@@ -2,9 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Exception\InvalidGridSizeException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+//use Symfony\Component\Finder\Finder ;
 
 class DefaultController extends Controller
 {
@@ -37,5 +39,38 @@ class DefaultController extends Controller
                 'sudoku/index.html.twig',
                 array()
                 ) ;
+    }
+    
+    /**
+     * @Route("/{size}", name="grid")
+     */
+    public function gridAction(Request $request, $size=null)
+    {
+        $size = (int) $size ;
+        try {
+            $this->validateGridSize($size) ;
+        } catch (InvalidGridSizeException $ex) {
+            return $this->render(
+                    'sudoku/error.html.twig',
+                    array('msg' => $ex->getMessage() )
+                    ) ;
+        }
+        
+        return $this->render(
+                'sudoku/grid.html.twig',
+                array('size' => $size, 
+                      'msg' => '',
+                      'post' => array(),
+                      'sqrt' => sqrt($size) )
+                ) ;
+    }
+
+    protected function validateGridSize($size)
+    {
+        $root = sqrt($size) ;
+        if(fmod($root, 1) != 0) 
+        {
+            throw new InvalidGridSizeException('Invalid grid size : ' . $size) ;
+        }        
     }
 }
