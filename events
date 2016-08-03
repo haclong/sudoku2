@@ -1,0 +1,121 @@
+php bin/console debug:event-dispatcher > events
+Registered Listeners Grouped by Event
+=====================================
+
+"console.command" event
+-----------------------
+
+ ------- ------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                        Priority  
+ ------- ------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Component\HttpKernel\EventListener\DebugHandlersListener::configure()   2048      
+  #2      Symfony\Bridge\Monolog\Handler\ConsoleHandler::onCommand()                      255       
+ ------- ------------------------------------------------------------------------------- ---------- 
+
+"console.terminate" event
+-------------------------
+
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                            Priority  
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener::onTerminate()   0         
+  #2      Symfony\Bridge\Monolog\Handler\ConsoleHandler::onTerminate()                        -255      
+ ------- ----------------------------------------------------------------------------------- ---------- 
+
+"grid.get" event
+----------------
+
+ ------- ---------------------------------------------- ---------- 
+  Order   Callable                                       Priority  
+ ------- ---------------------------------------------- ---------- 
+  #1      AppBundle\Service\GridAggregate::onGetGrid()   0         
+ ------- ---------------------------------------------- ---------- 
+
+"kernel.controller" event
+-------------------------
+
+ ------- ----------------------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                                        Priority  
+ ------- ----------------------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Bundle\FrameworkBundle\DataCollector\RouterDataCollector::onKernelController()          0         
+  #2      Symfony\Bundle\FrameworkBundle\DataCollector\RequestDataCollector::onKernelController()         0         
+  #3      Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener::onKernelController()       0         
+  #4      Sensio\Bundle\FrameworkExtraBundle\EventListener\ParamConverterListener::onKernelController()   0         
+  #5      Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener::onKernelController()        0         
+  #6      Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener::onKernelController()         0         
+  #7      Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener::onKernelController()         -128      
+ ------- ----------------------------------------------------------------------------------------------- ---------- 
+
+"kernel.exception" event
+------------------------
+
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                            Priority  
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Component\HttpKernel\EventListener\ProfilerListener::onKernelException()    0         
+  #2      Symfony\Component\HttpKernel\EventListener\ExceptionListener::onKernelException()   -128      
+ ------- ----------------------------------------------------------------------------------- ---------- 
+
+"kernel.finish_request" event
+-----------------------------
+
+ ------- ---------------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                                 Priority  
+ ------- ---------------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelFinishRequest()       0         
+  #2      Symfony\Component\HttpKernel\EventListener\TranslatorListener::onKernelFinishRequest()   0         
+  #3      Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelFinishRequest()       0         
+  #4      Symfony\Component\Security\Http\Firewall::onKernelFinishRequest()                        0         
+ ------- ---------------------------------------------------------------------------------------- ---------- 
+
+"kernel.request" event
+----------------------
+
+ ------- ---------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                           Priority  
+ ------- ---------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Component\HttpKernel\EventListener\DebugHandlersListener::configure()      2048      
+  #2      Symfony\Component\HttpKernel\EventListener\DumpListener::configure()               1024      
+  #3      Symfony\Bundle\FrameworkBundle\EventListener\SessionListener::onKernelRequest()    128       
+  #4      Symfony\Component\HttpKernel\EventListener\FragmentListener::onKernelRequest()     48        
+  #5      Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest()       32        
+  #6      Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()       16        
+  #7      Symfony\Component\HttpKernel\EventListener\TranslatorListener::onKernelRequest()   10        
+  #8      Symfony\Component\Security\Http\Firewall::onKernelRequest()                        8         
+ ------- ---------------------------------------------------------------------------------- ---------- 
+
+"kernel.response" event
+-----------------------
+
+ ------- -------------------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                                     Priority  
+ ------- -------------------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Component\HttpKernel\EventListener\ResponseListener::onKernelResponse()              0         
+  #2      Symfony\Bundle\FrameworkBundle\DataCollector\RequestDataCollector::onKernelResponse()        0         
+  #3      Symfony\Component\Security\Http\RememberMe\ResponseListener::onKernelResponse()              0         
+  #4      Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener::onKernelResponse()       0         
+  #5      Symfony\Component\HttpKernel\EventListener\ProfilerListener::onKernelResponse()              -100      
+  #6      Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener::onKernelResponse()   -128      
+  #7      Symfony\Component\HttpKernel\EventListener\SaveSessionListener::onKernelResponse()           -1000     
+  #8      Symfony\Component\HttpKernel\EventListener\StreamedResponseListener::onKernelResponse()      -1024     
+ ------- -------------------------------------------------------------------------------------------- ---------- 
+
+"kernel.terminate" event
+------------------------
+
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                            Priority  
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener::onTerminate()   0         
+  #2      Symfony\Component\HttpKernel\EventListener\ProfilerListener::onKernelTerminate()    -1024     
+ ------- ----------------------------------------------------------------------------------- ---------- 
+
+"kernel.view" event
+-------------------
+
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                            Priority  
+ ------- ----------------------------------------------------------------------------------- ---------- 
+  #1      Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener::onKernelView()   0         
+ ------- ----------------------------------------------------------------------------------- ---------- 
+
