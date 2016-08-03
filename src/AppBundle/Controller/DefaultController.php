@@ -46,9 +46,9 @@ class DefaultController extends Controller
      */
     public function gridAction(Request $request, $size=null)
     {
-        $size = (int) $size ;
+        $gridSize = (int) $size ;
         try {
-            $this->validateGridSize($size) ;
+            $this->validateGridSize($gridSize) ;
         } catch (InvalidGridSizeException $ex) {
             return $this->render(
                     'sudoku/error.html.twig',
@@ -58,10 +58,10 @@ class DefaultController extends Controller
         
         return $this->render(
                 'sudoku/grid.html.twig',
-                array('size' => $size, 
+                array('size' => $gridSize, 
                       'msg' => '',
                       'post' => array(),
-                      'sqrt' => sqrt($size) )
+                      'sqrt' => sqrt($gridSize) )
                 ) ;
     }
 
