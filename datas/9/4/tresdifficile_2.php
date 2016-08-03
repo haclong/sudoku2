@@ -1,0 +1,37 @@
+<?php
+// tres difficile
+$array = array() ;
+$array[0][7] = 4 ;
+$array[1][0] = 5 ;
+$array[1][3] = 1 ;
+$array[1][6] = 6 ;
+$array[1][7] = 3 ;
+$array[2][1] = 7 ;
+$array[2][3] = 8 ;
+$array[2][4] = 6 ;
+$array[2][8] = 2 ;
+$array[3][0] = 8 ;
+$array[3][1] = 5 ;
+$array[3][4] = 3 ;
+$array[3][6] = 4 ;
+$array[4][0] = 3 ;
+$array[4][1] = 9 ;
+$array[4][2] = 7 ;
+$array[4][4] = 8 ;
+$array[4][6] = 2 ;
+$array[4][7] = 5 ;
+$array[4][8] = 6 ;
+$array[5][2] = 2 ;
+$array[5][4] = 7 ;
+$array[5][7] = 8 ;
+$array[5][8] = 3 ;
+$array[6][0] = 7 ;
+$array[6][4] = 4 ;
+$array[6][5] = 9 ;
+$array[6][7] = 6 ;
+$array[7][1] = 4 ;
+$array[7][2] = 9 ;
+$array[7][5] = 7 ;
+$array[7][8] = 8 ;
+$array[8][1] = 3 ;
+return $array ;

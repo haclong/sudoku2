@@ -1,0 +1,41 @@
+<?php
+// difficile - avec déduction par élimination de bloc
+$array = array() ;
+$array[0][0] = 3 ;
+$array[0][2] = 4 ;
+$array[0][3] = 5 ;
+$array[0][4] = 1 ;
+$array[0][5] = 7 ;
+$array[0][6] = 2 ;
+$array[0][8] = 9 ;
+$array[1][2] = 7 ;
+$array[1][5] = 4 ;
+$array[1][6] = 5 ;
+$array[1][8] = 1 ;
+$array[2][4] = 2 ;
+$array[2][6] = 4 ;
+$array[3][0] = 7 ;
+$array[3][6] = 6 ;
+$array[4][1] = 4 ;
+$array[4][2] = 1 ;
+$array[4][3] = 3 ;
+$array[4][5] = 5 ;
+$array[4][6] = 8 ;
+$array[4][7] = 9 ;
+$array[5][2] = 5 ;
+$array[5][8] = 4 ;
+$array[6][2] = 3 ;
+$array[6][4] = 6 ;
+$array[7][0] = 9 ;
+$array[7][2] = 6 ;
+$array[7][3] = 1 ;
+$array[7][6] = 3 ;
+$array[8][0] = 5 ;
+$array[8][2] = 2 ;
+$array[8][3] = 7 ;
+$array[8][4] = 4 ;
+$array[8][5] = 3 ;
+$array[8][6] = 9 ;
+$array[8][8] = 6 ;
+
+return $array ;
