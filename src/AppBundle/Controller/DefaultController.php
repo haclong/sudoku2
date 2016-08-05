@@ -61,7 +61,7 @@ class DefaultController extends Controller
                 array('size' => $gridSize, 
                       'msg' => '',
                       'post' => array(),
-                      'sqrt' => sqrt($gridSize) )
+                      'sqrt' => sqrt($gridSize))
                 ) ;
     }
 
