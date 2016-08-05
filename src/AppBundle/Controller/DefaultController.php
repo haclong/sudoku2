@@ -35,6 +35,7 @@ class DefaultController extends Controller
 //            var_dump($path) ; die() ;
 //        }
 
+      
         return $this->render(
                 'sudoku/index.html.twig',
                 array()
