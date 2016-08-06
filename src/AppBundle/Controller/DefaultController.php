@@ -74,4 +74,8 @@ class DefaultController extends Controller
             throw new InvalidGridSizeException('Invalid grid size : ' . $size) ;
         }        
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> parent of 5a8fbd3... test gocd
