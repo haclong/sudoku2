@@ -34,6 +34,7 @@ class DefaultController extends Controller
 //            $path = include($file->getRealpath()) ;
 //            var_dump($path) ; die() ;
 //        }
+
       
         return $this->render(
                 'sudoku/index.html.twig',
