@@ -54,29 +54,42 @@
 {% endblock %}
 
 {% block javascripts %}
+
     <script>
-        $("#getGridButton").click(function() {
-//            alert("getGridButton") ;
-//            $.getJSON("{{path('getGrid')}}", refreshGrid); 
-            $.ajax({
-              dataType: "json",
-              url: "{{path('getGrid')}}",
-              data: {size: "{{size}}"},
-              success: refreshGrid
-            });
-        }) ;
-        
-        function refreshGrid(data)
-        {
-//            var myData = JSON.parse(JSON.stringify(data)) ;
-            var myData = data.getGrid ;
-            var i; 
-//            alert(JSON.stringify(myData)) ;
-//            alert("Data: " + data.getGrid.size) ;
-//            alert("Data: " + myData.tiles.length) ;
-            for(i=0; i<myData.tiles.length; i++) {
-                document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
+            $("#getGridButton").click(function() {
+    //            alert("getGridButton") ;
+    //            $.getJSON("{{path('getGrid')}}", refreshGrid); 
+                $.ajax({
+                  dataType: "json",
+                  url: "{{path('getGrid')}}",
+                  data: {size: "{{size}}"},
+                  success: refreshGrid
+                });
+            }) ;
+
+            function refreshGrid(data)
+            {
+    //            var myData = JSON.parse(JSON.stringify(data)) ;
+                var myData = data.getGrid ;
+                var i; 
+    //            alert(JSON.stringify(myData)) ;
+    //            alert("Data: " + data.getGrid.size) ;
+    //            alert("Data: " + myData.tiles.length) ;
+                for(i=0; i<myData.tiles.length; i++) {
+                    document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
+                }
             }
-        }
-    </script>
+
+            $("#clearGridButton").click(function() {
+    //            alert(document.getElementsByTagName("input").length) ;
+                var tilesInput = document.getElementsByTagName("input") ;
+                var i ;
+
+                for(i=0; i<tilesInput.length; i++) {
+                    tilesInput[i].value = "" ;
+                }
+            }) ;
+
+        </script>
+
 {% endblock %}

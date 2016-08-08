@@ -39,6 +39,7 @@ class ApiController extends Controller
 //        }
     }
     
+    // TODO : réussir à faire un test unitaire de getGrid sans cette méthode
     protected function pickAGrid($size)
     {
         if($size == 'test') {
@@ -54,7 +55,17 @@ class ApiController extends Controller
             } elseif ($size == 9) {
                 $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
             }
-            $array = include($file) ;
+            
+            $fileContent = include($file) ;
+
+            $array = array() ;
+            foreach($fileContent as $row => $cols)
+            {
+                foreach($cols as $col => $value)
+                {
+                    $array[] = array('id' => 't.' .$row.'.'.$col, 'value'=> $value) ;
+                }
+            }
         }
         
         return $array ;
