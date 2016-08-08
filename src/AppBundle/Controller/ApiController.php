@@ -38,7 +38,25 @@ class ApiController extends Controller
 //                    ) ;
 //        }
     }
-    
+
+    /**
+     * @Route("/api/saveGrid", name="saveGrid")
+     */
+    public function saveGridAction(Request $request)
+    {
+//        if($request->isXmlHttpRequest()) {
+            $grid = $request->get('grid') ;
+            $grid = '{"grid":[{"id":"t.0.0","value":"1"},{"id":"t.0.1","value":"2"},{"id":"t.0.2","value":"3"},{"id":"t.0.3","value":"4"},{"id":"t.1.0","value":""},{"id":"t.1.1","value":""},{"id":"t.1.2","value":""},{"id":"t.1.3","value":""},{"id":"t.2.0","value":""},{"id":"t.2.1","value":""},{"id":"t.2.2","value":""},{"id":"t.2.3","value":""},{"id":"t.3.0","value":""},{"id":"t.3.1","value":""},{"id":"t.3.2","value":""},{"id":"t.3.3","value":""}]}' ; 
+            var_dump(json_decode($grid)) ;
+            return new JsonResponse(json_decode($grid)) ;
+//        } else {
+//            return $this->render(
+//                    'sudoku/error.html.twig',
+//                    array('msg' =>'No XHR' )
+//                    ) ;
+//        }
+    }
+
     // TODO : réussir à faire un test unitaire de getGrid sans cette méthode
     protected function pickAGrid($size)
     {

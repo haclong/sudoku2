@@ -56,40 +56,62 @@
 {% block javascripts %}
 
     <script>
-            $("#getGridButton").click(function() {
-    //            alert("getGridButton") ;
-    //            $.getJSON("{{path('getGrid')}}", refreshGrid); 
-                $.ajax({
-                  dataType: "json",
-                  url: "{{path('getGrid')}}",
-                  data: {size: "{{size}}"},
-                  success: refreshGrid
-                });
-            }) ;
+        $("#getGridButton").click(function() {
+//            alert("getGridButton") ;
+//            $.getJSON("{{path('getGrid')}}", refreshGrid); 
+            $.ajax({
+              dataType: "json",
+              url: "{{path('getGrid')}}",
+              data: {size: "{{size}}"},
+              success: refreshGrid
+            });
+        }) ;
 
-            function refreshGrid(data)
-            {
-    //            var myData = JSON.parse(JSON.stringify(data)) ;
-                var myData = data.getGrid ;
-                var i; 
-    //            alert(JSON.stringify(myData)) ;
-    //            alert("Data: " + data.getGrid.size) ;
-    //            alert("Data: " + myData.tiles.length) ;
-                for(i=0; i<myData.tiles.length; i++) {
-                    document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
-                }
+        function refreshGrid(data)
+        {
+//            var myData = JSON.parse(JSON.stringify(data)) ;
+            var myData = data.getGrid ;
+            var i; 
+//            alert(JSON.stringify(myData)) ;
+//            alert("Data: " + data.getGrid.size) ;
+//            alert("Data: " + myData.tiles.length) ;
+            for(i=0; i<myData.tiles.length; i++) {
+                document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
             }
+        }
 
-            $("#clearGridButton").click(function() {
-    //            alert(document.getElementsByTagName("input").length) ;
-                var tilesInput = document.getElementsByTagName("input") ;
-                var i ;
+        $("#clearGridButton").click(function() {
+//            alert(document.getElementsByTagName("input").length) ;
+            var tilesInput = document.getElementsByTagName("input") ;
+            var i ;
 
-                for(i=0; i<tilesInput.length; i++) {
-                    tilesInput[i].value = "" ;
-                }
-            }) ;
+            for(i=0; i<tilesInput.length; i++) {
+                tilesInput[i].value = "" ;
+            }
+        }) ;
 
-        </script>
+        $("#saveGridButton").click(function() {
+//            alert(document.getElementsByTagName("input").length) ;
+            var tilesInput = document.getElementsByTagName("input") ;
+            var i ;
+            var tilesData = new Array() ;
+            
+            for(i=0; i<tilesInput.length; i++) {
+                tilesData[i] = {} ;
+                tilesData[i]['id'] = tilesInput[i].id ;
+                tilesData[i]['value'] = tilesInput[i].value ;
+            }
+            
+            alert(JSON.stringify({grid:tilesData})) ;
+            $.ajax({
+                type: "POST",
+                url: "{{path('saveGrid')}}",
+                data: JSON.stringify({grid:tilesData}),
+                contentType: 'application/json',
+                success: function(data) {alert(data.length);},
+                dataType: "json"
+            });
+        }) ;
+    </script>
 
 {% endblock %}
