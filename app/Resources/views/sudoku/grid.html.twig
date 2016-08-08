@@ -78,5 +78,16 @@
                 document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
             }
         }
+
+        $("#clearGridButton").click(function() {
+//            alert(document.getElementsByTagName("input").length) ;
+            var tilesInput = document.getElementsByTagName("input") ;
+            var i ;
+            
+            for(i=0; i<tilesInput.length; i++) {
+                tilesInput[i].value = "" ;
+            }
+        }) ;
+
     </script>
 {% endblock %}
