@@ -22,15 +22,6 @@ class DefaultController extends Controller
 //    }
 
     /**
-     * @Route("/debug", name="debug")
-     */
-    public function debugAction(Request $request)
-    {
-        // replace this example code with whatever you need
-        return $this->render('sudoku/debug.html.twig', []);
-    }
-
-    /**
      * @Route("/", name="homepage")
      */
     public function indexAction(Request $request)
