@@ -26,7 +26,7 @@ class DebugController  extends Controller {
         $array = SavedGridMapper::fromJson($json) ;
         
         
-        var_dump( $array ) ;
+        var_dump( $array->getSafeTiles()) ;
 //        $grid = "<?php \r\n return array() ;" ;
         
 //        $filesystem = new Filesystem() ;
