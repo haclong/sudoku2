@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\Utils\SavedGridMapper;
+use AppBundle\Utils\SudokuFileMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -45,10 +48,14 @@ class ApiController extends Controller
     public function saveGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
-            $grid = $request->get('grid') ;
-            $grid = '{"grid":[{"id":"t.0.0","value":"1"},{"id":"t.0.1","value":"2"},{"id":"t.0.2","value":"3"},{"id":"t.0.3","value":"4"},{"id":"t.1.0","value":""},{"id":"t.1.1","value":""},{"id":"t.1.2","value":""},{"id":"t.1.3","value":""},{"id":"t.2.0","value":""},{"id":"t.2.1","value":""},{"id":"t.2.2","value":""},{"id":"t.2.3","value":""},{"id":"t.3.0","value":""},{"id":"t.3.1","value":""},{"id":"t.3.2","value":""},{"id":"t.3.3","value":""}]}' ; 
-            var_dump(json_decode($grid)) ;
-            return new JsonResponse(json_decode($grid)) ;
+            $filesystem = new Filesystem() ;
+            $path = realpath($this->getParameter('kernel.root_dir').'/..') ;
+            $sudokuJson = $request->getContent() ;
+            $jsonToArray = SavedGridMapper::fromJson($sudokuJson) ;
+            $string = SudokuFileMapper::mapToString($jsonToArray->getSafeTiles()) ;
+            $filesystem->dumpFile($path . '/datas/'.$jsonToArray->getSize().'/'.uniqid().'.php', $string) ;
+            
+            return new JsonResponse($sudokuJson) ;
 //        } else {
 //            return $this->render(
 //                    'sudoku/error.html.twig',
