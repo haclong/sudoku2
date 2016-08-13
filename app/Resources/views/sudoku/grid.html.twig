@@ -102,11 +102,11 @@
                 tilesData[i]['value'] = tilesInput[i].value ;
             }
             
-            alert(JSON.stringify({grid:tilesData})) ;
+            alert(JSON.stringify({grid:{size:{{size}},tiles:tilesData}})) ;
             $.ajax({
                 type: "POST",
                 url: "{{path('saveGrid')}}",
-                data: JSON.stringify({grid:tilesData}),
+                data: JSON.stringify({grid:{size:{{size}},tiles:tilesData}}),
                 contentType: 'application/json',
                 success: function(data) {alert(data.length);},
                 dataType: "json"
