@@ -68,7 +68,7 @@ class ApiController extends Controller
     protected function pickAGrid($size)
     {
         if($size == 'test') {
-            $array = array(
+            $arrayForJson = array(
                 array('id' => 't.0.0', 'value' => 2),
                 array('id' => 't.2.5', 'value' => 8),
                 array('id' => 't.5.3', 'value' => 5),
@@ -82,17 +82,10 @@ class ApiController extends Controller
             }
             
             $fileContent = include($file) ;
-
-            $array = array() ;
-            foreach($fileContent as $row => $cols)
-            {
-                foreach($cols as $col => $value)
-                {
-                    $array[] = array('id' => 't.' .$row.'.'.$col, 'value'=> $value) ;
-                }
-            }
+            
+            $arrayForJson = SudokuFileMapper::prepareArrayForJson($fileContent) ;
         }
         
-        return $array ;
+        return $arrayForJson ;
     }
 }
