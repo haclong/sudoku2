@@ -22,7 +22,7 @@ class ApiController extends Controller
 {
     /**
      * 
-     * @Route("/api/getGrid", name="getGrid")
+     * @Route("/api/grid/get", name="getGrid")
      */
     public function getGridAction(Request $request)
     {
@@ -53,7 +53,31 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/api/saveGrid", name="saveGrid")
+     * 
+     * @Route("/api/grid/reload", name="reloadGrid")
+     */
+    public function reloadGridAction(Request $request)
+    {
+//        if($request->isXmlHttpRequest()) {
+            // on crée l'objet Grid qui est en session
+            $grid = new Grid(9) ;
+            $aGrid = $this->pickAGrid(9) ;
+            $grid->setTiles($aGrid) ;
+            
+            $arrayForJson = SudokuFileMapper::prepareArrayForJson($grid->getTiles()) ;
+            $response['getGrid'] = array('tiles' => $arrayForJson) ;
+//            $response = array('size' => $size) ;
+            return new JsonResponse($response) ;
+//        } else {
+//            return $this->render(
+//                    'sudoku/error.html.twig',
+//                    array('msg' => 'No XHR')
+//                    ) ;
+//        }
+    }
+
+    /**
+     * @Route("/api/grid/save", name="saveGrid")
      */
     public function saveGridAction(Request $request)
     {
