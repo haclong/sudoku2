@@ -24,7 +24,11 @@ class GridTest  extends \PHPUnit_Framework_TestCase
     
     public function testValue() {
         $grid = new Grid(9) ;
-        $array = array(1, 2, 3, 4) ;
+        $array = array() ;
+        $array[0][3] = 2 ;
+        $array[2][5] = 4 ;
+        $array[3][2] = 8 ;
+        $array[5][3] = 8 ;
         $grid->setTiles($array) ;
         $this->assertEquals($grid->getTiles(), $array) ;
     }

@@ -49,29 +49,20 @@ class TileTest  extends \PHPUnit_Framework_TestCase
         $this->tile = null ;
     }
     
-    public function testInitialize() {
+    public function testPropertiesAreInitialized() {
         $this->tile->initialize(3, 4, 4) ;
         $this->assertEquals($this->tile->getRow(), 3) ;
         $this->assertEquals($this->tile->getCol(), 4) ;
         $this->assertEquals($this->tile->getRegion(), 4) ;
         $this->assertFalse($this->tile->isSolved()) ;
         $this->assertEquals($this->tile->getSize(), 4) ;
-
-        $i = 0 ;
-        $figures = $this->tile->getFigures() ;
-        foreach($figures as $k=>$v)
-        {
-            foreach($figures[$k] as $v)
-            {
-                $i++ ;
-            }
-        }
-        $this->assertEquals($i, 4) ;
+        $this->assertEquals($this->tile->getId(), '3.4') ;
     }
     
-    public function testId() {
+    public function testPossibilitiesFigureInitiated() {
         $this->tile->initialize(3, 4, 4) ;
-        $this->assertEquals($this->tile->getId(), '3.4') ;
+        $figures = $this->tile->getPossibilitiesFigure() ;
+        $this->assertEquals(4, count($figures)) ;
     }
     
     public function testReset() {
@@ -85,6 +76,7 @@ class TileTest  extends \PHPUnit_Framework_TestCase
     public function testGetDefinitiveFigure()
     {
         $this->tile->initialize(3, 4, 4) ;
+        $this->assertFalse($this->tile->getDefinitiveFigure()) ;
         $this->tile->set(3) ;
         $this->assertEquals($this->tile->getDefinitiveFigure(), 3) ;
     }
@@ -145,11 +137,18 @@ class TileTest  extends \PHPUnit_Framework_TestCase
         $this->tile->set(3) ;
     }
     
-    public function testSetTriggerEvent() {
+    public function testSetEventTriggered() {
         $this->dispatcher->expects($this->once())
                    ->method('dispatch')
                    ->with('tile.set', $this->equalTo($this->tileSetEvent));
         $this->tile->initialize(3, 4, 4) ;
         $this->tile->set(3) ;
     }
+//    
+//    public function testSetSolved() {
+//        $this->tile->initialize(3, 4, 4) ;
+//        $this->assertFalse($this->tile->isSolved()) ;
+//        $this->tile->setSolved(true) ;
+//        $this->assertTrue($this->tile->isSolved()) ;
+//    }
 }
