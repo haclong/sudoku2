@@ -10,6 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * @author haclong
  */
 class DebugControllerTest extends WebTestCase {
+    public function testMe()
+    {
+        $this->assertTrue(true) ;
+    }
     
     public function testDebugPage()
     {

@@ -37,8 +37,8 @@ class ApiController extends Controller
             $grid->setTiles($aGrid) ;
             
             // la création de la grille génère un événement grid.get
-            $event = new GetGridEvent($grid) ;
-            $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
+//            $event = new GetGridEvent($grid) ;
+//            $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
             //$response = $this->get('jsonMapper')->gridToJson($grid) ;
             $arrayForJson = SudokuFileMapper::prepareArrayForJson($aGrid) ;
             $response['getGrid'] = array('tiles' => $arrayForJson) ;
@@ -66,7 +66,6 @@ class ApiController extends Controller
             
             $arrayForJson = SudokuFileMapper::prepareArrayForJson($grid->getTiles()) ;
             $response['getGrid'] = array('tiles' => $arrayForJson) ;
-//            $response = array('size' => $size) ;
             return new JsonResponse($response) ;
 //        } else {
 //            return $this->render(

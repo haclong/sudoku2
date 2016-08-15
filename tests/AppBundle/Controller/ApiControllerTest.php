@@ -15,7 +15,7 @@ class ApiControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/api/getGrid?size=test');
+        $crawler = $client->request('GET', '/api/grid/get?size=test');
         $response = $client->getResponse();
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
