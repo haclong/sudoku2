@@ -16,7 +16,6 @@ class GetGridEventTest extends \PHPUnit_Framework_TestCase  {
                      ->disableOriginalConstructor()
                      ->getMock() ;
         $event = new GetGridEvent($grid) ;
-        $this->assertInstanceOf('AppBundle\Event\GetGridEvent', $event) ;
         $this->assertInstanceOf('AppBundle\Entity\Grid', $event->getGrid()) ;
         $this->assertEquals($event::NAME, 'grid.get') ;
     }
