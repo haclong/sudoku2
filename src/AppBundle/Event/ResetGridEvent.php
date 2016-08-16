@@ -9,6 +9,6 @@ use Symfony\Component\EventDispatcher\Event;
  *
  * @author haclong
  */
-class ReloadGridEvent extends Event {
-    const NAME = 'grid.reload' ;
+class ResetGridEvent extends Event {
+    const NAME = 'grid.reset' ;
 }

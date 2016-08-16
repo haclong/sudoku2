@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use Exception;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -14,9 +15,13 @@ class SudokuSessionFactory {
     public static function create()
     {
         $session = new Session() ;
-        $attributeBag = new AttributeBag('sudoku') ;
-        $attributeBag->setName('sudoku') ;
-        $session->registerBag($attributeBag) ;
+//        try {
+            $attributeBag = new AttributeBag('sudoku') ;
+            $attributeBag->setName('sudoku') ;
+            $session->registerBag($attributeBag) ;
+//        } catch (Exception $ex) {
+//            $session->getBag('sudoku') ;
+//        }
         
         return $session ;
     }

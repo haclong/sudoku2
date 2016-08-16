@@ -8,7 +8,7 @@
 
     <button class="btn btn-default" type="submit" name="submit" value="start">Résoudre</button>
     <button class="btn btn-default" type="submit" name="submit" value="play">Jouer</button>
-    <button id="reloadGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
+    <button id="resetGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
 
     <button id="clearGridButton" class="btn btn-default" type="submit" name="empty" value="clear">Nouvelle grille</button>
     <button id="saveGridButton"  class="btn btn-default" type="submit" name="save" value="save">Enregistrer une nouvelle grille</button>
@@ -65,10 +65,10 @@
             });
         }) ;
 
-        $("#reloadGridButton").click(function() {
+        $("#resetGridButton").click(function() {
             $.ajax({
               dataType: "json",
-              url: "{{path('reloadGrid')}}",
+              url: "{{path('resetGrid')}}",
               success: clearAndLoadGrid
             });
         }) ;

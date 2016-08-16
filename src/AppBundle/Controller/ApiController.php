@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Grid;
 use AppBundle\Event\GetGridEvent;
+use AppBundle\Event\ResetGridEvent;
 use AppBundle\Utils\GridMapper;
 use AppBundle\Utils\SudokuFileMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -54,14 +55,14 @@ class ApiController extends Controller
 
     /**
      * 
-     * @Route("/api/grid/reload", name="reloadGrid")
+     * @Route("/api/grid/reset", name="resetGrid")
      */
-    public function reloadGridAction(Request $request)
+    public function resetGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
             // on crée l'événement reload pour réinitialiser toutes les sessions
-            $event = new ReloadGridEvent() ;
-            $this->get('event_dispatcher')->dispatch('grid.reload', $event) ;
+            $event = new ResetGridEvent() ;
+            $this->get('event_dispatcher')->dispatch('grid.reset', $event) ;
             
             // on crée l'objet Grid qui est en session
 //            $grid = new Grid(9) ;

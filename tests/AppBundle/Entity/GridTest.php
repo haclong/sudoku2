@@ -14,11 +14,12 @@ class GridTest  extends \PHPUnit_Framework_TestCase
     public function testGrid() {
         $grid = new Grid(9) ;
         $this->assertFalse($grid->isSolved()) ;
-        $grid->solve(true) ;
+//        $grid->solve(true) ;
         $this->assertEquals($grid->getSize(), 9) ;
-        $this->assertTrue($grid->isSolved()) ;
-        $grid->reset(15) ;
-        $this->assertEquals($grid->getSize(), 15) ;
+        $this->assertEquals(81, $grid->getRemainingTiles()) ;
+//        $this->assertTrue($grid->isSolved()) ;
+        $grid->reset() ;
+        $this->assertEquals($grid->getSize(), 9) ;
         $this->assertFalse($grid->isSolved()) ;
     }
     
@@ -32,4 +33,12 @@ class GridTest  extends \PHPUnit_Framework_TestCase
         $grid->setTiles($array) ;
         $this->assertEquals($grid->getTiles(), $array) ;
     }
+    
+    public function testDecreaseRemainingTiles() {
+        $grid = new Grid(4) ;
+        $this->assertEquals(16, $grid->getRemainingTiles()) ;
+        $grid->decreaseRemainingTiles() ;
+        $this->assertEquals(15, $grid->getRemainingTiles()) ;
+    }
+            
 }

@@ -43,11 +43,14 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
     
     public function testSaveGrid()
     {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                          ->setConstructorArgs(array(9))
+                          ->getMock() ;
         $this->sudokuBag->expects($this->once())
                         ->method('set')
                         ->with($this->equalTo('grid'));
         
-        $this->service->saveGrid('coucou') ;
+        $this->service->saveGrid($grid) ;
     }
     
     public function testGetGrid()
@@ -57,5 +60,52 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
                         ->with($this->equalTo('grid'))
                         ->will($this->returnValue('coucou'));
         $this->assertEquals('coucou', $this->service->getGrid()) ;
+    }
+    
+    public function testResetGrid()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                          ->setConstructorArgs(array(9))
+                          ->getMock() ;
+        $grid->expects($this->once())
+                ->method('reset');
+        $this->sudokuBag->expects($this->once())
+                        ->method('get')
+                        ->with($this->equalTo('grid'))
+                        ->will($this->returnValue($grid));
+        $this->service->resetGrid() ;
+    }
+    
+    public function testSaveValues()
+    {
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                       ->getMock() ;
+        $this->sudokuBag->expects($this->once())
+                        ->method('set')
+                        ->with($this->equalTo('values'));
+        
+        $this->service->saveValues($values) ;
+    }
+    
+    public function testGetValues()
+    {
+        $this->sudokuBag->expects($this->once())
+                        ->method('get')
+                        ->with($this->equalTo('values'))
+                        ->will($this->returnValue('coucou'));
+        $this->assertEquals('coucou', $this->service->getValues()) ;
+    }
+    
+    public function testResetValues()
+    {
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                       ->getMock() ;
+        $values->expects($this->once())
+                ->method('reset');
+        $this->sudokuBag->expects($this->once())
+                        ->method('get')
+                        ->with($this->equalTo('values'))
+                        ->will($this->returnValue($values));
+        $this->service->resetValues() ;
     }
 }
