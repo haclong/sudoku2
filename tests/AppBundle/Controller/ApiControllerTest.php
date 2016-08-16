@@ -11,14 +11,17 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class ApiControllerTest extends WebTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
     public function testGetGrid()
     {
         $client = static::createClient();
 
         $crawler = $client->request('GET', '/api/grid/get?size=test');
         $response = $client->getResponse();
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+//var_dump($crawler) ;
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
         $this->assertContains('{"getGrid":{"tiles":[{"id":"t.0.0","value":2},{"id":"t.2.5","value":8},{"id":"t.5.3","value":5}]}}', $response->getContent());
     }

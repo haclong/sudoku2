@@ -357,22 +357,6 @@ class Grid
 
         return true ;
     }
-
-    /**
-     * Check if all cases are solved
-     *
-     * @return bool
-     */
-    public function isSolved()
-    {
-        foreach($this->cases as $case) {
-            if($case->figures->isFigureEmpty()) {
-                return false ;
-            }            
-        }
-
-        return true ;
-    }
 }
 
 
