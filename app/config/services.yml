@@ -7,3 +7,15 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    sudokuSession:
+        class: Symfony\Component\HttpFoundation\Session\Session
+        factory: [AppBundle\Utils\SudokuSessionFactory, create]
+    sudokuSessionService:
+        class: AppBundle\Service\SudokuSessionService
+        arguments: ['@sudokuSession']
+
+    gridAggregate:
+        class: AppBundle\Subscriber\GridAggregate
+        arguments: ['@sudokuSessionService']
+        tags:
+            - { name: kernel.event_subscriber } 

@@ -8,7 +8,7 @@
 
     <button class="btn btn-default" type="submit" name="submit" value="start">Résoudre</button>
     <button class="btn btn-default" type="submit" name="submit" value="play">Jouer</button>
-    <button class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
+    <button id="resetGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
 
     <button id="clearGridButton" class="btn btn-default" type="submit" name="empty" value="clear">Nouvelle grille</button>
     <button id="saveGridButton"  class="btn btn-default" type="submit" name="save" value="save">Enregistrer une nouvelle grille</button>
@@ -61,31 +61,21 @@
               dataType: "json",
               url: "{{path('getGrid')}}",
               data: {size: "{{size}}"},
-              success: refreshGrid
+              success: loadGrid
             });
         }) ;
 
-        function refreshGrid(data)
-        {
-//            var myData = JSON.parse(JSON.stringify(data)) ;
-            var myData = data.getGrid ;
-            var i; 
-//            alert(JSON.stringify(myData)) ;
-//            alert("Data: " + data.getGrid.size) ;
-//            alert("Data: " + myData.tiles.length) ;
-            for(i=0; i<myData.tiles.length; i++) {
-                document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
-            }
-        }
+        $("#resetGridButton").click(function() {
+            $.ajax({
+              dataType: "json",
+              url: "{{path('resetGrid')}}",
+              success: clearAndLoadGrid
+            });
+        }) ;
+
 
         $("#clearGridButton").click(function() {
-//            alert(document.getElementsByTagName("input").length) ;
-            var tilesInput = document.getElementsByTagName("input") ;
-            var i ;
-
-            for(i=0; i<tilesInput.length; i++) {
-                tilesInput[i].value = "" ;
-            }
+            clearGrid() ;
         }) ;
 
         $("#saveGridButton").click(function() {
@@ -110,6 +100,36 @@
                 dataType: "json"
             });
         }) ;
+
+        function loadGrid(data)
+        {
+//            var myData = JSON.parse(JSON.stringify(data)) ;
+            var myData = data.getGrid ;
+            var i; 
+//            alert(JSON.stringify(myData)) ;
+//            alert("Data: " + data.getGrid.size) ;
+//            alert("Data: " + myData.tiles.length) ;
+            for(i=0; i<myData.tiles.length; i++) {
+                document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
+            }
+        }
+
+        function clearGrid()
+        {
+//            alert(document.getElementsByTagName("input").length) ;
+            var tilesInput = document.getElementsByTagName("input") ;
+            var i ;
+
+            for(i=0; i<tilesInput.length; i++) {
+                tilesInput[i].value = "" ;
+            }
+        }
+        
+        function clearAndLoadGrid(data)
+        {
+            clearGrid() ;
+            loadGrid(data) ;
+        }
     </script>
 
 {% endblock %}

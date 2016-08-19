@@ -23,4 +23,17 @@ class SudokuFileMapper
         $string .= 'return $array ;' ;
         return $string ;
     }
+    
+    public static function prepareArrayForJson($fileContent)
+    {
+        $array = array() ;
+        foreach($fileContent as $row => $cols)
+        {
+            foreach($cols as $col => $value)
+            {
+                $array[] = array('id' => 't.' .$row.'.'.$col, 'value'=> $value) ;
+            }
+        }
+        return $array ;
+    }
 }

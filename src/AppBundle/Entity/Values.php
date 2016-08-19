@@ -5,11 +5,11 @@ namespace AppBundle\Entity;
 use AppBundle\Exception\InvalidFigureCountException;
 
 /**
- * Description of Value
+ * Description of Values
  *
  * @author haclong
  */
-class Value {
+class Values {
     protected $gridSize ;
     protected $values = array() ;
     
@@ -19,10 +19,14 @@ class Value {
 
     public function add($value)
     {
-        if(count($this->values) >= $this->gridSize)
-        {
-            throw new InvalidFigureCountException('Maximum allowed figure number reached : ' .$this->gridSize) ;
-        }
+//        if(!in_array($value, $this->values))
+//        {
+            if(count($this->values) >= $this->gridSize)
+            {
+                throw new InvalidFigureCountException('Maximum allowed figure number reached : ' .$this->gridSize) ;
+            }
+//            $this->values[] = $value ;
+//        }    
         if(!in_array($value, $this->values))
         {
             $this->values[] = $value ;
@@ -42,6 +46,7 @@ class Value {
     public function reset()
     {
         $this->values = array() ;
+        //$this->gridSize = null ;
     }
     
     public function getValueByKey($key)

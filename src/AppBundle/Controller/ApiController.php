@@ -2,7 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\SavedGridMapper;
+use AppBundle\Entity\Grid;
+use AppBundle\Event\GetGridEvent;
+use AppBundle\Event\ResetGridEvent;
+use AppBundle\Utils\GridMapper;
 use AppBundle\Utils\SudokuFileMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,18 +23,26 @@ class ApiController extends Controller
 {
     /**
      * 
-     * @Route("/api/getGrid", name="getGrid")
+     * @Route("/api/grid/get", name="getGrid")
      */
     public function getGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
-            $aGrid = $this->pickAGrid($request->get('size')) ;
-//            $grid = new Grid($size) ;
-//            $grid->setTiles($array) ;
-//            $getGrid = new GetGridEvent($grid) ;
-//            $this->get('event_dispatcher')->dispatch('grid.get', $getGrid) ;
+            $gridSize = $request->get('size') ;
+
+            // on récupère une grille dans datas/
+            $aGrid = $this->pickAGrid($gridSize) ;
+
+            // on crée l'objet Grid et on enregistre la grille qu'on va charger
+            $grid = new Grid($gridSize) ;
+            $grid->setTiles($aGrid) ;
+            
+            // la création de la grille génère un événement grid.get
+            $event = new GetGridEvent($grid) ;
+            $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
             //$response = $this->get('jsonMapper')->gridToJson($grid) ;
-            $response['getGrid'] = array('tiles' => $aGrid) ;
+            $arrayForJson = SudokuFileMapper::prepareArrayForJson($aGrid) ;
+            $response['getGrid'] = array('tiles' => $arrayForJson) ;
 //            $response = array('size' => $size) ;
             return new JsonResponse($response) ;
 //        } else {
@@ -43,7 +54,34 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/api/saveGrid", name="saveGrid")
+     * 
+     * @Route("/api/grid/reset", name="resetGrid")
+     */
+    public function resetGridAction(Request $request)
+    {
+//        if($request->isXmlHttpRequest()) {
+            // on crée l'événement reload pour réinitialiser toutes les sessions
+            $event = new ResetGridEvent() ;
+            $this->get('event_dispatcher')->dispatch('grid.reset', $event) ;
+            
+            // on crée l'objet Grid qui est en session
+//            $grid = new Grid(9) ;
+//            $aGrid = $this->pickAGrid(9) ;
+//            $grid->setTiles($aGrid) ;
+            
+            $arrayForJson = SudokuFileMapper::prepareArrayForJson($grid->getTiles()) ;
+            $response['getGrid'] = array('tiles' => $arrayForJson) ;
+            return new JsonResponse($response) ;
+//        } else {
+//            return $this->render(
+//                    'sudoku/error.html.twig',
+//                    array('msg' => 'No XHR')
+//                    ) ;
+//        }
+    }
+
+    /**
+     * @Route("/api/grid/save", name="saveGrid")
      */
     public function saveGridAction(Request $request)
     {
@@ -51,7 +89,7 @@ class ApiController extends Controller
             $filesystem = new Filesystem() ;
             $path = realpath($this->getParameter('kernel.root_dir').'/..') ;
             $sudokuJson = $request->getContent() ;
-            $jsonToArray = SavedGridMapper::fromJson($sudokuJson) ;
+            $jsonToArray = GridMapper::fromJson($sudokuJson) ;
             $string = SudokuFileMapper::mapToString($jsonToArray->getSafeTiles()) ;
             $filesystem->dumpFile($path . '/datas/'.$jsonToArray->getSize().'/'.uniqid().'.php', $string) ;
             
@@ -68,11 +106,10 @@ class ApiController extends Controller
     protected function pickAGrid($size)
     {
         if($size == 'test') {
-            $array = array(
-                array('id' => 't.0.0', 'value' => 2),
-                array('id' => 't.2.5', 'value' => 8),
-                array('id' => 't.5.3', 'value' => 5),
-                );
+            $array = array() ;
+            $array[0][0] = 2 ;
+            $array[2][5] = 8 ;
+            $array[5][3] = 5 ;
         } else {
             $size = (int) $size ;
             if($size == 4) {
@@ -81,16 +118,7 @@ class ApiController extends Controller
                 $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
             }
             
-            $fileContent = include($file) ;
-
-            $array = array() ;
-            foreach($fileContent as $row => $cols)
-            {
-                foreach($cols as $col => $value)
-                {
-                    $array[] = array('id' => 't.' .$row.'.'.$col, 'value'=> $value) ;
-                }
-            }
+            $array = include($file) ;
         }
         
         return $array ;

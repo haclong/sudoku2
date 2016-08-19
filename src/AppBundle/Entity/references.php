@@ -1,8 +1,3 @@
-<?php
-namespace SudokuSolver\Model ;
-
-use Exception;
-
 class Grid
 {
     /**
@@ -12,7 +7,6 @@ class Grid
      */
     public function __construct($size)
     {
-        $this->size = $size ;
         $this->buildGrid() ;
     }
 
@@ -363,22 +357,6 @@ class Grid
 
         return true ;
     }
-
-    /**
-     * Check if all cases are solved
-     *
-     * @return bool
-     */
-    public function isSolved()
-    {
-        foreach($this->cases as $case) {
-            if($case->figures->isFigureEmpty()) {
-                return false ;
-            }            
-        }
-
-        return true ;
-    }
 }
 
 
@@ -417,24 +395,6 @@ class GridCase
      * @var $final_status bool
      */
     protected $final_status ;
-
-    /**
-     * Constructor
-     *
-     * @param int $region Region number
-     * @param int $col Column number
-     * @param int $row Row number
-     * @param int $size Sudoku grid size (useful to set the figures array)
-     */
-    public function __construct($region, $row, $col, $size)
-    {
-        $this->col = $col ;
-        $this->row = $row ;
-	$this->region = $region ;
-        $this->id = $row . "." . $col ;
-        $this->status = false ;
-        $this->figures = new Figure($size) ;
-    }
     
     /**
      * get the case status
@@ -473,96 +433,6 @@ class GridCase
 
 
 
-
-
-
-
-<?php
-namespace SudokuSolver\Model ;
-
-class Figure
-{
-    /**
-     * Is figure empty ?
-     *
-     * return bool
-     */
-    public function isFigureEmpty()
-    {
-        foreach($this->figures as $figure)
-        {
-            if($figure == self::VALID)
-            {
-                return false ;
-            }
-        }
-        return true ;
-    }
-
-    /**
-     * Is figure valid ?
-     *
-     * return bool
-     */
-    public function isFigureSet()
-    {
-        foreach($this->figures as $figure)
-        {
-            if($figure == self::VALID)
-            {
-                return true ;
-            }
-        }
-        return false ;
-    }
-
-    /**
-     * Return figure status : if not discarded, figure still valid
-     *
-     * @param int $figure
-     * 
-     * return string
-     */
-    protected function getFigureMaybe($figure)
-    {
-        if($this->figures[$figure] != self::DISCARD)
-        {
-            return $figure ;
-        }
-        return '' ;
-    }
-
-    /**
-     * Get final figure
-     *
-     * @param int $figure
-     * 
-     * return string
-     */
-    public function getFigure($figure=null)
-    {
-        if($figure==null)
-        {
-            return $this->getFigureSet() ;
-        }
-        else
-        {
-            return $this->getFigureMaybe($figure) ;
-        }
-    }
-
-    /**
-     * Get figures by key
-     *
-     * @param int $index
-     * 
-     * return int
-     */
-    public function getFigureStatus($index)
-    {
-        return $this->figures[$index] ;
-    }
-}
 
 
 

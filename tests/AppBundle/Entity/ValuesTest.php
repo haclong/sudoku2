@@ -2,18 +2,18 @@
 
 namespace Tests\AppBundle\Entity;
 
-use AppBundle\Entity\Value;
+use AppBundle\Entity\Values;
 use AppBundle\Exception\InvalidFigureCountException;
 
 /**
- * Description of ValueTest
+ * Description of ValuesTest
  *
  * @author haclong
  */
-class ValueTest extends \PHPUnit_Framework_TestCase 
+class ValuesTest extends \PHPUnit_Framework_TestCase 
 {
     public function testGridSize() {
-        $value = new Value() ;
+        $value = new Values() ;
         $value->setGridSize(4) ;
         $this->assertEquals($value->getGridSize(), 4) ;
         $value->add(9) ;
@@ -25,9 +25,9 @@ class ValueTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($value->getValues()), 0) ;
     }
     
-    public function testValueAdd()
+    public function testValuesAdd()
     {
-        $value = new Value() ;
+        $value = new Values() ;
         $value->setGridSize(4) ;
         $value->add(9) ;
         $value->add(8) ;
@@ -38,7 +38,7 @@ class ValueTest extends \PHPUnit_Framework_TestCase
     
     public function testReset()
     {
-        $value = new Value() ;
+        $value = new Values() ;
         $value->setGridSize(4) ;
         $value->add(9) ;
         $value->add(8) ;
@@ -51,7 +51,7 @@ class ValueTest extends \PHPUnit_Framework_TestCase
     public function testInvalidFigureCountExceptionThrown()
     {
         $this->setExpectedException(InvalidFigureCountException::class) ;
-        $value = new Value() ;
+        $value = new Values() ;
         $value->setGridSize(4) ;
         $value->add(9) ;
         $value->add(8) ;
@@ -62,7 +62,7 @@ class ValueTest extends \PHPUnit_Framework_TestCase
     
     public function testGetValueByKey()
     {
-        $value = new Value() ;
+        $value = new Values() ;
         $value->setGridSize(4) ;
         $value->add(9) ;
         $value->add(8) ;
@@ -72,7 +72,7 @@ class ValueTest extends \PHPUnit_Framework_TestCase
     
     public function testGetKeyByValue()
     {
-        $value = new Value() ;
+        $value = new Values() ;
         $value->setGridSize(4) ;
         $value->add(9) ;
         $value->add(8) ;

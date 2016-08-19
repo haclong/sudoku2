@@ -112,7 +112,6 @@ class Tile {
         {
             $this->figures['possibilities'][$i] = $i ;
         }
-        $this->solved = false ;
     }
     
     protected function checkFiguresCount() {
@@ -135,7 +134,7 @@ class Tile {
         }
     }
     
-    public function checkTile() {
+    protected function checkTile() {
         $this->checkFiguresCount() ;
         $this->checkOnePossiblityLast() ;
     }
@@ -184,16 +183,17 @@ class Tile {
     
     public function reset() {
         $this->resetFigures() ;
+        $this->solved = false ;
     }
     
     public function isSolved() {
         return $this->solved ;
     }
     
-    public function setSolved($bool) {
-        $this->solved = $bool ;
-    }
-    
+//    public function setSolved($bool) {
+//        $this->solved = $bool ;
+//    }
+//    
     public function getDefinitiveFigure() {
         if(isset($this->figures['definitive']))
         {
@@ -206,10 +206,10 @@ class Tile {
         return $this->size;
     }
 
-    public function getFigures() {
-        return $this->figures;
-    }
-    
+//    public function getFigures() {
+//        return $this->figures;
+//    }
+//    
     public function getPossibilitiesFigure() {
         if(!isset($this->figures['possibilities']))
         {
@@ -240,9 +240,5 @@ class Tile {
     
     public function getId() {
         return $this->id ;
-    }
-    
-    public function getEvent() {
-        return $this->event ;
     }
 }
