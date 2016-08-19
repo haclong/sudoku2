@@ -26,7 +26,5 @@ class GridAggregate implements EventSubscriberInterface {
     
     public function onGetGrid(GetGridEvent $event) {
         $this->session->saveGrid($event->getGrid()) ;
-//        var_dump($this->session->getGrid()) ;
-//        echo get_class($this->session) ;
     }
 }
