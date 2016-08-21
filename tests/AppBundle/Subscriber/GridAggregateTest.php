@@ -44,30 +44,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
 
     public function testGetGridSubscriber()
     {
-        $event = $this->getMockBuilder('AppBundle\Event\GetGridEvent')
-                                    ->disableOriginalConstructor()
-                                    ->getMock() ;
-        
-        $subscriber = $this->getMockBuilder('AppBundle\Subscriber\GridAggregate')
-                                   ->disableOriginalConstructor()
-                                   ->setMethods(array('onGetGrid'))
-                                   ->getMock() ;
-
-        $this->dispatcher->addSubscriber($subscriber) ;
-
-        $subscriber->expects($this->once())
-                   ->method('onGetGrid')
-                   ->with($this->equalTo($event));
-        $this->dispatcher->dispatch($event::NAME, $event) ;
-        $listeners = $this->dispatcher->getListeners($event::NAME) ;
-        $result = false ;
-        foreach($listeners as $listener)
-        {
-            if($listener[0] instanceof $subscriber) {
-                $result = true ;
-                continue ;
-            }
-        }
+        $result = $this->commonEventSubscriber('GetGridEvent', 'onGetGrid') ;
         $this->assertTrue($result) ;
     }
     
@@ -84,5 +61,52 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $gridAggregate = new GridAggregate($this->service) ;
         $gridAggregate->onGetGrid($event) ;
     }
+    
+    public function testResetGridSubscriber()
+    {
+        $result = $this->commonEventSubscriber('ResetGridEvent', 'onResetGrid') ;
+        $this->assertTrue($result) ;
+    }
+    
+    public function testOnResetGrid()
+    {
+        $event = $this->getMockBuilder('AppBundle\Event\ResetGridEvent')
+                                    ->getMock() ;
+        
+        $this->service->expects($this->once())
+                ->method('resetGrid') ;
+        
+        $gridAggregate = new GridAggregate($this->service) ;
+        $gridAggregate->onResetGrid($event) ;
+    }
 
+    protected function commonEventSubscriber($eventName, $method)
+    {
+        $event = $this->getMockBuilder('AppBundle\Event\\'.$eventName)
+                                    ->disableOriginalConstructor()
+                                    ->getMock() ;
+        
+        $subscriber = $this->getMockBuilder('AppBundle\Subscriber\GridAggregate')
+                                   ->disableOriginalConstructor()
+                                   ->setMethods(array($method))
+                                   ->getMock() ;
+
+        $this->dispatcher->addSubscriber($subscriber) ;
+
+        $subscriber->expects($this->once())
+                   ->method($method)
+                   ->with($this->equalTo($event));
+        $this->dispatcher->dispatch($event::NAME, $event) ;
+        $listeners = $this->dispatcher->getListeners($event::NAME) ;
+        $result = false ;
+        foreach($listeners as $listener)
+        {
+            if($listener[0] instanceof $subscriber) {
+                $result = true ;
+                continue ;
+            }
+        }
+        return $result ;
+    }
+    
 }

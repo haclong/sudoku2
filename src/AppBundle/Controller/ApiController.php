@@ -64,13 +64,14 @@ class ApiController extends Controller
             $event = new ResetGridEvent() ;
             $this->get('event_dispatcher')->dispatch('grid.reset', $event) ;
             
-            // on crée l'objet Grid qui est en session
-//            $grid = new Grid(9) ;
-//            $aGrid = $this->pickAGrid(9) ;
-//            $grid->setTiles($aGrid) ;
+            // on récupère l'objet Grid qui est en session
+            $session = $this->get('sudokuSessionService') ;
+            $grid = $session->getGrid() ;
             
             $arrayForJson = SudokuFileMapper::prepareArrayForJson($grid->getTiles()) ;
+                        
             $response['getGrid'] = array('tiles' => $arrayForJson) ;
+        
             return new JsonResponse($response) ;
 //        } else {
 //            return $this->render(

@@ -103,6 +103,7 @@ class SudokuSessionService {
     protected function resetEntry($key)
     {
         $entry = $this->sudokuSessionBag->get($key) ;
+//        echo "sudokuSessionService : ". get_class($entry) ;
         $entry->reset() ;
     }
 }

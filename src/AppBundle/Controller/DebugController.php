@@ -31,7 +31,7 @@ class DebugController  extends Controller {
             // la création de la grille génère un événement grid.get
             $event = new GetGridEvent($grid) ;
             $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
-            var_dump($this->get('sudokuSessionService')->getGrid()) ;
+//            var_dump($this->get('sudokuSessionService')->getGrid()) ;
 //            var_dump($_SESSION['sudoku']['grid']) ;
         return $this->render('sudoku/debug.html.twig', []);
     }

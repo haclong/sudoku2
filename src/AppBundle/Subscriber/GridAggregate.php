@@ -1,8 +1,8 @@
 <?php
-
 namespace AppBundle\Subscriber;
 
 use AppBundle\Event\GetGridEvent;
+use AppBundle\Event\ResetGridEvent;
 use AppBundle\Service\SudokuSessionService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -21,10 +21,15 @@ class GridAggregate implements EventSubscriberInterface {
     public static function getSubscribedEvents() {
         return array(
             GetGridEvent::NAME => 'onGetGrid',
+            ResetGridEvent::NAME => 'onResetGrid',
         ) ;
     }
     
     public function onGetGrid(GetGridEvent $event) {
         $this->session->saveGrid($event->getGrid()) ;
+    }
+    
+    public function onResetGrid(ResetGridEvent $event) {
+        $this->session->resetGrid() ;
     }
 }

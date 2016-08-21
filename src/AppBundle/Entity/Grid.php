@@ -23,7 +23,6 @@ class Grid {
     public function reset()
     {
         $this->solved = false ;
-        $this->tiles = array() ;
         $this->remainingTiles = $this->size * $this->size ;
     }
     

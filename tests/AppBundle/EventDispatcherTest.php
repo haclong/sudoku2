@@ -3,6 +3,7 @@
 namespace Tests\AppBundle;
 
 use AppBundle\Event\GetGridEvent;
+use AppBundle\Event\ResetGridEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -20,6 +21,14 @@ class EventDispatcherTest extends WebTestCase
         $this->AreSubscriberAddedByEvent(GetGridEvent::NAME, 1) ;
     }
     
+    /**
+     * @runInSeparateProcess
+     */
+    public function testResetGridSubscribersAdded()
+    {
+        $this->AreSubscriberAddedByEvent(ResetGridEvent::NAME, 1) ;
+    }
+
     protected function AreSubscriberAddedByEvent($event, $expected)
     {
         $client = static::createClient();
