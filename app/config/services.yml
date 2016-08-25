@@ -7,6 +7,11 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    valuesEntity:
+        class: AppBundle\Entity\Values
+    gridEntity:
+        class: AppBundle\Entity\Grid
+        
     sudokuSession:
         class: Symfony\Component\HttpFoundation\Session\Session
         factory: [AppBundle\Utils\SudokuSessionFactory, create]
@@ -16,6 +21,17 @@ services:
 
     gridAggregate:
         class: AppBundle\Subscriber\GridAggregate
-        arguments: ['@sudokuSessionService']
+        arguments: ['@sudokuSessionService', '@gridEntity']
         tags:
             - { name: kernel.event_subscriber } 
+#    valuesAggregate:
+#        class: AppBundle\Subscriber\ValuesAggregate
+#        arguments: ['@sudokuSessionService', '@valuesEntity']
+#        tags:
+#            - { name: kernel.event_subscriber } 
+
+    app.twig_extension:
+        class: AppBundle\Utils\TwigExtension
+        public: false
+        tags:
+            - { name: twig.extension }

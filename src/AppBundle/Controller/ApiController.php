@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Grid;
 use AppBundle\Event\GetGridEvent;
 use AppBundle\Event\ResetGridEvent;
 use AppBundle\Utils\GridMapper;
@@ -34,15 +33,14 @@ class ApiController extends Controller
             $aGrid = $this->pickAGrid($gridSize) ;
 
             // on crée l'objet Grid et on enregistre la grille qu'on va charger
-            $grid = new Grid($gridSize) ;
+            $grid = $this->get('gridEntity') ;
+            $grid->init($gridSize) ;
             $grid->setTiles($aGrid) ;
             
             // la création de la grille génère un événement grid.get
             $event = new GetGridEvent($grid) ;
             $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
-            //$response = $this->get('jsonMapper')->gridToJson($grid) ;
-            $arrayForJson = SudokuFileMapper::prepareArrayForJson($aGrid) ;
-            $response['getGrid'] = array('tiles' => $arrayForJson) ;
+            $response['getGrid'] = GridMapper::toArray($grid) ;
 //            $response = array('size' => $size) ;
             return new JsonResponse($response) ;
 //        } else {
@@ -66,11 +64,10 @@ class ApiController extends Controller
             
             // on récupère l'objet Grid qui est en session
             $session = $this->get('sudokuSessionService') ;
+            var_dump($session->getSession()); die() ;
             $grid = $session->getGrid() ;
-            
-            $arrayForJson = SudokuFileMapper::prepareArrayForJson($grid->getTiles()) ;
-                        
-            $response['getGrid'] = array('tiles' => $arrayForJson) ;
+            var_dump($grid) ;
+            $response['getGrid'] = GridMapper::toArray($grid) ;
         
             return new JsonResponse($response) ;
 //        } else {
@@ -87,12 +84,16 @@ class ApiController extends Controller
     public function saveGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+            $session = $this->get('sudokuSessionService') ;
+//            var_dump($session->getSession()->has('grid')) ;
+            $fromSessionGrid = $session->getGrid() ;
+
             $filesystem = new Filesystem() ;
             $path = realpath($this->getParameter('kernel.root_dir').'/..') ;
             $sudokuJson = $request->getContent() ;
-            $jsonToArray = GridMapper::fromJson($sudokuJson) ;
-            $string = SudokuFileMapper::mapToString($jsonToArray->getSafeTiles()) ;
-            $filesystem->dumpFile($path . '/datas/'.$jsonToArray->getSize().'/'.uniqid().'.php', $string) ;
+            $grid = GridMapper::fromJson($sudokuJson, $fromSessionGrid) ;
+            $string = SudokuFileMapper::mapToString($grid->getSafeTiles()) ;
+            $filesystem->dumpFile($path . '/datas/'.$grid->getSize().'/'.uniqid().'.php', $string) ;
             
             return new JsonResponse($sudokuJson) ;
 //        } else {

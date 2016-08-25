@@ -44,8 +44,11 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
     public function testSaveGrid()
     {
         $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                          ->setConstructorArgs(array(9))
+//                          ->setConstructorArgs(array(9))
+                          ->setMethods(array('init'))
                           ->getMock() ;
+//        $grid->method('init')
+//                ->with(array(9)) ;
         $this->sudokuBag->expects($this->once())
                         ->method('set')
                         ->with($this->equalTo('grid'));
@@ -65,7 +68,7 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
     public function testResetGrid()
     {
         $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                          ->setConstructorArgs(array(9))
+//                          ->setConstructorArgs(array(9))
                           ->getMock() ;
         $grid->expects($this->once())
                 ->method('reset');

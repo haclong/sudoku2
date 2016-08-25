@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Exception\InvalidGridSizeException;
+use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +34,6 @@ class DefaultController extends Controller
 //            $path = include($file->getRealpath()) ;
 //            var_dump($path) ; die() ;
 //        }
-
       
         return $this->render(
                 'sudoku/index.html.twig',
@@ -48,30 +47,40 @@ class DefaultController extends Controller
     public function gridAction(Request $request, $size=null)
     {
         $gridSize = (int) $size ;
-        try {
-            $this->validateGridSize($gridSize) ;
-        } catch (InvalidGridSizeException $ex) {
-            return $this->render(
-                    'sudoku/error.html.twig',
-                    array('msg' => $ex->getMessage() )
-                    ) ;
-        }
-        
+
+        $session = $this->get('sudokuSessionService') ;
+//        var_dump($session->getSession()->has('grid')) ;
+        $grid = $session->getGrid() ;
+        $grid->init($gridSize) ;
+        $aGrid = $this->pickAGrid($gridSize) ;
+        $grid->setTiles($aGrid) ;
+
+//        var_dump( $session->getGrid()) ;
+//        var_dump($grid) ;
+//        var_dump(GridMapper::toArray($grid)) ;
+
         return $this->render(
                 'sudoku/grid.html.twig',
-                array('size' => $gridSize, 
-                      'msg' => '',
-                      'post' => array(),
-                      'sqrt' => sqrt($gridSize))
-                ) ;
+                GridMapper::toArray($grid)) ;
     }
-
-    protected function validateGridSize($size)
+    protected function pickAGrid($size)
     {
-        $root = sqrt($size) ;
-        if(fmod($root, 1) != 0) 
-        {
-            throw new InvalidGridSizeException('Invalid grid size : ' . $size) ;
-        }        
+        if($size == 'test') {
+            $array = array() ;
+            $array[0][0] = 2 ;
+            $array[2][5] = 8 ;
+            $array[5][3] = 5 ;
+        } else {
+            $size = (int) $size ;
+            if($size == 4) {
+                $file = __DIR__ . "/../../../datas/4/1/1.php" ;
+            } elseif ($size == 9) {
+                $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
+            }
+            
+            $array = include($file) ;
+        }
+        
+        return $array ;
     }
 }

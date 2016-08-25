@@ -2,7 +2,8 @@
 
 namespace Tests\AppBundle\Entity;
 
-use AppBundle\Entity\Grid ;
+use AppBundle\Entity\Grid;
+use AppBundle\Exception\InvalidGridSizeException;
 
 /**
  * Description of GridTest
@@ -12,7 +13,8 @@ use AppBundle\Entity\Grid ;
 class GridTest  extends \PHPUnit_Framework_TestCase 
 {
     public function testGrid() {
-        $grid = new Grid(9) ;
+        $grid = new Grid() ;
+        $grid->init(9) ;
         $this->assertFalse($grid->isSolved()) ;
 //        $grid->solve(true) ;
         $this->assertEquals($grid->getSize(), 9) ;
@@ -24,7 +26,8 @@ class GridTest  extends \PHPUnit_Framework_TestCase
     }
     
     public function testValue() {
-        $grid = new Grid(9) ;
+        $grid = new Grid() ;
+        $grid->init(9) ;
         $array = array() ;
         $array[0][3] = 2 ;
         $array[2][5] = 4 ;
@@ -35,19 +38,28 @@ class GridTest  extends \PHPUnit_Framework_TestCase
     }
     
     public function testDecreaseRemainingTiles() {
-        $grid = new Grid(4) ;
+        $grid = new Grid() ;
+        $grid->init(4) ;
         $this->assertEquals(16, $grid->getRemainingTiles()) ;
         $grid->decreaseRemainingTiles() ;
         $this->assertEquals(15, $grid->getRemainingTiles()) ;
     }
 
     public function testSolved() {
-        $grid = new Grid(2) ;
+        $grid = new Grid() ;
+        $grid->init(4) ;
         $this->assertFalse($grid->isSolved()) ;
-        $grid->decreaseRemainingTiles() ;
-        $grid->decreaseRemainingTiles() ;
-        $grid->decreaseRemainingTiles() ;
-        $grid->decreaseRemainingTiles() ;
+        for($i=0; $i<16; $i++)
+        {
+            $grid->decreaseRemainingTiles() ;
+        }
         $this->assertTrue($grid->isSolved()) ;
+    }
+
+    public function testInvalidGridSizeException()
+    {
+        $this->setExpectedException(InvalidGridSizeException::class) ;
+        $grid = new Grid() ;
+        $grid->init(3) ;
     }
 }

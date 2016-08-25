@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    
 
 <!--form method="post" action="<?php // echo $this->url('home', array('size' => count($grid))) ; ?>"-->
 <!--form name="sudokuGrid"-->   
@@ -20,16 +21,13 @@
     <div>Cliquer sur 'Nouvelle grille' pour vider la grille complètement.</div>
 </p>
 
-<pre>
-    {{msg}}
-</pre>
-
 <table class="sudoku_grid">
     {% for row in 0..size-1 %}
     <tr>
         {% for col in 0..size-1 %}
             {% set topStyle = "" %}
             {% set leftStyle = "" %}
+            {% set sqrt = '9'|sqrt %}
             {% if row % sqrt == 0 %}
                 {% set topStyle = " region_border_top" %}
             {% endif %}
@@ -43,12 +41,6 @@
     {% endfor %}
 </table>
 <!--/form-->
-<pre>
-    {% for item in post %}
-        {{item}}
-    {% endfor %}
-</pre>
-
 {% endblock %}
 
 {% block javascripts %}

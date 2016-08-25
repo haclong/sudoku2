@@ -19,18 +19,18 @@ class Values {
 
     public function add($value)
     {
-//        if(!in_array($value, $this->values))
-//        {
+        if(!in_array($value, $this->values))
+        {
             if(count($this->values) >= $this->gridSize)
             {
                 throw new InvalidFigureCountException('Maximum allowed figure number reached : ' .$this->gridSize) ;
             }
-//            $this->values[] = $value ;
-//        }    
-        if(!in_array($value, $this->values))
-        {
             $this->values[] = $value ;
         }    
+//        if(!in_array($value, $this->values))
+//        {
+//            $this->values[] = $value ;
+//        }    
     }
     
     public function getGridSize()

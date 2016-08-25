@@ -58,7 +58,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
               ->method('getGrid')
               ->will($this->returnValue($this->grid));
         
-        $gridAggregate = new GridAggregate($this->service) ;
+        $gridAggregate = new GridAggregate($this->service, $this->grid) ;
         $gridAggregate->onGetGrid($event) ;
     }
     
@@ -76,7 +76,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->service->expects($this->once())
                 ->method('resetGrid') ;
         
-        $gridAggregate = new GridAggregate($this->service) ;
+        $gridAggregate = new GridAggregate($this->service, $this->grid) ;
         $gridAggregate->onResetGrid($event) ;
     }
 
