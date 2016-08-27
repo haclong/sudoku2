@@ -20,11 +20,6 @@ class SudokuSessionService {
     public function getSession() {
         return $this->sudokuSessionBag;
     }
-//    
-//    public function setGrid(Grid $value)
-//    {
-//        $this->setEntry('grid', $value) ;
-//    }
     
     public function saveGrid(Grid $value)
     {
@@ -40,11 +35,6 @@ class SudokuSessionService {
     {
         return $this->getEntry('grid') ;
     }
-//    
-//    public function setValues(Values $value)
-//    {
-//        $this->setEntry('values', $value) ;
-//    }
     
     public function saveValues(Values $value)
     {
@@ -103,6 +93,7 @@ class SudokuSessionService {
     protected function resetEntry($key)
     {
         $entry = $this->sudokuSessionBag->get($key) ;
+//        echo "sudokuSessionService : ". get_class($entry) ;
         $entry->reset() ;
     }
 }

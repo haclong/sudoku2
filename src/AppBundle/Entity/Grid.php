@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Exception\InvalidGridSizeException;
+
 /**
  * Description of Grid
  *
@@ -13,17 +15,20 @@ class Grid {
     protected $solved = false ;
     protected $remainingTiles = array() ;
     
-    
-    public function __construct($size)
+    public function init($size)
     {
-        $this->size = (int) $size ;
-        $this->remainingTiles = $size * $size ;
+        $gridSize = (int) $size ;
+//        try {
+            $this->validateGridSize($gridSize) ;
+            $this->size = $gridSize ;
+            $this->remainingTiles = $size * $size ;
+//        } catch (InvalidGridSizeException $ex) {
+//        }
     }
     
     public function reset()
     {
         $this->solved = false ;
-        $this->tiles = array() ;
         $this->remainingTiles = $this->size * $this->size ;
     }
     
@@ -64,5 +69,14 @@ class Grid {
             return true ;
         }
         return $this->solved ;
+    }
+
+    protected function validateGridSize($size)
+    {
+        $root = sqrt($size) ;
+        if(fmod($root, 1) != 0) 
+        {
+            throw new InvalidGridSizeException('Invalid grid size : ' . $size) ;
+        }        
     }
 }

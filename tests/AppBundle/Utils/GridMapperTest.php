@@ -1,8 +1,9 @@
 <?php
-
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\Entity\Grid;
 use AppBundle\Utils\GridMapper;
+
 
 /**
  * Description of GridMapperTest
@@ -11,16 +12,30 @@ use AppBundle\Utils\GridMapper;
  */
 class GridMapperTest  extends \PHPUnit_Framework_TestCase 
 {
-    public function testFromJson()
+    public function testGridToArrayMapper()
     {
+        $tiles = array() ;
+        $tiles[0][1] = 3 ;
+        $tiles[2][1] = 2 ;
+        $tiles[3][0] = 2 ;
+        $tiles[3][3] = 1 ;
+        $grid = new Grid() ;
+        $grid->init(4) ;
+        $grid->setTiles($tiles) ;
+        
+        $expectedArray = array() ;
+        $expectedArray['size'] = 4 ;
+        $expectedArray['tiles'] = array() ;
+        $expectedArray['tiles'][] = array('id' => 't.0.1', 'value' => 3) ;
+        $expectedArray['tiles'][] = array('id' => 't.2.1', 'value' => 2) ;
+        $expectedArray['tiles'][] = array('id' => 't.3.0', 'value' => 2) ;
+        $expectedArray['tiles'][] = array('id' => 't.3.3', 'value' => 1) ;
+        
         $mapper = new GridMapper() ;
-        $json = '{"grid":{"size":4,"tiles":[{"id":"t.0.0","value":""},{"id":"t.0.1","value":""},{"id":"t.0.2","value":"2"},{"id":"t.0.3","value":""},{"id":"t.1.0","value":"3"},{"id":"t.1.1","value":""},{"id":"t.1.2","value":"1"},{"id":"t.1.3","value":""},{"id":"t.2.0","value":""},{"id":"t.2.1","value":"4"},{"id":"t.2.2","value":"3"},{"id":"t.2.3","value":"2"},{"id":"t.3.0","value":""},{"id":"t.3.1","value":"1"},{"id":"t.3.2","value":""},{"id":"t.3.3","value":""}]}}' ;
-        $grid = $mapper->fromJson($json) ;
-        $tiles = $grid->getTiles() ;
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $grid) ;
-        $this->assertEquals($grid->getSize(), 4) ;
-        $this->assertEquals(count($tiles), 4) ;
+        $array = $mapper->toArray($grid) ;
+        
+        $this->assertEquals(count($array['tiles']), 4) ;
         $this->assertArrayHasKey(3, $tiles[3]) ;
-        $this->assertEquals($tiles[1][2], 1) ;
+        $this->assertEquals($expectedArray, $array) ;
     }
 }

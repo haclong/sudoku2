@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Controller;
 
-use AppBundle\Exception\InvalidGridSizeException;
+use AppBundle\Entity\Grid;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
@@ -17,21 +17,27 @@ class DefaultControllerTest extends WebTestCase
         $this->assertContains('Choisir une taille de grille', $crawler->text());
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testGrid()
     {
-        $client = static::createClient();
+        $this->client = static::createClient();
+        $session = $this->mockSession() ;
+//        echo get_class($this->client->getContainer()->get('sudokuSessionService')) ;
 
-        $crawler = $client->request('GET', '/9');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $crawler = $this->client->request('GET', '/9');
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertContains('Charger une grille', $crawler->filter('button#getGridButton')->text());
         $this->assertContains('t.8.8', $crawler->filter('td input')->last()->attr('id')) ;
     }
-    
-    public function testGridSizeException()
+
+    protected function mockSession()
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/7');
-        $this->assertContains('Error', $crawler->filter('h1')->text());
+        $session = $this->client->getContainer()->get('sudokuSessionService');
+        $grid = new Grid() ;
+        $session->saveGrid($grid) ;
+
+        return $session ;
     }
 }
