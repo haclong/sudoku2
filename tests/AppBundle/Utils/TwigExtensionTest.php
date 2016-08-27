@@ -10,9 +10,24 @@ use AppBundle\Utils\TwigExtension;
  * @author haclong
  */
 class TwigExtensionTest extends \PHPUnit_Framework_TestCase {
+    public function testGetFilters()
+    {
+        $filter = new TwigExtension() ;
+        $this->assertThat(
+                $filter->getFilters(),
+                $this->containsOnlyInstancesOf('Twig_SimpleFilter')
+                ) ;
+    }
+    
     public function testSqrt()
     {
         $filter = new TwigExtension() ;
         $this->assertEquals(3, $filter->sqrtFilter(9)) ;
+    }
+    
+    public function testGetName()
+    {
+        $filter = new TwigExtension() ;
+        $this->assertEquals('app_extension', $filter->getName()) ;
     }
 }
