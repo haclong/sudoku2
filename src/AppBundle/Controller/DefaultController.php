@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Event\GridSize;
+use AppBundle\Event\StartGameEvent;
 use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,7 +36,10 @@ class DefaultController extends Controller
 //            $path = include($file->getRealpath()) ;
 //            var_dump($path) ; die() ;
 //        }
-      
+        
+        $session = $this->get('sudokuSessionService') ;
+        $session->getSession()->clear() ;
+//        var_dump($session->getSession()->get('grid')) ;
         return $this->render(
                 'sudoku/index.html.twig',
                 array()
@@ -46,15 +51,15 @@ class DefaultController extends Controller
      */
     public function gridAction(Request $request, $size=null)
     {
-        $gridSize = (int) $size ;
-
+        $gridSize = new GridSize($size) ;
+        
         $session = $this->get('sudokuSessionService') ;
-//        var_dump($session->getSession()->has('grid')) ;
-        $grid = $session->getGrid() ;
-        $grid->init($gridSize) ;
-        $aGrid = $this->pickAGrid($gridSize) ;
-        $grid->setTiles($aGrid) ;
 
+        $event = new StartGameEvent($gridSize) ;
+        $this->get('event_dispatcher')->dispatch('game.start', $event) ;
+//        $aGrid = $this->pickAGrid($gridSize) ;
+//        $grid->setTiles($aGrid) ;
+        $grid = $session->getGrid() ;
 //        var_dump( $session->getGrid()) ;
 //        var_dump($grid) ;
 //        var_dump(GridMapper::toArray($grid)) ;

@@ -5,6 +5,7 @@ namespace AppBundle\Subscriber;
 use AppBundle\Entity\Grid;
 use AppBundle\Event\GetGridEvent;
 use AppBundle\Event\ResetGridEvent;
+use AppBundle\Event\StartGameEvent;
 use AppBundle\Service\SudokuSessionService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -23,6 +24,7 @@ class GridAggregate implements EventSubscriberInterface {
     
     public static function getSubscribedEvents() {
         return array(
+            StartGameEvent::NAME => 'onStartGame',
             GetGridEvent::NAME => 'onGetGrid',
             ResetGridEvent::NAME => 'onResetGrid',
         ) ;
@@ -34,7 +36,13 @@ class GridAggregate implements EventSubscriberInterface {
     protected function storeGrid(Grid $grid) {
         $this->session->saveGrid($grid) ;
     }
-
+    
+    public function onStartGame(StartGameEvent $event) {
+        $grid = $this->getGridFromSession() ;
+        $grid->newGrid() ;
+        $grid->init($event->getGridSize()->get()) ;
+        $this->storeGrid($grid) ;
+    }
     public function onGetGrid(GetGridEvent $event) {
         $this->session->saveGrid($event->getGrid()) ;
     }

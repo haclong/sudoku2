@@ -32,6 +32,14 @@ class Grid {
         $this->remainingTiles = $this->size * $this->size ;
     }
     
+    public function newGrid()
+    {
+        $this->solved = false ;
+        $this->remainingTiles = null ;
+        $this->tile = array() ;
+        $this->size = null ;
+    }
+    
     public function getSize()
     {
         return $this->size ;
