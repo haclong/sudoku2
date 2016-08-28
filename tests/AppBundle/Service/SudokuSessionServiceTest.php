@@ -111,4 +111,36 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
                         ->will($this->returnValue($values));
         $this->service->resetValues() ;
     }
+    public function testSaveTiles()
+    {
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                       ->getMock() ;
+        $this->sudokuBag->expects($this->once())
+                        ->method('set')
+                        ->with($this->equalTo('tiles'));
+        
+        $this->service->saveTiles($tiles) ;
+    }
+    
+    public function testGetTiles()
+    {
+        $this->sudokuBag->expects($this->once())
+                        ->method('get')
+                        ->with($this->equalTo('tiles'))
+                        ->will($this->returnValue('coucou'));
+        $this->assertEquals('coucou', $this->service->getTiles()) ;
+    }
+    
+    public function testResetTiles()
+    {
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                       ->getMock() ;
+        $tiles->expects($this->once())
+                ->method('reset');
+        $this->sudokuBag->expects($this->once())
+                        ->method('get')
+                        ->with($this->equalTo('tiles'))
+                        ->will($this->returnValue($tiles));
+        $this->service->resetTiles() ;
+    }
 }

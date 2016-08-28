@@ -4,6 +4,7 @@
 namespace AppBundle\Service;
 use AppBundle\Entity\Grid;
 use AppBundle\Entity\Values;
+use AppBundle\Entity\Tiles;
 
 
 /**
@@ -57,20 +58,20 @@ class SudokuSessionService {
 //        $this->setEntry('tiles', $value) ;
 //    }
     
-//    public function saveTiles(Tiles $value)
-//    {
-//        $this->saveEntry('tiles', $value) ;
-//    }
-//    
-//    public function resetTiles()
-//    {
-//        $this->resetEntry('tiles') ;
-//    }
-//    
-//    public function getTiles()
-//    {
-//        return $this->getEntry('tiles') ;
-//    }
+    public function saveTiles(Tiles $value)
+    {
+        $this->saveEntry('tiles', $value) ;
+    }
+    
+    public function resetTiles()
+    {
+        $this->resetEntry('tiles') ;
+    }
+    
+    public function getTiles()
+    {
+        return $this->getEntry('tiles') ;
+    }
 //    
 //    protected function setEntry($key, $value)
 //    {
