@@ -13,7 +13,7 @@ class Grid {
     protected $size ;
     protected $tiles = array() ;
     protected $solved = false ;
-    protected $remainingTiles = array() ;
+    protected $remainingTiles = -1 ;
     
     public function init($size)
     {
@@ -30,6 +30,14 @@ class Grid {
     {
         $this->solved = false ;
         $this->remainingTiles = $this->size * $this->size ;
+    }
+    
+    public function newGrid()
+    {
+        $this->solved = false ;
+        $this->remainingTiles = -1 ;
+        $this->tiles = array() ;
+        $this->size = null ;
     }
     
     public function getSize()
@@ -51,11 +59,6 @@ class Grid {
     {
         $this->tiles = $array ;
     }
-//    
-//    public function solve($bool)
-//    {
-//        $this->solved = $bool ;
-//    }
     
     public function decreaseRemainingTiles()
     {

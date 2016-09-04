@@ -12,16 +12,20 @@ services:
     gridEntity:
         class: AppBundle\Entity\Grid
         
-    sudokuSession:
-        class: Symfony\Component\HttpFoundation\Session\Session
-        factory: [AppBundle\Utils\SudokuSessionFactory, create]
-    sudokuSessionService:
-        class: AppBundle\Service\SudokuSessionService
-        arguments: ['@sudokuSession']
+#    sudokuSession:
+#        class: Symfony\Component\HttpFoundation\Session\Session
+#        factory: [AppBundle\Utils\SudokuSessionFactory, create]
+#    sudokuSessionService:
+#        class: AppBundle\Service\SudokuSessionService
+#        factory: [AppBundle\Service\SudokuSessionServiceFactory, create]
+#        arguments: ['@sudokuSession']
 
     gridAggregate:
         class: AppBundle\Subscriber\GridAggregate
-        arguments: ['@sudokuSessionService', '@gridEntity']
+#        arguments: ['@sudokuSessionService', '@gridEntity']
+        arguments: ['@session']
+#        calls:
+#            - [setGrid, ['@gridEntity']]
         tags:
             - { name: kernel.event_subscriber } 
 #    valuesAggregate:

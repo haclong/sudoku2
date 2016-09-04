@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Event\GridSize;
+use AppBundle\Entity\Grid;
+use AppBundle\Event\ChooseGridEvent;
 use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,77 +13,58 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
-//    /**
-//     * @Route("/", name="homepage")
-//     */
-//    public function indexAction(Request $request)
-//    {
-//        // replace this example code with whatever you need
-//        return $this->render('default/index.html.twig', [
-//            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..'),
-//        ]);
-//    }
-
     /**
      * @Route("/", name="homepage")
+     * @param Request $request
      */
     public function indexAction(Request $request)
     {
-//        var_dump(__DIR__ . "/../../../datas") ;
-//        $finder = new Finder() ;
-//        $finder->files()->in(__DIR__ . "/../../../datas/9/1") ;
-//        foreach($finder as $file)
-//        {
-//            $path = include($file->getRealpath()) ;
-//            var_dump($path) ; die() ;
-//        }
-      
+        $session = $this->get('session') ;
+        $session->clear() ;
+
+        $grid = new Grid() ;
+        $session->set('grid', $grid) ;
+        $array = GridMapper::toArray($session->get('grid')) ;
+
+        $this->debugSession("DefaultController::indexAction") ;
+        
         return $this->render(
                 'sudoku/index.html.twig',
-                array()
-                ) ;
+                $array) ;
     }
-    
+
     /**
      * @Route("/{size}", name="grid")
      */
     public function gridAction(Request $request, $size=null)
     {
-        $gridSize = (int) $size ;
+        $gridSize = new GridSize($size) ;
+        
+        $event = new ChooseGridEvent($gridSize) ;
+        $this->get('event_dispatcher')->dispatch('grid.choose', $event) ;
 
-        $session = $this->get('sudokuSessionService') ;
-//        var_dump($session->getSession()->has('grid')) ;
-        $grid = $session->getGrid() ;
-        $grid->init($gridSize) ;
-        $aGrid = $this->pickAGrid($gridSize) ;
-        $grid->setTiles($aGrid) ;
-
-//        var_dump( $session->getGrid()) ;
-//        var_dump($grid) ;
-//        var_dump(GridMapper::toArray($grid)) ;
-
+        $session = $this->get('session') ;
+        $grid = $session->get('grid') ;
+        
+        $this->debugSession("DefaultController::gridAction") ;
+        $array = GridMapper::toArray($grid) ;
+        
         return $this->render(
                 'sudoku/grid.html.twig',
-                GridMapper::toArray($grid)) ;
+                $array) ;
     }
-    protected function pickAGrid($size)
+    
+    protected function debugSession($mark)
     {
-        if($size == 'test') {
-            $array = array() ;
-            $array[0][0] = 2 ;
-            $array[2][5] = 8 ;
-            $array[5][3] = 5 ;
-        } else {
-            $size = (int) $size ;
-            if($size == 4) {
-                $file = __DIR__ . "/../../../datas/4/1/1.php" ;
-            } elseif ($size == 9) {
-                $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
-            }
-            
-            $array = include($file) ;
-        }
-        
-        return $array ;
+        $session = $this->get('session') ;
+        $logger = $this->get('logger') ;
+        $grid = $session->get('grid') ;
+        $array = [
+            "size" => $grid->getSize(),
+            "solved" => $grid->isSolved(),
+            "remain" => $grid->getRemainingTiles(),
+            "tiles" => json_encode($grid->getTiles())
+        ] ;
+        $logger->debug($mark, $array) ;
     }
 }

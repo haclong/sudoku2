@@ -37,6 +37,30 @@ class GridTest  extends \PHPUnit_Framework_TestCase
         $this->assertEquals($grid->getTiles(), $array) ;
     }
     
+    public function testNewGrid() {
+        $grid = new Grid() ;
+        $grid->init(9) ;
+        $array = array() ;
+        $array[0][3] = 2 ;
+        $array[2][5] = 4 ;
+        $array[3][2] = 8 ;
+        $array[5][3] = 8 ;
+        $grid->setTiles($array) ;
+        $grid->newGrid() ;
+        $this->assertEquals(array(), $grid->getTiles()) ;
+        $this->assertNull($grid->getSize()) ;
+        $this->assertFalse($grid->isSolved()) ;
+        $this->assertEquals(-1, $grid->getRemainingTiles()) ;
+    }
+
+    public function newGrid()
+    {
+        $this->solved = false ;
+        $this->remainingTiles = null ;
+        $this->tiles = array() ;
+        $this->size = null ;
+    }
+    
     public function testDecreaseRemainingTiles() {
         $grid = new Grid() ;
         $grid->init(4) ;

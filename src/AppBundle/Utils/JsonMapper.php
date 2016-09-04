@@ -16,14 +16,19 @@ class JsonMapper {
     public static function toArray($json)
     {
         $jsonContent = json_decode ($json) ;
-
         $tiles = array();
         foreach($jsonContent->grid->tiles as $tile)
         {
             $id = explode('.', $tile->id) ;
             $value = $tile->value ;
-            $tiles[$id[1]][$id[2]] = $value ;
+            if(!empty($value)) {
+                $tiles[$id[1]][$id[2]] = $value ;
+            }
         }
-        return $tiles ;
+
+        $array = array() ;
+        $array['size'] = $jsonContent->grid->size ;
+        $array['tiles'] = $tiles ;
+        return $array ;
     }
 }
