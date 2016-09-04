@@ -17,4 +17,5 @@ class TileSetTest  extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($tile->getCol(), 4) ;
         $this->assertEquals($tile->getRegion(), 2) ;
         $this->assertEquals($tile->getFigure(), 5) ;
-    }}
+    }
+}

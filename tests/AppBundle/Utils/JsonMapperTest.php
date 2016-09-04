@@ -31,10 +31,10 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase {
         $json = json_encode($array) ;
 
         $mapper = new JsonMapper() ;
-        $grid = new Grid() ;
+        $responseArray = $mapper->toArray($json) ;
         
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $mapper->toGrid($json, $grid)) ;
-        $this->assertEquals($grid, $mapper->toGrid($json, $grid)) ;
-        $this->assertEquals(4, $mapper->toGrid($json, $grid)->getSize()) ;
+        $this->assertTrue(is_array($responseArray)) ;
+        $this->assertEquals(4, $responseArray['size']) ;
+        $this->assertEquals($expected, $responseArray['tiles']) ;
     }
 }

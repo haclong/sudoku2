@@ -136,7 +136,7 @@ class Tile {
     
     protected function checkTile() {
         $this->checkFiguresCount() ;
-        $this->checkOnePossiblityLast() ;
+        $this->checkOnePossibilityLast() ;
     }
     
     public function discard($figure) {
@@ -155,8 +155,7 @@ class Tile {
             $this->figures['discarded'][$figure] = $figure ;
         }
         
-        $this->checkFiguresCount() ;
-        $this->checkOnePossibilityLast() ;
+        $this->checkTile() ;
 //
 //        if($this->isOnePossibilityLast()) {
 //            $this->set(current($this->figures['possibilities'])) ;
