@@ -3,11 +3,16 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Grid;
+use AppBundle\Event\ChooseGridEvent;
+use AppBundle\Event\ClearGridEvent;
 use AppBundle\Event\GetGridEvent;
 use AppBundle\Event\ResetGridEvent;
 use AppBundle\Event\StartGameEvent;
 use AppBundle\Service\SudokuSessionService;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
+
 
 /**
  * Description of GridAggregate
@@ -17,37 +22,115 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class GridAggregate implements EventSubscriberInterface {
     protected $session ;
     
-    public function __construct(SudokuSessionService $sessionService, Grid $grid) {
+    public function __construct(Session $sessionService) {
         $this->session = $sessionService ;
-        $this->storeGrid($grid) ;
     }
     
     public static function getSubscribedEvents() {
         return array(
-            StartGameEvent::NAME => 'onStartGame',
+//            StartGameEvent::NAME => 'onStartGame',
+            ChooseGridEvent::NAME => 'onChooseGrid',
             GetGridEvent::NAME => 'onGetGrid',
             ResetGridEvent::NAME => 'onResetGrid',
+            ClearGridEvent::NAME => 'onClearGrid',
         ) ;
     }
     
     protected function getGridFromSession() {
-        return $this->session->getGrid() ;
+        return $this->session->get('grid') ;
     }
     protected function storeGrid(Grid $grid) {
-        $this->session->saveGrid($grid) ;
+        $this->session->set('grid', $grid) ;
     }
     
-    public function onStartGame(StartGameEvent $event) {
+    public function onChooseGrid(ChooseGridEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->newGrid() ;
         $grid->init($event->getGridSize()->get()) ;
         $this->storeGrid($grid) ;
     }
+    
     public function onGetGrid(GetGridEvent $event) {
-        $this->session->saveGrid($event->getGrid()) ;
+        $grid = $this->getGridFromSession() ;
+        //echo $event->getTiles()->getSize() ;
+        //die ;
+        if($grid->getSize() != $event->getTiles()->getSize())
+        {
+            throw new RuntimeException('event grid size differs from session grid size') ;
+        }
+        $grid->setTiles($event->getTiles()->getTiles()) ;
+        $this->storeGrid($grid) ;
     }
     
     public function onResetGrid(ResetGridEvent $event) {
-        $this->session->resetGrid() ;
+        $grid = $this->getGridFromSession() ;
+        $grid->reset() ;
+        $this->storeGrid($grid) ;
+    }
+
+    public function onClearGrid(ClearGridEvent $event) {
+        $grid = $this->getGridFromSession() ;
+        $size = $grid->getSize() ;
+        $grid->newGrid() ;
+        $grid->init($size) ;
+        $this->storeGrid($grid) ;
     }
 }
+
+
+
+///**
+// * Description of GridAggregate
+// *
+// * @author haclong
+// */
+//class GridAggregate implements EventSubscriberInterface {
+//    protected $session ;
+//    
+////    public function __construct(SudokuSessionService $sessionService, Grid $grid) {
+//    public function __construct(Session $sessionService, Grid $grid) {
+//        $this->session = $sessionService ;
+//        $this->storeGrid($grid) ;
+//    }
+//    
+//    public static function getSubscribedEvents() {
+//        return array(
+//            StartGameEvent::NAME => 'onStartGame',
+//            GetGridEvent::NAME => 'onGetGrid',
+//            ResetGridEvent::NAME => 'onResetGrid',
+//        ) ;
+//    }
+//    
+//    protected function getGridFromSession() {
+////        return $this->session->getGrid() ;
+//        return $this->session->get('grid') ;
+//    }
+//    protected function storeGrid(Grid $grid) {
+////        $this->session->saveGrid($grid) ;
+//        $this->session->set('grid', $grid) ;
+//    }
+//    
+//    public function onStartGame(StartGameEvent $event) {
+//        $grid = $this->getGridFromSession() ;
+//        $grid->newGrid() ;
+//        $grid->init($event->getGridSize()->get()) ;
+//        $this->storeGrid($grid) ;
+//    }
+//    public function onGetGrid(GetGridEvent $event) {
+//        $grid = $this->getGridFromSession() ;
+////        var_dump(get_class($this->session->get('grid'))) ;
+////        if($grid->getSize() != $event->getGrid()->getSize())
+////        {
+////            throw new RuntimeException('event grid size differs from session grid size') ;
+////        }
+//        $grid->setTiles($event->getGrid()->getTiles()) ;
+//        //$eventGrid = $event->getGrid() ;
+//        $this->storeGrid($grid) ;
+//    }
+//    
+//    public function onResetGrid(ResetGridEvent $event) {
+//        $grid = $this->getGridFromSession() ;
+//        $grid->reset() ;
+//        $this->storeGrid($grid) ;
+//    }
+//}

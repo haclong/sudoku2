@@ -2,6 +2,9 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Event\GridSize;
+use AppBundle\Event\ChooseGridEvent;
+use AppBundle\Utils\GridMapper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -18,18 +21,42 @@ class ApiControllerTest extends WebTestCase
     {
         $client = static::createClient();
         
-//        $this->getGrid() ;
+        $grid = $client->getContainer()->get('gridEntity') ;
+        $session = $client->getContainer()->get('session') ;
+        $session->set('grid', $grid) ;
+        $dispatcher = $client->getContainer()->get('event_dispatcher') ;
 
-        $crawler = $client->request('GET', '/api/grid/get?size=test');
+        $gridSize = new GridSize(9) ;
+        $event = new ChooseGridEvent($gridSize) ;
+        $dispatcher->dispatch('grid.choose', $event) ;
+        
+//        var_dump($service->getGrid()) ;
+
+        $crawler = $client->request('GET', '/api/grid/get?size=9');
+        
+        // récupérer la grille en session
+        
+        // tests sur le retour en json
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
-        $this->assertEquals('{"getGrid":{"size":0,"tiles":[{"id":"t.0.0","value":2},{"id":"t.2.5","value":8},{"id":"t.5.3","value":5}]}}', $response->getContent());
-    }
-    
-    protected function getGrid()
-    {
+        $json = json_decode($response->getContent()) ;
+        $this->assertInstanceOf('stdClass', $json) ;
+        $this->assertObjectHasAttribute('getGrid', $json) ;
+        $this->assertObjectHasAttribute('size', $json->getGrid) ;
+        $this->assertEquals(9, $json->getGrid->size) ;
+        $this->assertObjectHasAttribute('tiles', $json->getGrid) ;
+        $this->assertGreaterThan(9, count($json->getGrid->tiles)) ;
         
+        // tests sur les données de grid dans la session
+        $mappedJson['getGrid'] = GridMapper::toArray($session->get('grid')) ;
+//        var_dump($mappedJson) ;
+        $this->assertInstanceOf('AppBundle\Entity\Grid', $session->get('grid')) ;
+        $this->assertEquals(9, $session->get('grid')->getSize()) ;
+        $this->assertFalse($session->get('grid')->isSolved()) ;
+        $this->assertGreaterThan(0, count($session->get('grid')->getTiles())) ;
+        $this->assertLessThanOrEqual(9, count($session->get('grid')->getTiles())) ;
+        $this->assertEquals($response->getContent(), json_encode($mappedJson)) ;
     }
 
 //    /**

@@ -13,16 +13,22 @@ use AppBundle\Entity\Tiles;
  * @author haclong
  */
 class SudokuSessionService {
-    protected $sudokuSessionBag ;
+    protected $session ;
+    protected $sessionBag ;
     
-    public function __construct($session) {
-        $this->sudokuSessionBag = $session->getBag('sudoku');
+    public function setSession($session) {
+        $this->session = $session ;
+        $this->sessionBag = $session->getBag('sudoku');
     }
 
     public function getSession() {
-        return $this->sudokuSessionBag;
+        return $this->session;
     }
     
+    public function getSessionBag() {
+        return $this->sessionBag ;
+    }
+        
     public function saveGrid(Grid $value)
     {
         $this->saveEntry('grid', $value) ;
@@ -52,11 +58,6 @@ class SudokuSessionService {
     {
         return $this->getEntry('values') ;
     }
-//    
-//    public function setTiles(Tiles $value)
-//    {
-//        $this->setEntry('tiles', $value) ;
-//    }
     
     public function saveTiles(Tiles $value)
     {
@@ -72,30 +73,20 @@ class SudokuSessionService {
     {
         return $this->getEntry('tiles') ;
     }
-//    
-//    protected function setEntry($key, $value)
-//    {
-//        if($this->sudokuSessionBag->has($key)) {
-//            return $this->sudokuSessionBag->get($key) ;
-//        } else {
-//            return $this->sudokuSessionBag->set($key, $value) ;
-//        }
-//    }
     
     protected function saveEntry($key, $value)
     {
-        return $this->sudokuSessionBag->set($key, $value) ;
+        $this->sessionBag->set($key, $value) ;
     }
     
     protected function getEntry($key)
     {
-        return $this->sudokuSessionBag->get($key) ;
+        return $this->sessionBag->get($key) ;
     }
     
     protected function resetEntry($key)
     {
-        $entry = $this->sudokuSessionBag->get($key) ;
-//        echo "sudokuSessionService : ". get_class($entry) ;
+        $entry = $this->sessionBag->get($key) ;
         $entry->reset() ;
     }
 }

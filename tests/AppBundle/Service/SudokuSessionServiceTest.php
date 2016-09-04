@@ -28,7 +28,8 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
         $this->session->method('getBag')
                       ->willReturn($this->sudokuBag) ;
         
-        $this->service = new SudokuSessionService($this->session) ;
+        $this->service = new SudokuSessionService() ;
+        $this->service->setSession($this->session) ;
     }
     
     protected function tearDown() {
@@ -38,7 +39,12 @@ class SudokuSessionServiceTest extends \PHPUnit_Framework_TestCase
     
     public function testGetSession()
     {
-        $this->assertEquals($this->sudokuBag, $this->service->getSession()) ;
+        $this->assertEquals($this->session, $this->service->getSession()) ;
+    }
+    
+    public function testGetSessionBag()
+    {
+        $this->assertEquals($this->sudokuBag, $this->service->getSessionBag()) ;
     }
     
     public function testSaveGrid()

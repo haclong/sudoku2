@@ -3,7 +3,7 @@
 
 namespace AppBundle\Event;
 
-use AppBundle\Entity\Grid;
+use AppBundle\Entity\Event\TilesLoaded;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -13,14 +13,14 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class GetGridEvent extends Event {
     const NAME = 'grid.get' ;
-    protected $grid ;
-    public function __construct(Grid $grid)
+    protected $tiles ;
+    public function __construct(TilesLoaded $tiles)
     {
-        $this->grid = $grid ;
+        $this->tiles = $tiles ;
     }
     
-    public function getGrid()
+    public function getTiles()
     {
-        return $this->grid ;
+        return $this->tiles ;
     }
 }

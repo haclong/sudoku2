@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Event\GridSize;
 use AppBundle\Entity\Grid;
 use AppBundle\Event\GetGridEvent;
+use AppBundle\Event\ResetGridEvent;
+use AppBundle\Event\StartGameEvent;
 use AppBundle\Service\SudokuSessionService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,17 +26,6 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
-            $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
-            $array = include($file) ;
-            $grid = new Grid(9) ;
-            $grid->setTiles($array) ;
-            
-            // la création de la grille génère un événement grid.get
-            $event = new GetGridEvent($grid) ;
-            $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
-            
-//            var_dump($this->get('sudokuSessionService')->getGrid()) ;
-//            var_dump($_SESSION['sudoku']) ;
         return $this->render('sudoku/debug.html.twig', []);
     }
 }

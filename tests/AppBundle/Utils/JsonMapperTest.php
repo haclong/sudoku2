@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\Entity\Grid;
 use AppBundle\Utils\JsonMapper;
 
 /**
@@ -30,7 +31,10 @@ class JsonMapperTest extends \PHPUnit_Framework_TestCase {
         $json = json_encode($array) ;
 
         $mapper = new JsonMapper() ;
+        $grid = new Grid() ;
         
-        $this->assertEquals($expected, $mapper->toArray($json)) ;
+        $this->assertInstanceOf('AppBundle\Entity\Grid', $mapper->toGrid($json, $grid)) ;
+        $this->assertEquals($grid, $mapper->toGrid($json, $grid)) ;
+        $this->assertEquals(4, $mapper->toGrid($json, $grid)->getSize()) ;
     }
 }

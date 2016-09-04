@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle;
 
+use AppBundle\Event\ChooseGridEvent;
 use AppBundle\Event\GetGridEvent;
 use AppBundle\Event\ResetGridEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -13,6 +14,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class EventDispatcherTest extends WebTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
+    public function testStartGameSubscribersAdded()
+    {
+        $this->AreSubscriberAddedByEvent(ChooseGridEvent::NAME, 1) ;
+    }
     /**
      * @runInSeparateProcess
      */
