@@ -3,9 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\TilesLoaded;
-use AppBundle\Event\ClearGridEvent;
-use AppBundle\Event\GetGridEvent;
-use AppBundle\Event\ResetGridEvent;
+use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Utils\GridMapper;
 use AppBundle\Utils\JsonMapper;
 use AppBundle\Utils\SudokuFileMapper;
@@ -25,9 +25,9 @@ class ApiController extends Controller
 {
     /**
      * 
-     * @Route("/api/grid/get", name="getGrid")
+     * @Route("/api/grid/load", name="loadGrid")
      */
-    public function getGridAction(Request $request)
+    public function loadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
             $gridSize = $request->get('size') ;
@@ -36,19 +36,19 @@ class ApiController extends Controller
             $loadedTiles = $this->pickAGrid($gridSize) ;
             
             $loadedGrid = new TilesLoaded($gridSize, $loadedTiles) ;
-            $this->debugSession("ApiController::getGrid::pre") ;
+            $this->debugSession("ApiController::loadGrid::pre") ;
 
 //            $grid = $session->get('grid') ;
 //            $grid->setTiles($aGrid) ;
 ////            $session->set('grid', $grid) ;
                     
-            $event = new GetGridEvent($loadedGrid) ;
-            $this->get('event_dispatcher')->dispatch('grid.get', $event) ;
+            $event = new LoadGameEvent($loadedGrid) ;
+            $this->get('event_dispatcher')->dispatch('game.load', $event) ;
            
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $this->debugSession("ApiController::getGrid::post") ;
+            $this->debugSession("ApiController::loadGrid::post") ;
             
             return new JsonResponse($response) ;
 //        } else {
@@ -61,20 +61,20 @@ class ApiController extends Controller
 
     /**
      * 
-     * @Route("/api/grid/reset", name="resetGrid")
+     * @Route("/api/grid/reload", name="reloadGrid")
      */
-    public function resetGridAction(Request $request)
+    public function reloadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
             // on crée l'événement reload pour réinitialiser toutes les sessions
-            $event = new ResetGridEvent() ;
-            $this->get('event_dispatcher')->dispatch('grid.reset', $event) ;
+            $event = new ReloadGameEvent() ;
+            $this->get('event_dispatcher')->dispatch('game.reload', $event) ;
 
             // on récupère l'objet Grid qui est en session
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $this->debugSession("ApiController::resetGrid") ;
+            $this->debugSession("ApiController::reloadGrid") ;
         
             return new JsonResponse($response) ;
 //        } else {
@@ -87,20 +87,20 @@ class ApiController extends Controller
     
     /**
      * 
-     * @Route("/api/grid/clear", name="clearGrid")
+     * @Route("/api/grid/reset", name="resetGrid")
      */
-    public function clearGridAction(Request $request)
+    public function resetGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
             // on crée l'événement reload pour réinitialiser toutes les sessions
-            $event = new ClearGridEvent() ;
-            $this->get('event_dispatcher')->dispatch('grid.clear', $event) ;
+            $event = new ResetGameEvent() ;
+            $this->get('event_dispatcher')->dispatch('game.reset', $event) ;
 
             // on récupère l'objet Grid qui est en session
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $this->debugSession("ApiController::clearGrid") ;
+            $this->debugSession("ApiController::resetGrid") ;
         
             return new JsonResponse($response) ;
 //        } else {

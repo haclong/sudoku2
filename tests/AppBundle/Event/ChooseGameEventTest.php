@@ -2,22 +2,22 @@
 
 namespace Tests\AppBundle\Event;
 
-use AppBundle\Event\ChooseGridEvent;
+use AppBundle\Event\ChooseGameEvent;
 
 /**
- * Description of ChooseGridEventTest
+ * Description of ChooseGameEventTest
  *
  * @author haclong
  */
-class ChooseGridEventTest extends \PHPUnit_Framework_TestCase  {
+class ChooseGameEventTest extends \PHPUnit_Framework_TestCase  {
     public function testConstructor()
     {
         $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                      ->disableOriginalConstructor()
                      ->getMock() ;
 
-        $event = new ChooseGridEvent($size) ;
-        $this->assertEquals($event::NAME, 'grid.choose') ;
+        $event = new ChooseGameEvent($size) ;
+        $this->assertEquals($event::NAME, 'game.choose') ;
         $this->assertInstanceOf('AppBundle\Entity\Event\GridSize', $event->getGridSize()) ;
     }
 }

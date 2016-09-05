@@ -7,12 +7,12 @@ use AppBundle\Entity\Event\TilesLoaded;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Description of GetGridEvent
+ * Description of LoadGameEvent
  *
  * @author haclong
  */
-class GetGridEvent extends Event {
-    const NAME = 'grid.get' ;
+class LoadGameEvent extends Event {
+    const NAME = 'game.load' ;
     protected $tiles ;
     public function __construct(TilesLoaded $tiles)
     {

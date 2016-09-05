@@ -3,12 +3,11 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Grid;
-use AppBundle\Event\ChooseGridEvent;
-use AppBundle\Event\ClearGridEvent;
-use AppBundle\Event\GetGridEvent;
-use AppBundle\Event\ResetGridEvent;
+use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\StartGameEvent;
-use AppBundle\Service\SudokuSessionService;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -29,10 +28,10 @@ class GridAggregate implements EventSubscriberInterface {
     public static function getSubscribedEvents() {
         return array(
 //            StartGameEvent::NAME => 'onStartGame',
-            ChooseGridEvent::NAME => 'onChooseGrid',
-            GetGridEvent::NAME => 'onGetGrid',
-            ResetGridEvent::NAME => 'onResetGrid',
-            ClearGridEvent::NAME => 'onClearGrid',
+            ChooseGameEvent::NAME => 'onChooseGame',
+            LoadGameEvent::NAME => 'onLoadGame',
+            ReloadGameEvent::NAME => 'onReloadGame',
+            ResetGameEvent::NAME => 'onResetGame',
         ) ;
     }
     
@@ -43,14 +42,14 @@ class GridAggregate implements EventSubscriberInterface {
         $this->session->set('grid', $grid) ;
     }
     
-    public function onChooseGrid(ChooseGridEvent $event) {
+    public function onChooseGame(ChooseGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->newGrid() ;
         $grid->init($event->getGridSize()->get()) ;
         $this->storeGrid($grid) ;
     }
     
-    public function onGetGrid(GetGridEvent $event) {
+    public function onLoadGame(LoadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         //echo $event->getTiles()->getSize() ;
         //die ;
@@ -62,13 +61,13 @@ class GridAggregate implements EventSubscriberInterface {
         $this->storeGrid($grid) ;
     }
     
-    public function onResetGrid(ResetGridEvent $event) {
+    public function onReloadGame(ReloadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->reset() ;
         $this->storeGrid($grid) ;
     }
 
-    public function onClearGrid(ClearGridEvent $event) {
+    public function onResetGame(ResetGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $size = $grid->getSize() ;
         $grid->newGrid() ;
