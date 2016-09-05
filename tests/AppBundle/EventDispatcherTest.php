@@ -2,9 +2,9 @@
 
 namespace Tests\AppBundle;
 
-use AppBundle\Event\ChooseGridEvent;
-use AppBundle\Event\GetGridEvent;
-use AppBundle\Event\ResetGridEvent;
+use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\ReloadGameEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -19,14 +19,14 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testStartGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ChooseGridEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(ChooseGameEvent::NAME, 1) ;
     }
     /**
      * @runInSeparateProcess
      */
     public function testGetGridSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(GetGridEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 1) ;
     }
     
     /**
@@ -34,7 +34,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testResetGridSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ResetGridEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(ReloadGameEvent::NAME, 1) ;
     }
 
     protected function AreSubscriberAddedByEvent($event, $expected)

@@ -9,8 +9,8 @@ use Symfony\Component\EventDispatcher\Event;
  *
  * @author haclong
  */
-class ChooseGridEvent extends Event {
-    const NAME = 'grid.choose' ;
+class ChooseGameEvent extends Event {
+    const NAME = 'game.choose' ;
     protected $gridSize ;
     
     public function __construct(GridSize $size)

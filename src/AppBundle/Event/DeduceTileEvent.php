@@ -6,12 +6,12 @@ use AppBundle\Entity\Event\TileLastPossibility;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Description of LastPossibilityEvent
+ * Description of DeduceTileEvent
  *
  * @author haclong
  */
-class LastPossibilityEvent extends Event {
-    const NAME = 'tile.lastPossibility' ;
+class DeduceTileEvent extends Event {
+    const NAME = 'tile.deduce' ;
     protected $tile ;
 
     public function __construct(TileLastPossibility $tile) {

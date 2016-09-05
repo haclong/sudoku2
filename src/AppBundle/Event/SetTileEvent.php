@@ -6,11 +6,11 @@ use AppBundle\Entity\Event\TileSet;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Description of TileSetEvent
+ * Description of SetTileEvent
  *
  * @author haclong
  */
-class TileSetEvent extends Event {
+class SetTileEvent extends Event {
     const NAME = 'tile.set' ;
     protected $tile ;
     public function __construct(TileSet $tileSet)

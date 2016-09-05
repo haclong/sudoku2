@@ -2,21 +2,21 @@
 
 namespace Tests\AppBundle\Event;
 
-use AppBundle\Event\GetGridEvent;
+use AppBundle\Event\LoadGameEvent;
 
 /**
- * Description of GetGridEventTest
+ * Description of LoadGameEventTest
  *
  * @author haclong
  */
-class GetGridEventTest extends \PHPUnit_Framework_TestCase  {
+class LoadGameEventTest extends \PHPUnit_Framework_TestCase  {
     public function testConstructor()
     {
         $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
                      ->disableOriginalConstructor()
                      ->getMock() ;
-        $event = new GetGridEvent($tiles) ;
+        $event = new LoadGameEvent($tiles) ;
         $this->assertInstanceOf('AppBundle\Entity\Event\TilesLoaded', $event->getTiles()) ;
-        $this->assertEquals($event::NAME, 'grid.get') ;
+        $this->assertEquals($event::NAME, 'game.load') ;
     }
 }

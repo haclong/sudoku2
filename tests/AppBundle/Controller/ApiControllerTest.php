@@ -3,9 +3,9 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
-use AppBundle\Event\ChooseGridEvent;
-use AppBundle\Event\ClearGridEvent;
-use AppBundle\Event\ResetGridEvent;
+use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Utils\GridMapper;
 use AppBundle\Utils\JsonMapper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,7 +20,7 @@ class ApiControllerTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testGetGrid()
+    public function testLoadGrid()
     {
         $client = static::createClient();
         
@@ -30,7 +30,7 @@ class ApiControllerTest extends WebTestCase
         $session = $client->getContainer()->get('session') ;
         $session->set('grid', $grid) ;
 
-        $crawler = $client->request('GET', '/api/grid/get?size=9');
+        $crawler = $client->request('GET', '/api/grid/load?size=9');
         
         // tests sur le retour en json
         $response = $client->getResponse();
@@ -57,7 +57,7 @@ class ApiControllerTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testResetGrid()
+    public function testReloadGrid()
     {
         $client = static::createClient();
         
@@ -112,7 +112,7 @@ class ApiControllerTest extends WebTestCase
         $session = $client->getContainer()->get('session') ;
         $session->set('grid', $grid) ;
 
-        $crawler = $client->request('GET', '/api/grid/reset');
+        $crawler = $client->request('GET', '/api/grid/reload');
         
         // tests sur le retour en json
         $response = $client->getResponse();
@@ -134,7 +134,7 @@ class ApiControllerTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testClearGrid()
+    public function testResetGrid()
     {
         $client = static::createClient();
         
@@ -186,7 +186,7 @@ class ApiControllerTest extends WebTestCase
         $session = $client->getContainer()->get('session') ;
         $session->set('grid', $grid) ;
 
-        $crawler = $client->request('GET', '/api/grid/clear');
+        $crawler = $client->request('GET', '/api/grid/reset');
         
         // tests sur le retour en json
         $response = $client->getResponse();

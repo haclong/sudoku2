@@ -1,13 +1,14 @@
 <?php
 
 namespace AppBundle\Event;
+
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Description of ClearGridEvent
+ * Description of ReloadGameEvent
  *
  * @author haclong
  */
-class ClearGridEvent extends Event {
-    const NAME = 'grid.clear' ;
+class ReloadGameEvent extends Event {
+    const NAME = 'game.reload' ;
 }

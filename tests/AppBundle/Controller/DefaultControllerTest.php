@@ -40,7 +40,7 @@ class DefaultControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/9');
 
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertContains('Charger une grille', $crawler->filter('button#getGridButton')->text());
+        $this->assertContains('Charger une grille', $crawler->filter('button#loadGridButton')->text());
         $this->assertContains('t.8.8', $crawler->filter('td input')->last()->attr('id')) ;
         $this->assertInstanceOf('AppBundle\Entity\Grid', $this->session->get('grid')) ;
         $this->assertEquals(9, $this->session->get('grid')->getSize()) ;

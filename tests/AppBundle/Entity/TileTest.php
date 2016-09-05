@@ -25,7 +25,7 @@ class TileTest  extends \PHPUnit_Framework_TestCase
 
         $tileLastPossibility = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
                                     ->getMock() ;
-        $this->lastPossibilityEvent = $this->getMockBuilder('AppBundle\Event\LastPossibilityEvent')
+        $this->lastPossibilityEvent = $this->getMockBuilder('AppBundle\Event\DeduceTileEvent')
                                                ->setConstructorArgs(array($tileLastPossibility))
                                                ->getMock() ;
         $this->lastPossibilityEvent->method('getTile')
@@ -33,7 +33,7 @@ class TileTest  extends \PHPUnit_Framework_TestCase
 
         $tileset = $this->getMockBuilder('AppBundle\Entity\Event\TileSet')
                         ->getMock() ;
-        $this->tileSetEvent = $this->getMockBuilder('AppBundle\Event\TileSetEvent')
+        $this->tileSetEvent = $this->getMockBuilder('AppBundle\Event\SetTileEvent')
                                    ->setConstructorArgs(array($tileset))
                                    ->getMock() ;
         $this->tileSetEvent->method('getTile')

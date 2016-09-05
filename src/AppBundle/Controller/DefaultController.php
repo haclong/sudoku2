@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
 use AppBundle\Entity\Grid;
-use AppBundle\Event\ChooseGridEvent;
+use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -40,8 +40,8 @@ class DefaultController extends Controller
     {
         $gridSize = new GridSize($size) ;
         
-        $event = new ChooseGridEvent($gridSize) ;
-        $this->get('event_dispatcher')->dispatch('grid.choose', $event) ;
+        $event = new ChooseGameEvent($gridSize) ;
+        $this->get('event_dispatcher')->dispatch('game.choose', $event) ;
 
         $session = $this->get('session') ;
         $grid = $session->get('grid') ;

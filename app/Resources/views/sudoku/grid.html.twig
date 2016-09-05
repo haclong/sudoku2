@@ -5,13 +5,13 @@
 
 <!--form method="post" action="<?php // echo $this->url('home', array('size' => count($grid))) ; ?>"-->
 <!--form name="sudokuGrid"-->   
-    <button id="getGridButton"   class="btn btn-default" type="submit" name="load" value="get">Charger une grille</button>
+    <button id="loadGridButton"   class="btn btn-default" type="submit" name="load" value="get">Charger une grille</button>
 
     <button class="btn btn-default" type="submit" name="submit" value="start">Résoudre</button>
     <button class="btn btn-default" type="submit" name="submit" value="play">Jouer</button>
-    <button id="resetGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
+    <button id="reloadGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
 
-    <button id="clearGridButton" class="btn btn-default" type="submit" name="empty" value="clear">Nouvelle grille</button>
+    <button id="resetGridButton" class="btn btn-default" type="submit" name="empty" value="clear">Nouvelle grille</button>
     <button id="saveGridButton"  class="btn btn-default" type="submit" name="save" value="save">Enregistrer une nouvelle grille</button>
 <p>
     <div>Insérer les chiffres de départ de la grille.</div>
@@ -46,31 +46,31 @@
 {% block javascripts %}
 
     <script>
-        $("#getGridButton").click(function() {
+        $("#loadGridButton").click(function() {
 //            alert("getGridButton") ;
-//            $.getJSON("{{path('getGrid')}}", refreshGrid); 
+//            $.getJSON("{{path('loadGrid')}}", refreshGrid); 
             $.ajax({
               dataType: "json",
-              url: "{{path('getGrid')}}",
+              url: "{{path('loadGrid')}}",
               data: {size: "{{size}}"},
               success: loadGrid
             });
         }) ;
 
-        $("#resetGridButton").click(function() {
+        $("#reloadGridButton").click(function() {
             $.ajax({
               dataType: "json",
-              url: "{{path('resetGrid')}}",
+              url: "{{path('reloadGrid')}}",
               success: clearAndLoadGrid
             });
         }) ;
 
 
-        $("#clearGridButton").click(function() {
+        $("#resetGridButton").click(function() {
 //            clearGrid() ;
             $.ajax({
               dataType: "json",
-              url: "{{path('clearGrid')}}",
+              url: "{{path('resetGrid')}}",
               success: clearGrid
             });
         }) ;

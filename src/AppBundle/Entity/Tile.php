@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Event\LastPossibilityEvent;
-use AppBundle\Event\TileSetEvent;
+use AppBundle\Event\DeduceTileEvent;
+use AppBundle\Event\SetTileEvent;
 use AppBundle\Exception\AlreadyDiscardedException;
 use AppBundle\Exception\ImpossibleToDiscardException;
 use AppBundle\Exception\InvalidFigureCountException;
@@ -77,23 +77,23 @@ class Tile {
     
     /**
      * événement à déclencher quand il ne reste qu'une possibilité
-     * @var LastPossibilityEvent
+     * @var DeduceTileEvent
      */
-    protected $lastPossibilityEvent ;
+    protected $deduceTileEvent ;
     
     /**
      * 
      * @param EventDispatcherInterface $eventDispatcher
-     * @param TileSetEvent $tileSetEvent
-     * @param LastPossibilityEvent $lastPossibilityEvent
+     * @param SetTileEvent $setTileEvent
+     * @param deduceTileEvent $deduceTileEvent
      */
     public function __construct(EventDispatcherInterface $eventDispatcher, 
-                                TileSetEvent $tileSetEvent,
-                                LastPossibilityEvent $lastPossibilityEvent)
+                                SetTileEvent $setTileEvent,
+                                DeduceTileEvent $deduceTileEvent)
     {
         $this->dispatcher = $eventDispatcher ;
-        $this->setTileEvent = $tileSetEvent ;
-        $this->lastPossibilityEvent = $lastPossibilityEvent ;
+        $this->setTileEvent = $setTileEvent ;
+        $this->deduceTileEvent = $deduceTileEvent ;
     }
             
     public function initialize($row, $col, $size) {
@@ -129,8 +129,8 @@ class Tile {
     protected function checkOnePossibilityLast() {
         if(count($this->getPossibilitiesFigure()) == 1)
         {
-            $this->lastPossibilityEvent->getTile()->set($this->row, $this->col, $this->region, current($this->figures['possibilities'])) ;
-            $this->dispatcher->dispatch('tile.lastPossibility', $this->lastPossibilityEvent) ;
+            $this->deduceTileEvent->getTile()->set($this->row, $this->col, $this->region, current($this->figures['possibilities'])) ;
+            $this->dispatcher->dispatch('tile.lastPossibility', $this->deduceTileEvent) ;
         }
     }
     

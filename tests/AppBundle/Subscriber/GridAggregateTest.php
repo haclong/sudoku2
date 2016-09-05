@@ -47,20 +47,20 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->grid = null ;
     }
 
-    public function testChooseGridSubscriber()
+    public function testChooseGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('ChooseGridEvent', 'onChooseGrid') ;
+        $result = $this->commonEventSubscriber('ChooseGameEvent', 'onChooseGame') ;
         $this->assertTrue($result) ;
     }
 
-    public function testOnChooseGrid()
+    public function testOnChooseGame()
     {
         $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                         ->disableOriginalConstructor()
                         ->getMock() ;
         $size->method('get')
                 ->willReturn(9) ;
-        $event = $this->getMockBuilder('AppBundle\Event\ChooseGridEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\ChooseGameEvent')
                                     ->setConstructorArgs(array($size))
                                     ->getMock() ;
         $event->method('getGridSize')
@@ -70,16 +70,16 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                 ->method('newGrid') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onChooseGrid($event) ;
+        $gridAggregate->onChooseGame($event) ;
     }
 
-    public function testGetGridSubscriber()
+    public function testLoadGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('GetGridEvent', 'onGetGrid') ;
+        $result = $this->commonEventSubscriber('LoadGameEvent', 'onLoadGame') ;
         $this->assertTrue($result) ;
     }
     
-    public function testOnGetGrid()
+    public function testOnLoadGame()
     {
         $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
                         ->disableOriginalConstructor()
@@ -88,7 +88,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                 ->willReturn(9) ;
         $tiles->method('getTiles')
                 ->willReturn(array()) ;
-        $event = $this->getMockBuilder('AppBundle\Event\GetGridEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
                                     ->setConstructorArgs(array($tiles))
                                     ->getMock() ;
         
@@ -97,7 +97,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
               ->will($this->returnValue($tiles));
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onGetGrid($event) ;
+        $gridAggregate->onLoadGame($event) ;
     }
 
     public function testRuntimeExceptionExpected()
@@ -110,7 +110,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                 ->willReturn(8) ;
         $tiles->method('getTiles')
                 ->willReturn(array()) ;
-        $event = $this->getMockBuilder('AppBundle\Event\GetGridEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
                                     ->setConstructorArgs(array($tiles))
                                     ->getMock() ;
         $event->method('getTiles')
@@ -118,43 +118,43 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onGetGrid($event) ;
+        $gridAggregate->onLoadGame($event) ;
     }
     
-    public function testResetGridSubscriber()
+    public function testReloadGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('ResetGridEvent', 'onResetGrid') ;
+        $result = $this->commonEventSubscriber('ReloadGameEvent', 'onReloadGame') ;
         $this->assertTrue($result) ;
     }
     
-    public function testOnResetGrid()
+    public function testOnReloadGame()
     {
-        $event = $this->getMockBuilder('AppBundle\Event\ResetGridEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\ReloadGameEvent')
                                     ->getMock() ;
         
         $this->grid->expects($this->once())
                 ->method('reset') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onResetGrid($event) ;
+        $gridAggregate->onReloadGame($event) ;
     }
 
-    public function testClearGridSubscriber()
+    public function testResetGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('ClearGridEvent', 'onClearGrid') ;
+        $result = $this->commonEventSubscriber('ResetGameEvent', 'onResetGame') ;
         $this->assertTrue($result) ;
     }
     
-    public function testOnClearGrid()
+    public function testOnResetGame()
     {
-        $event = $this->getMockBuilder('AppBundle\Event\ClearGridEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\ResetGameEvent')
                                     ->getMock() ;
         
         $this->grid->expects($this->once())
                 ->method('newGrid') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onClearGrid($event) ;
+        $gridAggregate->onResetGame($event) ;
     }
    
     protected function commonEventSubscriber($eventName, $method)

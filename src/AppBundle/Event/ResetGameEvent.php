@@ -1,14 +1,13 @@
 <?php
 
 namespace AppBundle\Event;
-
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Description of ReloadGridEvent
+ * Description of ResetGameEvent
  *
  * @author haclong
  */
-class ResetGridEvent extends Event {
-    const NAME = 'grid.reset' ;
+class ResetGameEvent extends Event {
+    const NAME = 'game.reset' ;
 }
