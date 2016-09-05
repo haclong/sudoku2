@@ -44,7 +44,7 @@ class GridAggregate implements EventSubscriberInterface {
     
     public function onChooseGame(ChooseGameEvent $event) {
         $grid = $this->getGridFromSession() ;
-        $grid->newGrid() ;
+        $grid->reset() ;
         $grid->init($event->getGridSize()->get()) ;
         $this->storeGrid($grid) ;
     }
@@ -63,14 +63,14 @@ class GridAggregate implements EventSubscriberInterface {
     
     public function onReloadGame(ReloadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
-        $grid->reset() ;
+        $grid->reload() ;
         $this->storeGrid($grid) ;
     }
 
     public function onResetGame(ResetGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $size = $grid->getSize() ;
-        $grid->newGrid() ;
+        $grid->reset() ;
         $grid->init($size) ;
         $this->storeGrid($grid) ;
     }

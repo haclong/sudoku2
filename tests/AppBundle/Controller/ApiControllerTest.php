@@ -2,10 +2,10 @@
 
 namespace Tests\AppBundle\Controller;
 
-use AppBundle\Entity\Event\GridSize;
-use AppBundle\Event\ChooseGameEvent;
-use AppBundle\Event\ResetGameEvent;
-use AppBundle\Event\ReloadGameEvent;
+//use AppBundle\Entity\Event\GridSize;
+//use AppBundle\Event\ChooseGameEvent;
+//use AppBundle\Event\ResetGameEvent;
+//use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Utils\GridMapper;
 use AppBundle\Utils\JsonMapper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

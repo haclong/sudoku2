@@ -122,7 +122,7 @@ class ApiController extends Controller
 
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
-            $grid->newGrid() ;
+            $grid->reset() ;
             $grid->init($responseArray['size']) ;
             $grid->setTiles($responseArray['tiles']) ;
         

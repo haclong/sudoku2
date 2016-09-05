@@ -24,7 +24,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session = new Session($mockSessionStorage) ;
         $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->disableOriginalConstructor()
-                     ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'newGrid'))
+                     ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'reload'))
                      ->getMock() ;
         $this->grid->method('getSize')
                 ->willReturn(9) ;
@@ -67,7 +67,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($size) ;
         
         $this->grid->expects($this->once())
-                ->method('newGrid') ;
+                ->method('reset') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
         $gridAggregate->onChooseGame($event) ;
@@ -133,7 +133,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                                     ->getMock() ;
         
         $this->grid->expects($this->once())
-                ->method('reset') ;
+                ->method('reload') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
         $gridAggregate->onReloadGame($event) ;
@@ -151,7 +151,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                                     ->getMock() ;
         
         $this->grid->expects($this->once())
-                ->method('newGrid') ;
+                ->method('reset') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
         $gridAggregate->onResetGame($event) ;
