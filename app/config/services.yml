@@ -20,19 +20,19 @@ services:
 #        factory: [AppBundle\Service\SudokuSessionServiceFactory, create]
 #        arguments: ['@sudokuSession']
 
+    sessionMarker:
+        class: AppBundle\Utils\SessionMarker
+        arguments: ['@session', '@logger']
     gridAggregate:
         class: AppBundle\Subscriber\GridAggregate
-#        arguments: ['@sudokuSessionService', '@gridEntity']
         arguments: ['@session']
-#        calls:
-#            - [setGrid, ['@gridEntity']]
         tags:
             - { name: kernel.event_subscriber } 
-#    valuesAggregate:
-#        class: AppBundle\Subscriber\ValuesAggregate
-#        arguments: ['@sudokuSessionService', '@valuesEntity']
-#        tags:
-#            - { name: kernel.event_subscriber } 
+    valuesAggregate:
+        class: AppBundle\Subscriber\ValuesAggregate
+        arguments: ['@session']
+        tags:
+            - { name: kernel.event_subscriber } 
 
     app.twig_extension:
         class: AppBundle\Utils\TwigExtension

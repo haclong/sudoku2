@@ -5,6 +5,7 @@ namespace Tests\AppBundle;
 use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
+use AppBundle\Event\ResetGameEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -24,17 +25,25 @@ class EventDispatcherTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testGetGridSubscribersAdded()
+    public function testLoadGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 2) ;
     }
     
     /**
      * @runInSeparateProcess
      */
-    public function testResetGridSubscribersAdded()
+    public function testReloadGameSubscribersAdded()
     {
         $this->AreSubscriberAddedByEvent(ReloadGameEvent::NAME, 1) ;
+    }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testResetGameSubscribersAdded()
+    {
+        $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 2) ;
     }
 
     protected function AreSubscriberAddedByEvent($event, $expected)

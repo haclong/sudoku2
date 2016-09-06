@@ -3,10 +3,10 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Values;
-use AppBundle\Event\GetGridEvent;
-use AppBundle\Event\ResetGridEvent;
-use AppBundle\Service\SudokuSessionService;
+use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\ResetGameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Description of ValueAggregate
@@ -16,34 +16,36 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ValuesAggregate implements EventSubscriberInterface {
     protected $session ;
 
-    public function __construct(SudokuSessionService $sessionService, Values $values) {
+    public function __construct(Session $sessionService) {
         $this->session = $sessionService ;
-        $this->storeValues($values) ;
     }
-    
+
     public static function getSubscribedEvents() {
         return array(
-            GetGridEvent::NAME => array('onGetGrid', 2048),
+            LoadGameEvent::NAME => array('onLoadGame', 2048),
+            ResetGameEvent::NAME => 'onResetGame',
         ) ;
-    }
-    
-    public function onResetGrid() {
-        $this->session->resetValues() ;
     }
 
     protected function getValuesFromSession() {
-        return $this->session->getValues() ;
+        return $this->session->get('values') ;
     }
     protected function storeValues(Values $values) {
-        $this->session->saveValues($values) ;
+        $this->session->set('values', $values) ;
     }
     
-    public function onGetGrid(GetGridEvent $event) {
+    public function onResetGame(ResetGameEvent $event) {
         $values = $this->getValuesFromSession() ;
-        $grid = $event->getGrid() ;
+        $values->reset() ;
+        $this->storeValues($values) ;
+    }
+    
+    public function onLoadGame(LoadGameEvent $event) {
+        $values = $this->getValuesFromSession() ;
+        $tiles = $event->getTiles() ;
         
-        $values->setGridSize($grid->getSize()) ;
-        foreach($grid->getTiles() as $row) 
+        $values->setGridSize($tiles->getSize()) ;
+        foreach($tiles->getTiles() as $row) 
         {
             foreach($row as $col)
             {

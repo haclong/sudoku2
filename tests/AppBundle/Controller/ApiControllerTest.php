@@ -2,10 +2,6 @@
 
 namespace Tests\AppBundle\Controller;
 
-//use AppBundle\Entity\Event\GridSize;
-//use AppBundle\Event\ChooseGameEvent;
-//use AppBundle\Event\ResetGameEvent;
-//use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Utils\GridMapper;
 use AppBundle\Utils\JsonMapper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -26,9 +22,11 @@ class ApiControllerTest extends WebTestCase
         
         $grid = $client->getContainer()->get('gridEntity') ;
         $grid->init(9) ;
+        $values = $client->getContainer()->get('valuesEntity') ;
         
         $session = $client->getContainer()->get('session') ;
         $session->set('grid', $grid) ;
+        $session->set('values', $values) ;
 
         $crawler = $client->request('GET', '/api/grid/load?size=9');
         
@@ -181,10 +179,12 @@ class ApiControllerTest extends WebTestCase
         $grid = $client->getContainer()->get('gridEntity') ;
         $grid->init(9) ;
         $grid->setTiles($array) ;
+        $values = $client->getContainer()->get('valuesEntity') ;
         
         // Remplir la session avec la grille existante
         $session = $client->getContainer()->get('session') ;
         $session->set('grid', $grid) ;
+        $session->set('values', $values) ;
 
         $crawler = $client->request('GET', '/api/grid/reset');
         
