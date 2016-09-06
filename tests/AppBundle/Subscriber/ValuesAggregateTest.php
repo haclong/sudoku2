@@ -2,33 +2,31 @@
 
 namespace Tests\AppBundle\Subscriber;
 
-use AppBundle\Subscriber\GridAggregate;
+use AppBundle\Subscriber\ValuesAggregate;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 /**
- * Description of GridAggregateTest
+ * Description of ValuesAggregateTest
  *
  * @author haclong
  */
-class GridAggregateTest extends \PHPUnit_Framework_TestCase
+class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
 {
     protected $dispatcher ;
     protected $session ;
-    protected $grid ;
+    protected $values ;
 
     protected function setUp()
     {
         $mockSessionStorage = new MockArraySessionStorage() ;
         $this->session = new Session($mockSessionStorage) ;
-        $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+        $this->values = $this->getMockBuilder('AppBundle\Entity\Values')
                      ->disableOriginalConstructor()
-                     ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'reload'))
+                     ->setMethods(array('setGridSize', 'reset'))
                      ->getMock() ;
-        $this->grid->method('getSize')
-                ->willReturn(9) ;
-        $this->session->set('grid', $this->grid) ;
+        $this->session->set('values', $this->values) ;
 //        $this->service = $this->getMockBuilder('AppBundle\Service\SudokuSessionService')
 //                              //->setConstructorArgs(array($trueSession))
 //                              //->disableOriginalConstructor()
@@ -44,33 +42,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     {
 //        $this->dispatcher = null ;
         $this->session = null ;
-        $this->grid = null ;
-    }
-
-    public function testChooseGameSubscriber()
-    {
-        $result = $this->commonEventSubscriber('ChooseGameEvent', 'onChooseGame') ;
-        $this->assertTrue($result) ;
-    }
-
-    public function testOnChooseGame()
-    {
-        $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
-                        ->disableOriginalConstructor()
-                        ->getMock() ;
-        $size->method('get')
-                ->willReturn(9) ;
-        $event = $this->getMockBuilder('AppBundle\Event\ChooseGameEvent')
-                                    ->setConstructorArgs(array($size))
-                                    ->getMock() ;
-        $event->method('getGridSize')
-                ->willReturn($size) ;
-        
-        $this->grid->expects($this->once())
-                ->method('reset') ;
-        
-        $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onChooseGame($event) ;
+        $this->values = null ;
     }
 
     public function testLoadGameSubscriber()
@@ -92,51 +64,12 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                                     ->setConstructorArgs(array($tiles))
                                     ->getMock() ;
         
-        $event->expects($this->exactly(2))
+        $event->expects($this->exactly(1))
               ->method('getTiles')
               ->will($this->returnValue($tiles));
         
-        $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onLoadGame($event) ;
-    }
-
-    public function testRuntimeExceptionExpected()
-    {
-        $this->setExpectedException(\RuntimeException::class) ;
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
-                        ->disableOriginalConstructor()
-                        ->getMock() ;
-        $tiles->method('getSize')
-                ->willReturn(8) ;
-        $tiles->method('getTiles')
-                ->willReturn(array()) ;
-        $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
-                                    ->setConstructorArgs(array($tiles))
-                                    ->getMock() ;
-        $event->method('getTiles')
-              ->willReturn($tiles);
-        
-        
-        $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onLoadGame($event) ;
-    }
-    
-    public function testReloadGameSubscriber()
-    {
-        $result = $this->commonEventSubscriber('ReloadGameEvent', 'onReloadGame') ;
-        $this->assertTrue($result) ;
-    }
-    
-    public function testOnReloadGame()
-    {
-        $event = $this->getMockBuilder('AppBundle\Event\ReloadGameEvent')
-                                    ->getMock() ;
-        
-        $this->grid->expects($this->once())
-                ->method('reload') ;
-        
-        $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onReloadGame($event) ;
+        $valuesAggregate = new ValuesAggregate($this->session) ;
+        $valuesAggregate->onLoadGame($event) ;
     }
 
     public function testResetGameSubscriber()
@@ -150,11 +83,11 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder('AppBundle\Event\ResetGameEvent')
                                     ->getMock() ;
         
-        $this->grid->expects($this->once())
+        $this->values->expects($this->once())
                 ->method('reset') ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onResetGame($event) ;
+        $valuesAggregate = new ValuesAggregate($this->session) ;
+        $valuesAggregate->onResetGame($event) ;
     }
    
     protected function commonEventSubscriber($eventName, $method)
@@ -164,7 +97,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                                     ->disableOriginalConstructor()
                                     ->getMock() ;
         
-        $subscriber = $this->getMockBuilder('AppBundle\Subscriber\GridAggregate')
+        $subscriber = $this->getMockBuilder('AppBundle\Subscriber\ValuesAggregate')
                                    ->disableOriginalConstructor()
                                    ->setMethods(array($method))
                                    ->getMock() ;

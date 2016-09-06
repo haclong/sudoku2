@@ -12,7 +12,6 @@ use AppBundle\Exception\InvalidGridSizeException;
 class Grid {
     protected $size ;
     protected $tiles = array() ;
-    protected $solved = false ;
     protected $remainingTiles = -1 ;
     
     public function init($size)
@@ -20,49 +19,71 @@ class Grid {
         $gridSize = (int) $size ;
 //        try {
             $this->validateGridSize($gridSize) ;
-            $this->size = $gridSize ;
-            $this->remainingTiles = $size * $size ;
+            $this->setSize($gridSize) ;
+            $this->reloadRemainingTiles() ;
 //        } catch (InvalidGridSizeException $ex) {
 //        }
     }
-    
+    public function reload()
+    {
+        $this->reloadRemainingTiles() ;
+    }
     public function reset()
     {
-        $this->solved = false ;
-        $this->remainingTiles = $this->size * $this->size ;
+        $this->resetRemainingTiles() ;
+        $this->resetTiles() ;
+        $this->resetSize() ;
     }
     
-    public function newGrid()
+    protected function setSize($size)
     {
-        $this->solved = false ;
-        $this->remainingTiles = -1 ;
-        $this->tiles = array() ;
+        $this->size = $size ;
+    }
+    protected function resetSize()
+    {
         $this->size = null ;
     }
-    
     public function getSize()
     {
         return $this->size ;
-    }
-    
-    public function getTiles()
-    {
-        return $this->tiles ;
-    }
-    
-    public function getRemainingTiles()
-    {
-        return $this->remainingTiles ;
     }
     
     public function setTiles(array $array)
     {
         $this->tiles = $array ;
     }
+    public function getTiles()
+    {
+        return $this->tiles ;
+    }
+    protected function resetTiles()
+    {
+        $this->tiles = [] ;
+    }
     
+    public function getRemainingTiles()
+    {
+        return $this->remainingTiles ;
+    }
+    protected function reloadRemainingTiles()
+    {
+        $this->remainingTiles = $this->size * $this->size ;
+    }
+    protected function resetRemainingTiles()
+    {
+        $this->remainingTiles = -1 ;
+    }
     public function decreaseRemainingTiles()
     {
         $this->remainingTiles -= 1 ;
+    }
+    public function increaseRemainingTiles()
+    {
+        if($this->remainingTiles == $this->size * $this->size)
+        {
+            throw new MaxRemainingTilesLimitException() ;
+        }
+        $this->remainingTiles += 1 ;
     }
             
     public function isSolved()
@@ -71,7 +92,7 @@ class Grid {
         {
             return true ;
         }
-        return $this->solved ;
+        return false ;
     }
 
     protected function validateGridSize($size)

@@ -44,15 +44,14 @@ class GridAggregate implements EventSubscriberInterface {
     
     public function onChooseGame(ChooseGameEvent $event) {
         $grid = $this->getGridFromSession() ;
-        $grid->newGrid() ;
+        $grid->reset() ;
         $grid->init($event->getGridSize()->get()) ;
         $this->storeGrid($grid) ;
     }
     
     public function onLoadGame(LoadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
-        //echo $event->getTiles()->getSize() ;
-        //die ;
+
         if($grid->getSize() != $event->getTiles()->getSize())
         {
             throw new RuntimeException('event grid size differs from session grid size') ;
@@ -63,14 +62,14 @@ class GridAggregate implements EventSubscriberInterface {
     
     public function onReloadGame(ReloadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
-        $grid->reset() ;
+        $grid->reload() ;
         $this->storeGrid($grid) ;
     }
 
     public function onResetGame(ResetGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $size = $grid->getSize() ;
-        $grid->newGrid() ;
+        $grid->reset() ;
         $grid->init($size) ;
         $this->storeGrid($grid) ;
     }
