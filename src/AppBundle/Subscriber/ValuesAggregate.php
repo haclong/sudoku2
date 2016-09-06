@@ -36,6 +36,7 @@ class ValuesAggregate implements EventSubscriberInterface {
     
     public function onResetGame(ResetGameEvent $event) {
         $values = $this->getValuesFromSession() ;
+        $values->reset() ;
         $this->storeValues($values) ;
     }
     
