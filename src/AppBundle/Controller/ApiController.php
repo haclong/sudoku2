@@ -30,13 +30,14 @@ class ApiController extends Controller
     public function loadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+        $sessionMarker = $this->get('sessionMarker') ;
             $gridSize = $request->get('size') ;
 
             // on récupère une grille dans datas/
             $loadedTiles = $this->pickAGrid($gridSize) ;
             
             $loadedGrid = new TilesLoaded($gridSize, $loadedTiles) ;
-            $this->debugSession("ApiController::loadGrid::pre") ;
+            $sessionMarker->logSession("ApiController::loadGrid::pre") ;
 
 //            $grid = $session->get('grid') ;
 //            $grid->setTiles($aGrid) ;
@@ -48,7 +49,7 @@ class ApiController extends Controller
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $this->debugSession("ApiController::loadGrid::post") ;
+            $sessionMarker->logSession("ApiController::loadGrid::post") ;
             
             return new JsonResponse($response) ;
 //        } else {
@@ -66,6 +67,7 @@ class ApiController extends Controller
     public function reloadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+        $sessionMarker = $this->get('sessionMarker') ;
             // on crée l'événement reload pour réinitialiser toutes les sessions
             $event = new ReloadGameEvent() ;
             $this->get('event_dispatcher')->dispatch('game.reload', $event) ;
@@ -74,7 +76,7 @@ class ApiController extends Controller
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $this->debugSession("ApiController::reloadGrid") ;
+            $sessionMarker->logSession("ApiController::reloadGrid") ;
         
             return new JsonResponse($response) ;
 //        } else {
@@ -92,6 +94,7 @@ class ApiController extends Controller
     public function resetGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+        $sessionMarker = $this->get('sessionMarker') ;
             // on crée l'événement reload pour réinitialiser toutes les sessions
             $event = new ResetGameEvent() ;
             $this->get('event_dispatcher')->dispatch('game.reset', $event) ;
@@ -100,7 +103,7 @@ class ApiController extends Controller
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $this->debugSession("ApiController::resetGrid") ;
+            $sessionMarker->logSession("ApiController::resetGrid") ;
         
             return new JsonResponse($response) ;
 //        } else {
@@ -117,6 +120,7 @@ class ApiController extends Controller
     public function saveGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+        $sessionMarker = $this->get('sessionMarker') ;
             $sudokuJson = $request->getContent() ;
             $responseArray = JsonMapper::toArray($sudokuJson) ;
 
@@ -131,7 +135,7 @@ class ApiController extends Controller
             $string = SudokuFileMapper::mapToString($grid->getTiles()) ;
             $filesystem->dumpFile($path . '/datas/'.$grid->getSize().'/'.uniqid().'.php', $string) ;
             $session->set('grid', $grid) ;
-            $this->debugSession("ApiController::saveGrid") ;
+            $sessionMarker->logSession("ApiController::saveGrid") ;
             return new JsonResponse($sudokuJson) ;
 //        } else {
 //            return $this->render(
@@ -154,19 +158,5 @@ class ApiController extends Controller
         $array = include($file) ;
         
         return $array ;
-    }
-    
-    protected function debugSession($mark)
-    {
-        $session = $this->get('session') ;
-        $logger = $this->get('logger') ;
-        $grid = $session->get('grid') ;
-        $array = [
-            "size" => $grid->getSize(),
-            "solved" => $grid->isSolved(),
-            "remain" => $grid->getRemainingTiles(),
-            "tiles" => json_encode($grid->getTiles())
-        ] ;
-        $logger->debug($mark, $array) ;
     }
 }

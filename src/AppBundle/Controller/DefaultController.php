@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
 use AppBundle\Entity\Grid;
+use AppBundle\Entity\Values;
 use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -20,13 +21,16 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         $session = $this->get('session') ;
+        $sessionMarker = $this->get('sessionMarker') ;
         $session->clear() ;
 
         $grid = new Grid() ;
+        $values = new Values() ;
         $session->set('grid', $grid) ;
+        $session->set('values', $values) ;
         $array = GridMapper::toArray($session->get('grid')) ;
 
-        $this->debugSession("DefaultController::indexAction") ;
+        $sessionMarker->logSession("DefaultController::indexAction") ;
         
         return $this->render(
                 'sudoku/index.html.twig',
@@ -38,6 +42,8 @@ class DefaultController extends Controller
      */
     public function gridAction(Request $request, $size=null)
     {
+        $sessionMarker = $this->get('sessionMarker') ;
+        
         $gridSize = new GridSize($size) ;
         
         $event = new ChooseGameEvent($gridSize) ;
@@ -46,25 +52,11 @@ class DefaultController extends Controller
         $session = $this->get('session') ;
         $grid = $session->get('grid') ;
         
-        $this->debugSession("DefaultController::gridAction") ;
+        $sessionMarker->logSession("DefaultController::gridAction") ;
         $array = GridMapper::toArray($grid) ;
         
         return $this->render(
                 'sudoku/grid.html.twig',
                 $array) ;
-    }
-    
-    protected function debugSession($mark)
-    {
-        $session = $this->get('session') ;
-        $logger = $this->get('logger') ;
-        $grid = $session->get('grid') ;
-        $array = [
-            "size" => $grid->getSize(),
-            "solved" => $grid->isSolved(),
-            "remain" => $grid->getRemainingTiles(),
-            "tiles" => json_encode($grid->getTiles())
-        ] ;
-        $logger->debug($mark, $array) ;
     }
 }
