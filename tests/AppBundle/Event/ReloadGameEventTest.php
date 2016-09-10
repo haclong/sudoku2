@@ -12,7 +12,11 @@ use AppBundle\Event\ReloadGameEvent;
 class ReloadGameEventTest extends \PHPUnit_Framework_TestCase  {
     public function testConstructor()
     {
-        $event = new ReloadGameEvent() ;
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+        $event = new ReloadGameEvent($grid) ;
         $this->assertEquals($event::NAME, 'game.reload') ;
+        $this->assertInstanceOf('AppBundle\Entity\Grid', $event->getGrid()) ;
     }
 }

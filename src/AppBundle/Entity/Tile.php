@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @author haclong
  */
-class Tile {
+class Tile implements \Serializable{
     /**
      * taille de la grille de sudoku
      * @var int
@@ -42,12 +42,12 @@ class Tile {
      */
     protected $region ;
     
-    /**
-     * id composé de {row index}.{col index}
-     * @var string
-     */
-    protected $id ;
-    
+//    /**
+//     * id composé de {row index}.{col index}
+//     * @var string
+//     */
+//    protected $id ;
+//    
     /**
      * tableau avec tous les index possible, les index éliminés et l'index final
      * @var array
@@ -101,7 +101,6 @@ class Tile {
         $this->row = $row;
         $this->col = $col;
         $this->region = RegionGetter::getRegion($row, $col, $size) ;
-        $this->id = $row.'.'.$col ;
         $this->solved = false ;
         $this->resetFigures() ;
     }
@@ -189,10 +188,6 @@ class Tile {
         return $this->solved ;
     }
     
-//    public function setSolved($bool) {
-//        $this->solved = $bool ;
-//    }
-//    
     public function getDefinitiveFigure() {
         if(isset($this->figures['definitive']))
         {
@@ -238,6 +233,30 @@ class Tile {
     }
     
     public function getId() {
-        return $this->id ;
+        return $this->row . '.' . $this->col ;
+    }
+    
+    public function serialize()
+    {
+//        return array('row', 'col', 'id', 'region', 'size', 'figures', 'solved') ;
+        return serialize([
+                    $this->row,
+                    $this->col,
+                    $this->figures,
+                    $this->size
+                ]) ;
+    }
+    
+    public function unserialize($data)
+    {
+        list(
+                $this->row,
+                $this->col,
+                $this->figures,
+                $this->size
+                ) = unserialize($data) ;
+        
+        $this->region = RegionGetter::getRegion($this->row, $this->col, $this->size) ;
+        $this->solved = isset($this->figures['definitive']) ? true : false ;
     }
 }

@@ -11,7 +11,26 @@ services:
         class: AppBundle\Entity\Values
     gridEntity:
         class: AppBundle\Entity\Grid
-        
+    tilesEntity:
+        class: AppBundle\Entity\Tiles
+        arguments: ['@tilesetEntity', '@tileEntity']
+
+    eventTileLastPossibilityEntity:
+        class: AppBundle\Entity\Event\TileLastPossibility
+    eventTileSetEntity:
+        class: AppBundle\Entity\Event\TileSet
+    tileEntity:
+        class: AppBundle\Entity\Tile
+        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent']
+    tilesetEntity:
+        class: AppBundle\Entity\Tiles\Tileset
+
+    deduceTileEvent:
+        class: AppBundle\Event\DeduceTileEvent
+        arguments: ['@eventTileLastPossibilityEntity']
+    setTileEvent:
+        class: AppBundle\Event\SetTileEvent
+        arguments: ['@eventTileSetEntity']
 #    sudokuSession:
 #        class: Symfony\Component\HttpFoundation\Session\Session
 #        factory: [AppBundle\Utils\SudokuSessionFactory, create]
@@ -33,6 +52,11 @@ services:
         arguments: ['@session']
         tags:
             - { name: kernel.event_subscriber } 
+    tilesAggregate:
+        class: AppBundle\Subscriber\TilesAggregate
+        arguments: ['@session']
+        tags: 
+            - { name: kernel.event_subscriber }
 
     app.twig_extension:
         class: AppBundle\Utils\TwigExtension

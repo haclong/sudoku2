@@ -144,11 +144,26 @@ class TileTest  extends \PHPUnit_Framework_TestCase
         $this->tile->initialize(3, 4, 4) ;
         $this->tile->set(3) ;
     }
-//    
-//    public function testSetSolved() {
-//        $this->tile->initialize(3, 4, 4) ;
-//        $this->assertFalse($this->tile->isSolved()) ;
-//        $this->tile->setSolved(true) ;
-//        $this->assertTrue($this->tile->isSolved()) ;
-//    }
+    
+    public function testSerializeDefinitiveFigure()
+    {
+        $this->tile->initialize(3, 4, 4) ;
+        $figures = $this->tile->getPossibilitiesFigure() ;
+
+        $this->tile->set(3) ;
+        $serialized = serialize($this->tile) ;
+        $unserialized = unserialize($serialized) ;
+        $this->assertEquals(3, $unserialized->getDefinitiveFigure()) ;
+        $this->assertTrue($unserialized->isSolved()) ;
+        $this->assertEquals(4, $unserialized->getRegion()) ;
+    }
+    
+    public function testSerializePossibilitiesFigure()
+    {
+        $this->tile->initialize(3, 4, 4) ;
+        $serialized = serialize($this->tile) ;
+        $unserialized = unserialize($serialized) ;
+        $this->assertEquals(4, count($unserialized->getPossibilitiesFigure())) ;
+        $this->assertFalse($unserialized->isSolved()) ;
+    }
 }

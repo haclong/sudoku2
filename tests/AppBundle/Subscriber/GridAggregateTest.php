@@ -130,6 +130,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     public function testOnReloadGame()
     {
         $event = $this->getMockBuilder('AppBundle\Event\ReloadGameEvent')
+                                    ->disableOriginalConstructor()
                                     ->getMock() ;
         
         $this->grid->expects($this->once())

@@ -19,11 +19,13 @@ class SessionMarker {
     public function logSession($mark)
     {
         $grid = $this->session->get('grid') ;
+        $values = $this->session->get('values') ;
         $array = [
             "size" => $grid->getSize(),
             "solved" => $grid->isSolved(),
             "remain" => $grid->getRemainingTiles(),
-            "tiles" => json_encode($grid->getTiles())
+            "tiles" => json_encode($grid->getTiles()),
+            "values" => json_encode($values->getValues())
         ] ;
         $this->logger->debug($mark, $array) ;
     }
