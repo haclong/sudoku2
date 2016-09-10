@@ -11,7 +11,11 @@ class DefaultControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->session = $this->client->getContainer()->get('session') ;
         $this->grid = $this->client->getContainer()->get('gridEntity') ;
+        $this->values = $this->client->getContainer()->get('valuesEntity') ;
+        $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
         $this->session->set('grid', $this->grid) ;
+        $this->session->set('values', $this->values) ;
+        $this->session->set('tiles', $this->tiles) ;
     }
     
     protected function tearDown()
@@ -19,6 +23,8 @@ class DefaultControllerTest extends WebTestCase
         $this->client = null ;
         $this->session = null ;
         $this->grid = null ;
+        $this->values = null ;
+        $this->tiles = null ;
     }
     /**
      * @runInSeparateProcess

@@ -102,6 +102,7 @@ class ApiControllerTest extends WebTestCase
         $grid = $client->getContainer()->get('gridEntity') ;
         $grid->init(9) ;
         $grid->setTiles($array) ;
+        $values = $client->getContainer()->get('valuesEntity') ;
         
 //        $gridToJson = GridMapper::toArray($grid) ;
 //        $expectedTiles = $gridToJson['tiles'] ;
@@ -109,6 +110,7 @@ class ApiControllerTest extends WebTestCase
         // Remplir la session avec la grille existante
         $session = $client->getContainer()->get('session') ;
         $session->set('grid', $grid) ;
+        $session->set('values', $values) ;
 
         $crawler = $client->request('GET', '/api/grid/reload');
         

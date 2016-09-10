@@ -2,6 +2,7 @@
 
 namespace AppBundle\Event;
 
+use AppBundle\Entity\Grid;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -11,4 +12,15 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class ReloadGameEvent extends Event {
     const NAME = 'game.reload' ;
+    protected $grid ;
+    
+    public function __construct(Grid $grid)
+    {
+        $this->grid = $grid ;
+    }
+    
+    public function getGrid()
+    {
+        return $this->grid ;
+    }
 }

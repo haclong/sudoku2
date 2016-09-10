@@ -33,19 +33,19 @@ class ApiController extends Controller
         $sessionMarker = $this->get('sessionMarker') ;
             $gridSize = $request->get('size') ;
 
-            // on récupère une grille dans datas/
+            // on choisit une grille à afficher
+            // les grilles sont stockées dans datas/
             $loadedTiles = $this->pickAGrid($gridSize) ;
             
+            // on charge la grille dans l'objet Grid
             $loadedGrid = new TilesLoaded($gridSize, $loadedTiles) ;
             $sessionMarker->logSession("ApiController::loadGrid::pre") ;
 
-//            $grid = $session->get('grid') ;
-//            $grid->setTiles($aGrid) ;
-////            $session->set('grid', $grid) ;
-                    
+            // on déclenche l'événement avec la grille à résoudre
             $event = new LoadGameEvent($loadedGrid) ;
             $this->get('event_dispatcher')->dispatch('game.load', $event) ;
-           
+
+            // on récupère la grille en session
             $session = $this->get('session') ;
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
@@ -67,13 +67,17 @@ class ApiController extends Controller
     public function reloadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
-        $sessionMarker = $this->get('sessionMarker') ;
+            $sessionMarker = $this->get('sessionMarker') ;
+            $session = $this->get('session') ;
+            
+            // on récupèr l'objet grid en session pour envoyer les infos aux autres objets
+            $grid = $session->get('grid') ;
+            
             // on crée l'événement reload pour réinitialiser toutes les sessions
-            $event = new ReloadGameEvent() ;
+            $event = new ReloadGameEvent($grid) ;
             $this->get('event_dispatcher')->dispatch('game.reload', $event) ;
 
-            // on récupère l'objet Grid qui est en session
-            $session = $this->get('session') ;
+            // on récupère l'objet Grid qui est en session (qui a été reloader)
             $grid = $session->get('grid') ;
             $response['grid'] = GridMapper::toArray($grid) ;
             $sessionMarker->logSession("ApiController::reloadGrid") ;

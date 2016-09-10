@@ -3,8 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
-use AppBundle\Entity\Grid;
-use AppBundle\Entity\Values;
 use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,10 +22,12 @@ class DefaultController extends Controller
         $sessionMarker = $this->get('sessionMarker') ;
         $session->clear() ;
 
-        $grid = new Grid() ;
-        $values = new Values() ;
+        $grid = $this->get('gridEntity') ;
+        $values = $this->get('valuesEntity') ;
+        $tiles = $this->get('tilesEntity') ;
         $session->set('grid', $grid) ;
         $session->set('values', $values) ;
+        $session->set('tiles', $tiles) ;
         $array = GridMapper::toArray($session->get('grid')) ;
 
         $sessionMarker->logSession("DefaultController::indexAction") ;
@@ -46,6 +46,8 @@ class DefaultController extends Controller
         
         $gridSize = new GridSize($size) ;
         
+        // déclencher l'événement game.choose
+        // on vient de choisir la taille de la grille de sudoku
         $event = new ChooseGameEvent($gridSize) ;
         $this->get('event_dispatcher')->dispatch('game.choose', $event) ;
 
