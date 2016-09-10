@@ -18,23 +18,24 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $session = $this->get('session') ;
+        $session = $this->get('sudokuSession') ;
         $sessionMarker = $this->get('sessionMarker') ;
         $session->clear() ;
 
-        $grid = $this->get('gridEntity') ;
-        $values = $this->get('valuesEntity') ;
-        $tiles = $this->get('tilesEntity') ;
-        $session->set('grid', $grid) ;
-        $session->set('values', $values) ;
-        $session->set('tiles', $tiles) ;
-        $array = GridMapper::toArray($session->get('grid')) ;
+////        $grid = $this->get('gridEntity') ;
+//        $values = $this->get('valuesEntity') ;
+//        $tiles = $this->get('tilesEntity') ;
+////        $session->set('grid', $grid) ;
+//        $session->set('values', $values) ;
+//        $session->set('tiles', $tiles) ;
+//        $mappedTiles = TilesMapper::toArray($session->get('tiles')) ;
+        $mappedTiles = GridMapper::toArray($session->getGrid()) ;
 
         $sessionMarker->logSession("DefaultController::indexAction") ;
         
         return $this->render(
                 'sudoku/index.html.twig',
-                $array) ;
+                $mappedTiles) ;
     }
 
     /**
@@ -43,6 +44,7 @@ class DefaultController extends Controller
     public function gridAction(Request $request, $size=null)
     {
         $sessionMarker = $this->get('sessionMarker') ;
+        $session = $this->get('sudokuSession') ;
         
         $gridSize = new GridSize($size) ;
         
@@ -51,14 +53,15 @@ class DefaultController extends Controller
         $event = new ChooseGameEvent($gridSize) ;
         $this->get('event_dispatcher')->dispatch('game.choose', $event) ;
 
-        $session = $this->get('session') ;
-        $grid = $session->get('grid') ;
+//        $tiles = $session->getTiles() ;
+        $grid = $session->getGrid() ;
         
         $sessionMarker->logSession("DefaultController::gridAction") ;
-        $array = GridMapper::toArray($grid) ;
+//        $mappedTiles = TilesMapper::toArray($session->get((tiles')) ;
+        $mappedTiles = GridMapper::toArray($grid) ;
         
         return $this->render(
                 'sudoku/grid.html.twig',
-                $array) ;
+                $mappedTiles) ;
     }
 }

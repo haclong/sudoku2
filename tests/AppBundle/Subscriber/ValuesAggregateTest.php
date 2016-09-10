@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Subscriber;
 
 use AppBundle\Subscriber\ValuesAggregate;
+use AppBundle\Utils\SudokuSession;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -21,12 +22,19 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $mockSessionStorage = new MockArraySessionStorage() ;
-        $this->session = new Session($mockSessionStorage) ;
+        $this->sess = new Session($mockSessionStorage) ;
         $this->values = $this->getMockBuilder('AppBundle\Entity\Values')
                      ->disableOriginalConstructor()
                      ->setMethods(array('setGridSize', 'reset'))
                      ->getMock() ;
-        $this->session->set('values', $this->values) ;
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+        $this->session = new SudokuSession($this->sess, $grid, $this->values, $tiles) ;
+        $this->session->setValues($this->values) ;
 //        $this->service = $this->getMockBuilder('AppBundle\Service\SudokuSessionService')
 //                              //->setConstructorArgs(array($trueSession))
 //                              //->disableOriginalConstructor()

@@ -5,8 +5,8 @@ namespace AppBundle\Subscriber;
 use AppBundle\Entity\Values;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Utils\SudokuSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Description of ValueAggregate
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class ValuesAggregate implements EventSubscriberInterface {
     protected $session ;
 
-    public function __construct(Session $sessionService) {
+    public function __construct(SudokuSession $sessionService) {
         $this->session = $sessionService ;
     }
 
@@ -28,16 +28,10 @@ class ValuesAggregate implements EventSubscriberInterface {
     }
 
     protected function getValuesFromSession() {
-        return $this->session->get('values') ;
+        return $this->session->getValues() ;
     }
     protected function storeValues(Values $values) {
-        $this->session->set('values', $values) ;
-    }
-    
-    public function onResetGame(ResetGameEvent $event) {
-        $values = $this->getValuesFromSession() ;
-        $values->reset() ;
-        $this->storeValues($values) ;
+        $this->session->setValues($values) ;
     }
     
     public function onLoadGame(LoadGameEvent $event) {
@@ -47,12 +41,17 @@ class ValuesAggregate implements EventSubscriberInterface {
         $values->setGridSize($tiles->getSize()) ;
         foreach($tiles->getTiles() as $row) 
         {
-            foreach($row as $col)
+            foreach($row as $value)
             {
-                $values->add($col) ;
+                $values->add($value) ;
             }
-            
         }
+        $this->storeValues($values) ;
+    }
+
+    public function onResetGame(ResetGameEvent $event) {
+        $values = $this->getValuesFromSession() ;
+        $values->reset() ;
         $this->storeValues($values) ;
     }
 }

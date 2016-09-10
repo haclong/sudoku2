@@ -3,6 +3,8 @@
 namespace Tests\AppBundle\Subscriber;
 
 use AppBundle\Subscriber\GridAggregate;
+use AppBundle\Utils\SudokuSession;
+use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -21,14 +23,22 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $mockSessionStorage = new MockArraySessionStorage() ;
-        $this->session = new Session($mockSessionStorage) ;
+        $this->sess = new Session($mockSessionStorage) ;
         $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->disableOriginalConstructor()
                      ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'reload'))
                      ->getMock() ;
         $this->grid->method('getSize')
                 ->willReturn(9) ;
-        $this->session->set('grid', $this->grid) ;
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+
+        $this->session = new SudokuSession($this->sess, $this->grid, $values, $tiles) ;
+        $this->session->setGrid($this->grid) ;
 //        $this->service = $this->getMockBuilder('AppBundle\Service\SudokuSessionService')
 //                              //->setConstructorArgs(array($trueSession))
 //                              //->disableOriginalConstructor()
@@ -42,7 +52,8 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     
     protected function tearDown()
     {
-//        $this->dispatcher = null ;
+//        $this->dispatcher = null 
+        $this->sess = null; 
         $this->session = null ;
         $this->grid = null ;
     }
@@ -102,7 +113,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
 
     public function testRuntimeExceptionExpected()
     {
-        $this->setExpectedException(\RuntimeException::class) ;
+        $this->setExpectedException(RuntimeException::class) ;
         $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
                         ->disableOriginalConstructor()
                         ->getMock() ;

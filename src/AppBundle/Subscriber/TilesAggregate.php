@@ -2,8 +2,9 @@
 
 namespace AppBundle\Subscriber;
 
+use AppBundle\Entity\Tiles;
+use AppBundle\Utils\SudokuSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Description of TilesAggregate
@@ -13,7 +14,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class TilesAggregate implements EventSubscriberInterface{
     protected $session ;
     
-    public function __construct(Session $session)
+    public function __construct(SudokuSession $session)
     {
         $this->session = $session ;
     }
@@ -25,11 +26,22 @@ class TilesAggregate implements EventSubscriberInterface{
     }
     
     protected function getTilesFromSession() {
-        return $this->session->get('tiles') ;
+        return $this->session->getTiles() ;
     }
     protected function storeTiles(Tiles $tiles) {
-        $this->session->set('tiles', $tiles) ;
+        $this->session->setTiles($tiles) ;
     }
+    
+//    public function onLoadGame(LoadGameEvent $event) {
+//        $grid = $this->getGridFromSession() ;
+//
+//        if($grid->getSize() != $event->getTiles()->getSize())
+//        {
+//            throw new RuntimeException('event grid size differs from session grid size') ;
+//        }
+//        $grid->setTiles($event->getTiles()->getTiles()) ;
+//        $this->storeGrid($grid) ;
+//    }
 }
 //<?php
 //
