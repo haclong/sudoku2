@@ -26,16 +26,19 @@ class RegionGetter {
     public static function getRegion($row, $col, $gridSize)
     {
 	$region = 0 ;
-	$sqrt = sqrt($gridSize) ;
-	
-	// Identify which part of the grid the row belong to
-        $row_region = floor(($row / $gridSize) * $sqrt) ;
-        
-        // Identify which part of the grid the column belongs to
-	$col_region = floor(($col / $gridSize) * $sqrt) ;
+        if($gridSize != 0)
+        {
+            $sqrt = sqrt($gridSize) ;
 
-        // Identify region number
-        $region = ($row_region * $sqrt) + $col_region ;
+            // Identify which part of the grid the row belong to
+            $row_region = floor(($row / $gridSize) * $sqrt) ;
+
+            // Identify which part of the grid the column belongs to
+            $col_region = floor(($col / $gridSize) * $sqrt) ;
+
+            // Identify region number
+            $region = ($row_region * $sqrt) + $col_region ;
+        }
 	return (int) $region ;
     }
 }
