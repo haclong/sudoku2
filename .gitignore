@@ -14,3 +14,5 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
+/datas/format
+/datas/references.php
