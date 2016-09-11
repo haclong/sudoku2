@@ -18,16 +18,16 @@ class EventDispatcherTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testStartGameSubscribersAdded()
+    public function testChooseGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ChooseGameEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(ChooseGameEvent::NAME, 2) ;
     }
     /**
      * @runInSeparateProcess
      */
     public function testLoadGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 2) ;
+        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 3) ;
     }
     
     /**
