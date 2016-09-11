@@ -16,7 +16,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @author haclong
  */
-class Tile implements \Serializable{
+//class Tile implements \Serializable{
+class Tile {
     /**
      * taille de la grille de sudoku
      * @var int
@@ -103,6 +104,7 @@ class Tile implements \Serializable{
         $this->region = RegionGetter::getRegion($row, $col, $size) ;
         $this->solved = false ;
         $this->resetFigures() ;
+        return $this ;
     }
     
     protected function resetFigures() {
@@ -174,7 +176,8 @@ class Tile implements \Serializable{
             $this->figures['discarded'][$value] = $value ;
         }
         $this->checkFiguresCount() ;
-        $this->setTileEvent->getTile()->set($this->row, $this->col, $this->region, $figure) ;
+        echo get_class($this->setTileEvent) ;
+//        $this->setTileEvent->getTile()->set($this->row, $this->col, $this->region, $figure) ;
         $this->dispatcher->dispatch('tile.set', $this->setTileEvent) ;
         $this->solved = true ;
     }
@@ -236,27 +239,40 @@ class Tile implements \Serializable{
         return $this->row . '.' . $this->col ;
     }
     
-    public function serialize()
-    {
-//        return array('row', 'col', 'id', 'region', 'size', 'figures', 'solved') ;
-        return serialize([
-                    $this->row,
-                    $this->col,
-                    $this->figures,
-                    $this->size
-                ]) ;
+    public function getValue() {
+        if($this->getDefinitiveFigure()) {
+            return $this->getDefinitiveFigure() ;
+        } else {
+            return "" ;
+        }
     }
     
-    public function unserialize($data)
+    public function __sleep()
     {
-        list(
-                $this->row,
-                $this->col,
-                $this->figures,
-                $this->size
-                ) = unserialize($data) ;
-        
-        $this->region = RegionGetter::getRegion($this->row, $this->col, $this->size) ;
-        $this->solved = isset($this->figures['definitive']) ? true : false ;
+        return array('row', 'col', 'id', 'region', 'size', 'figures', 'solved') ;
     }
+//    
+//    public function serialize()
+//    {
+//        return serialize([
+//                    $this->row,
+//                    $this->col,
+//                    $this->figures,
+//                    $this->size
+//                ]) ;
+//    }
+    
+
+//    public function unserialize($data)
+//    {
+////        $this->__construct($this->dispatcher, $this->setTileEvent, $this->deduceTileEvent) ;
+//        list(
+//                $this->row,
+//                $this->col,
+//                $this->figures,
+//                $this->size
+//                ) = unserialize($data) ;
+//        $this->region = RegionGetter::getRegion($this->row, $this->col, $this->size) ;
+//        $this->solved = isset($this->figures['definitive']) ? true : false ;
+//    }
 }

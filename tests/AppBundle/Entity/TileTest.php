@@ -63,6 +63,7 @@ class TileTest  extends \PHPUnit_Framework_TestCase
         $this->tile->initialize(3, 4, 4) ;
         $figures = $this->tile->getPossibilitiesFigure() ;
         $this->assertEquals(4, count($figures)) ;
+        $this->assertEquals("", $this->tile->getValue()) ;
     }
     
     public function testReset() {
@@ -79,6 +80,7 @@ class TileTest  extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->tile->getDefinitiveFigure()) ;
         $this->tile->set(3) ;
         $this->assertEquals($this->tile->getDefinitiveFigure(), 3) ;
+        $this->assertEquals(3, $this->tile->getValue()) ;
     }
     
     public function testDiscardImpossibleToDiscardException()

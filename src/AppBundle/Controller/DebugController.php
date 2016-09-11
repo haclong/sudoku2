@@ -26,6 +26,13 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
+        $tile = $this->get('tileEntity') ;
+        $serial = serialize($tile) ;
+        var_dump(unserialize($serial)) ;
+//        $tiles = $this->get('tilesEntity') ;
+//        $tiles->setTileset(4) ;
+//        $serialized = serialize($tiles) ;
+//        var_dump(unserialize($serialized)) ;
         return $this->render('sudoku/debug.html.twig', []);
     }
 }
