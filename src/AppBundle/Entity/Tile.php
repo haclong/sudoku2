@@ -2,21 +2,16 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Event\DeduceTileEvent;
-use AppBundle\Event\SetTileEvent;
 use AppBundle\Exception\AlreadyDiscardedException;
 use AppBundle\Exception\ImpossibleToDiscardException;
-use AppBundle\Exception\InvalidFigureCountException;
-use AppBundle\Exception\InvalidFigureException;
 use AppBundle\Utils\RegionGetter;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Description of Tile
  *
  * @author haclong
  */
-class Tile implements \Serializable{
+class Tile {
     /**
      * taille de la grille de sudoku
      * @var int
@@ -41,183 +36,99 @@ class Tile implements \Serializable{
      * @var int
      */
     protected $region ;
-    
-//    /**
-//     * id composé de {row index}.{col index}
-//     * @var string
-//     */
-//    protected $id ;
-//    
+
     /**
-     * tableau avec tous les index possible, les index éliminés et l'index final
+     * tableau avec tous les index possibles
      * @var array
      */
-    protected $figures = array() ;
+    protected $maybeValues = array() ;
     
     /**
-     * le gestionnaire d'événement
-     * nécessaire parce qu'on déclenche un événement chaque fois 
-     * que la case est trouvée
-     * @var EventDispatcherInterface
+     * tableau avec tous les index écartés
+     * @var array
      */
-    protected $dispatcher ;
+    protected $discardValues = array() ;
     
     /**
-     * flag pour savoir si la case est résolue (on a trouvé le chiffre)
-     * ou pas
-     * @var bool
+     * index final
+     * @var int
      */
-    protected $solved = false ;
+    protected $value = null ;
     
-    /**
-     * événement à déclencher quand une case a été trouvée
-     * @var TileSetEvent
-     */
-    protected $setTileEvent ;
-    
-    /**
-     * événement à déclencher quand il ne reste qu'une possibilité
-     * @var DeduceTileEvent
-     */
-    protected $deduceTileEvent ;
-    
-    /**
-     * 
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param SetTileEvent $setTileEvent
-     * @param deduceTileEvent $deduceTileEvent
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher, 
-                                SetTileEvent $setTileEvent,
-                                DeduceTileEvent $deduceTileEvent)
-    {
-        $this->dispatcher = $eventDispatcher ;
-        $this->setTileEvent = $setTileEvent ;
-        $this->deduceTileEvent = $deduceTileEvent ;
-    }
-            
     public function initialize($row, $col, $size) {
         $this->size = $size ; 
         $this->row = $row;
         $this->col = $col;
-        $this->region = RegionGetter::getRegion($row, $col, $size) ;
-        $this->solved = false ;
-        $this->resetFigures() ;
+        $this->resetValues() ;
+        return $this ;
     }
     
-    protected function resetFigures() {
-        $this->figures = array() ;
+    protected function resetValues() {
+        $this->discardValues = array() ;
+        $this->value = null ;
+        $this->solved = false ;
+        $this->maybeValues = array() ;
+
         for($i=0; $i<$this->size ; $i++) 
         {
-            $this->figures['possibilities'][$i] = $i ;
+            $this->maybeValues[$i] = $i ;
         }
-    }
-    
-    protected function checkFiguresCount() {
-        $i = 0 ;
-        
-        $i += count($this->getPossibilitiesFigure()) ;
-        
-        $i += count($this->getDiscardedFigure()) ;
-        
-        if(!$i == $this->size) {
-            throw new InvalidFigureCountException() ;
-        }
-    }
-    
-    protected function checkOnePossibilityLast() {
-        if(count($this->getPossibilitiesFigure()) == 1)
-        {
-            $this->deduceTileEvent->getTile()->set($this->row, $this->col, $this->region, current($this->figures['possibilities'])) ;
-            $this->dispatcher->dispatch('tile.lastPossibility', $this->deduceTileEvent) ;
-        }
-    }
-    
-    protected function checkTile() {
-        $this->checkFiguresCount() ;
-        $this->checkOnePossibilityLast() ;
     }
     
     public function discard($figure) {
-        if($figure >= $this->size) {
-            throw new InvalidFigureException() ;
-        }
-
-        if(isset($this->figures['definitive']) && $this->figures['definitive'] == $figure)
-        {
+        if(!is_null($this->value) && $this->value == $figure) {
             throw new ImpossibleToDiscardException() ;
         }
         
-        if(in_array($figure, $this->getPossibilitiesFigure())) 
-        {
-            unset($this->figures['possibilities'][$figure]) ;
-            $this->figures['discarded'][$figure] = $figure ;
-        }
-        
-        $this->checkTile() ;
-//
-//        if($this->isOnePossibilityLast()) {
-//            $this->set(current($this->figures['possibilities'])) ;
-//        }
+        unset($this->maybeValues[$figure]) ;
+        $this->discardValues[$figure] = $figure ;
     }
     
     public function set($figure) {
-        if(in_array($figure, $this->getDiscardedFigure())) {
+        if(in_array($figure, $this->discardValues)) {
             throw new AlreadyDiscardedException() ;
         }
-        $this->figures['definitive'] = $figure ;
-        unset($this->figures['possibilities'][$figure]) ;
+        $this->value = $figure ;
+        unset($this->maybeValues[$figure]) ;
 
-        foreach($this->getPossibilitiesFigure() as $value) 
+        foreach($this->maybeValues as $value) 
         {
-            unset($this->figures['possibilities'][$value]) ;
-            $this->figures['discarded'][$value] = $value ;
+            unset($this->maybeValues[$value]) ;
+            $this->discardValues[$value] = $value ;
         }
-        $this->checkFiguresCount() ;
-        $this->setTileEvent->getTile()->set($this->row, $this->col, $this->region, $figure) ;
-        $this->dispatcher->dispatch('tile.set', $this->setTileEvent) ;
         $this->solved = true ;
     }
     
     public function reset() {
-        $this->resetFigures() ;
-        $this->solved = false ;
+        $this->resetValues() ;
     }
     
     public function isSolved() {
         return $this->solved ;
     }
-    
-    public function getDefinitiveFigure() {
-        if(isset($this->figures['definitive']))
+
+    public function getMaybeValues() {
+        if(!isset($this->maybeValues))
         {
-            return $this->figures['definitive'] ;
+            $this->maybeValues = array() ;
         }
-        return false ;
-    }
-    
-    public function getSize() {
-        return $this->size;
+        return $this->maybeValues ;
     }
 
-//    public function getFigures() {
-//        return $this->figures;
-//    }
-//    
-    public function getPossibilitiesFigure() {
-        if(!isset($this->figures['possibilities']))
+    public function getDiscardValues() {
+        if(!isset($this->discardValues))
         {
-            $this->figures['possibilities'] = array() ;
+            $this->discardValues = array() ;
         }
-        return $this->figures['possibilities'] ;
+        return $this->discardValues ;
     }
-
-    public function getDiscardedFigure() {
-        if(!isset($this->figures['discarded']))
-        {
-            $this->figures['discarded'] = array() ;
+    
+    public function getValue() {
+        if(!is_null($this->value)) {
+            return $this->value ;
+        } else {
+            return null ;
         }
-        return $this->figures['discarded'] ;
     }
 
     public function getRow() {
@@ -227,36 +138,16 @@ class Tile implements \Serializable{
     public function getCol() {
         return $this->col;
     }
+    
+    public function getSize() {
+        return $this->size;
+    }
 
     public function getRegion() {
-        return $this->region;
+        return RegionGetter::getRegion($this->getRow(), $this->getCol(), $this->getSize()) ;
     }
     
     public function getId() {
         return $this->row . '.' . $this->col ;
-    }
-    
-    public function serialize()
-    {
-//        return array('row', 'col', 'id', 'region', 'size', 'figures', 'solved') ;
-        return serialize([
-                    $this->row,
-                    $this->col,
-                    $this->figures,
-                    $this->size
-                ]) ;
-    }
-    
-    public function unserialize($data)
-    {
-        list(
-                $this->row,
-                $this->col,
-                $this->figures,
-                $this->size
-                ) = unserialize($data) ;
-        
-        $this->region = RegionGetter::getRegion($this->row, $this->col, $this->size) ;
-        $this->solved = isset($this->figures['definitive']) ? true : false ;
     }
 }

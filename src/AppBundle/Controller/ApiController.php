@@ -30,7 +30,9 @@ class ApiController extends Controller
     public function loadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
-        $sessionMarker = $this->get('sessionMarker') ;
+            $sessionMarker = $this->get('sessionMarker') ;
+            $session = $this->get('sudokuSession') ;
+
             $gridSize = $request->get('size') ;
 
             // on choisit une grille à afficher
@@ -46,8 +48,7 @@ class ApiController extends Controller
             $this->get('event_dispatcher')->dispatch('game.load', $event) ;
 
             // on récupère la grille en session
-            $session = $this->get('session') ;
-            $grid = $session->get('grid') ;
+            $grid = $session->getGrid() ;
             $response['grid'] = GridMapper::toArray($grid) ;
             $sessionMarker->logSession("ApiController::loadGrid::post") ;
             
@@ -68,18 +69,14 @@ class ApiController extends Controller
     {
 //        if($request->isXmlHttpRequest()) {
             $sessionMarker = $this->get('sessionMarker') ;
-            $session = $this->get('session') ;
+            $session = $this->get('sudokuSession') ;
             
-            // on récupèr l'objet grid en session pour envoyer les infos aux autres objets
-            $grid = $session->get('grid') ;
-            
-            // on crée l'événement reload pour réinitialiser toutes les sessions
-            $event = new ReloadGameEvent($grid) ;
+            // on crée l(événement reload pour réinitialiser toutes les sessions
+            $event = new ReloadGameEvent($session->getGrid()) ;
             $this->get('event_dispatcher')->dispatch('game.reload', $event) ;
 
             // on récupère l'objet Grid qui est en session (qui a été reloader)
-            $grid = $session->get('grid') ;
-            $response['grid'] = GridMapper::toArray($grid) ;
+            $response['grid'] = GridMapper::toArray($session->getGrid()) ;
             $sessionMarker->logSession("ApiController::reloadGrid") ;
         
             return new JsonResponse($response) ;
@@ -98,15 +95,14 @@ class ApiController extends Controller
     public function resetGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
-        $sessionMarker = $this->get('sessionMarker') ;
+            $sessionMarker = $this->get('sessionMarker') ;
+            $session = $this->get('sudokuSession') ;
             // on crée l'événement reload pour réinitialiser toutes les sessions
             $event = new ResetGameEvent() ;
             $this->get('event_dispatcher')->dispatch('game.reset', $event) ;
 
             // on récupère l'objet Grid qui est en session
-            $session = $this->get('session') ;
-            $grid = $session->get('grid') ;
-            $response['grid'] = GridMapper::toArray($grid) ;
+            $response['grid'] = GridMapper::toArray($session->getGrid()) ;
             $sessionMarker->logSession("ApiController::resetGrid") ;
         
             return new JsonResponse($response) ;
@@ -124,12 +120,12 @@ class ApiController extends Controller
     public function saveGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
-        $sessionMarker = $this->get('sessionMarker') ;
+            $sessionMarker = $this->get('sessionMarker') ;
+            $session = $this->get('sudokuSession') ;
             $sudokuJson = $request->getContent() ;
             $responseArray = JsonMapper::toArray($sudokuJson) ;
 
-            $session = $this->get('session') ;
-            $grid = $session->get('grid') ;
+            $grid = $session->getGrid() ;
             $grid->reset() ;
             $grid->init($responseArray['size']) ;
             $grid->setTiles($responseArray['tiles']) ;
@@ -138,7 +134,7 @@ class ApiController extends Controller
             $path = realpath($this->getParameter('kernel.root_dir').'/..') ;
             $string = SudokuFileMapper::mapToString($grid->getTiles()) ;
             $filesystem->dumpFile($path . '/datas/'.$grid->getSize().'/'.uniqid().'.php', $string) ;
-            $session->set('grid', $grid) ;
+            $session->setGrid($grid) ;
             $sessionMarker->logSession("ApiController::saveGrid") ;
             return new JsonResponse($sudokuJson) ;
 //        } else {

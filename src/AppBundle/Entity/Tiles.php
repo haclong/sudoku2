@@ -10,6 +10,10 @@ use AppBundle\Entity\Tiles\Tileset;
  * @author haclong
  */
 class Tiles {
+    protected $tileset ;
+    protected $tile ;
+    protected $size ;
+
     public function __construct(Tileset $tileset, Tile $tile)
     {
         $this->tileset = $tileset ;
@@ -26,7 +30,13 @@ class Tiles {
                 $this->tileset->offsetSet($row.'.'.$col, $tile->initialize($row, $col, $size)) ;
             }
         }
+        $this->size = $size ;
         return $this ;
+    }
+    
+    public function getSize()
+    {
+        return $this->size ;
     }
     
     public function getTileset()
@@ -36,14 +46,21 @@ class Tiles {
     
     public function getTile($row, $col)
     {
-        return $this->tileset->offsetGet($row, $col) ;
+        return $this->tileset->offsetGet($row.'.'.$col) ;
     }
     
-    public function setTile($row, $col, $figure)
+    public function setTiles($grid)
     {
-        $tile = $this->getTile($row, $col) ;
-        $tile->set($figure) ;
-        return $this ;
+        foreach($grid as $row => $cols)
+        {
+            // ATTENTION : $value = $valuesEntity index
+            foreach($cols as $col => $value)
+            {
+                $tile = $this->getTile(0, 0) ;
+                $tile->set($value) ;
+            }
+            
+        }
     }
 
     public function reset() 
@@ -62,8 +79,8 @@ class Tiles {
         return $this->tileset->exchangeArray(array()) ;
     }
     
-    protected function reloadTileset()
+    protected function reloadTileset($grid)
     {
-        $this->setTileset(9) ;
+        $this->setTiles($grid) ;
     }
 }

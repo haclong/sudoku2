@@ -21,7 +21,6 @@ services:
         class: AppBundle\Entity\Event\TileSet
     tileEntity:
         class: AppBundle\Entity\Tile
-        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent']
     tilesetEntity:
         class: AppBundle\Entity\Tiles\Tileset
 
@@ -31,9 +30,13 @@ services:
     setTileEvent:
         class: AppBundle\Event\SetTileEvent
         arguments: ['@eventTileSetEntity']
-#    sudokuSession:
-#        class: Symfony\Component\HttpFoundation\Session\Session
-#        factory: [AppBundle\Utils\SudokuSessionFactory, create]
+    sudokuSession:
+        class: AppBundle\Utils\SudokuSession
+        arguments: ['@session', '@gridEntity', '@valuesEntity', '@tilesEntity']
+
+    tileService:
+        class: AppBundle\Service\TileService
+        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
 #    sudokuSessionService:
 #        class: AppBundle\Service\SudokuSessionService
 #        factory: [AppBundle\Service\SudokuSessionServiceFactory, create]
@@ -41,20 +44,20 @@ services:
 
     sessionMarker:
         class: AppBundle\Utils\SessionMarker
-        arguments: ['@session', '@logger']
+        arguments: ['@sudokuSession', '@logger']
     gridAggregate:
         class: AppBundle\Subscriber\GridAggregate
-        arguments: ['@session']
+        arguments: ['@sudokuSession']
         tags:
             - { name: kernel.event_subscriber } 
     valuesAggregate:
         class: AppBundle\Subscriber\ValuesAggregate
-        arguments: ['@session']
+        arguments: ['@sudokuSession']
         tags:
             - { name: kernel.event_subscriber } 
     tilesAggregate:
         class: AppBundle\Subscriber\TilesAggregate
-        arguments: ['@session']
+        arguments: ['@sudokuSession']
         tags: 
             - { name: kernel.event_subscriber }
 

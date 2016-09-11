@@ -4,13 +4,12 @@ namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Grid;
 use AppBundle\Event\ChooseGameEvent;
-use AppBundle\Event\ResetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
-use AppBundle\Event\StartGameEvent;
+use AppBundle\Event\ResetGameEvent;
+use AppBundle\Utils\SudokuSession;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 
 /**
@@ -21,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class GridAggregate implements EventSubscriberInterface {
     protected $session ;
     
-    public function __construct(Session $sessionService) {
+    public function __construct(SudokuSession $sessionService) {
         $this->session = $sessionService ;
     }
     
@@ -34,12 +33,12 @@ class GridAggregate implements EventSubscriberInterface {
             ResetGameEvent::NAME => 'onResetGame',
         ) ;
     }
-    
+
     protected function getGridFromSession() {
-        return $this->session->get('grid') ;
+        return $this->session->getGrid() ;
     }
     protected function storeGrid(Grid $grid) {
-        $this->session->set('grid', $grid) ;
+        $this->session->setGrid($grid) ;
     }
     
     public function onChooseGame(ChooseGameEvent $event) {
