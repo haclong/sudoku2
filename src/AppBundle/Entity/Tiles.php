@@ -12,6 +12,7 @@ use AppBundle\Entity\Tiles\Tileset;
 class Tiles {
     protected $tileset ;
     protected $tile ;
+    protected $size ;
 
     public function __construct(Tileset $tileset, Tile $tile)
     {
@@ -29,7 +30,13 @@ class Tiles {
                 $this->tileset->offsetSet($row.'.'.$col, $tile->initialize($row, $col, $size)) ;
             }
         }
+        $this->size = $size ;
         return $this ;
+    }
+    
+    public function getSize()
+    {
+        return $this->size ;
     }
     
     public function getTileset()

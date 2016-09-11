@@ -21,7 +21,6 @@ services:
         class: AppBundle\Entity\Event\TileSet
     tileEntity:
         class: AppBundle\Entity\Tile
-        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent']
     tilesetEntity:
         class: AppBundle\Entity\Tiles\Tileset
 
@@ -34,6 +33,10 @@ services:
     sudokuSession:
         class: AppBundle\Utils\SudokuSession
         arguments: ['@session', '@gridEntity', '@valuesEntity', '@tilesEntity']
+
+    tileService:
+        class: AppBundle\Service\TileService
+        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
 #    sudokuSessionService:
 #        class: AppBundle\Service\SudokuSessionService
 #        factory: [AppBundle\Service\SudokuSessionServiceFactory, create]

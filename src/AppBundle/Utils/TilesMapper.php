@@ -2,6 +2,8 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Tiles;
+
 /**
  * Description of TilesMapper
  *
@@ -23,7 +25,7 @@ class TilesMapper {
             $tileset[] = array('id' => 't.'.$tile->getRow().'.'.$tile->getCol(), 'value' => $tile->getValue()) ;
         }
         $array['tiles'] = $tileset ;
-        return array() ;
+        return $array ;
     }
 }
         

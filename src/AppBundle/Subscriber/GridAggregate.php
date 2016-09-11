@@ -51,10 +51,10 @@ class GridAggregate implements EventSubscriberInterface {
     public function onLoadGame(LoadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
 
-//        if($grid->getSize() != $event->getTiles()->getSize())
-//        {
-//            throw new RuntimeException('event grid size differs from session grid size') ;
-//        }
+        if($grid->getSize() != $event->getTiles()->getSize())
+        {
+            throw new RuntimeException('event grid size differs from session grid size') ;
+        }
         $grid->setTiles($event->getTiles()->getTiles()) ;
         $this->storeGrid($grid) ;
     }

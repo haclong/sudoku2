@@ -43,11 +43,11 @@ class TilesAggregate implements EventSubscriberInterface{
     }
     
     public function onLoadGame(LoadGameEvent $event) {
-        $tiles = $this->getTilesFromSession() ;
-
-        $mappedTiles = $this->mapTiles($event->getTiles()->getTiles()) ;
-        $tiles->setTiles($mappedTiles) ;
-        $this->storeTiles($tiles) ;
+//        $tiles = $this->getTilesFromSession() ;
+//
+//        $mappedTiles = $this->mapTiles($event->getTiles()->getTiles()) ;
+//        $tiles->setTiles($mappedTiles) ;
+//        $this->storeTiles($tiles) ;
     }
     
     protected function mapTiles($tiles)
