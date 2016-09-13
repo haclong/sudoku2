@@ -50,7 +50,7 @@ class ApiController extends Controller
             // on récupère la grille en session
             $grid = $session->getGrid() ;
             $response['grid'] = GridMapper::toArray($grid) ;
-            $sessionMarker->logSession("ApiController::loadGrid::post") ;
+            $sessionMarker->logSession("ApiControllerTest::loadGrid::post") ;
             
             return new JsonResponse($response) ;
 //        } else {
