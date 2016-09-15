@@ -28,7 +28,7 @@ class DebugController  extends Controller {
     {
         $tile = $this->get('tileEntity') ;
         $serial = serialize($tile) ;
-        var_dump(unserialize($serial)) ;
+//        var_dump(unserialize($serial)) ;
 //        $tiles = $this->get('tilesEntity') ;
 //        $tiles->setTileset(4) ;
 //        $serialized = serialize($tiles) ;

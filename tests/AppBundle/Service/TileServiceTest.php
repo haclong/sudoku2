@@ -59,7 +59,8 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $tile->expects($this->once())
                 ->method('discard')
                 ->with($this->EqualTo(2)) ;
-        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent, $this->values) ;
+        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
+        $service->setValues($this->values) ;
         $service->discard($tile, 3) ;
     }
     
@@ -82,7 +83,8 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $this->dispatcher->expects($this->once())
                    ->method('dispatch')
                    ->with('tile.lastPossibility', $this->equalTo($this->lastPossibilityEvent));
-        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent, $this->values) ;
+        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
+        $service->setValues($this->values) ;
         $service->discard($tile, 3) ;
     }
     
@@ -105,7 +107,8 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $this->dispatcher->expects($this->once())
                    ->method('dispatch')
                    ->with('tile.set', $this->equalTo($this->tileSetEvent));
-        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent, $this->values) ;
+        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
+        $service->setValues($this->values) ;
         $service->set($tile, 3) ;
     }
     
@@ -121,7 +124,8 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $tile->method('getValue')
                 ->willReturn(2) ;
 
-        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent, $this->values) ;
+        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
+        $service->setValues($this->values) ;
         $service->set($tile, 3) ;
     }
 }

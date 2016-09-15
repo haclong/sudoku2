@@ -10,20 +10,20 @@ use AppBundle\Exception\InvalidFigureCountException;
  * @author haclong
  */
 class Values {
-    protected $gridSize ;
+    protected $size ;
     protected $values = array() ;
     
-    public function setGridSize($gridSize) {
-        $this->gridSize = $gridSize;
+    public function setSize($size) {
+        $this->size = $size;
     }
 
     public function add($value)
     {
         if(!in_array($value, $this->values))
         {
-            if(count($this->values) >= $this->gridSize)
+            if(count($this->values) >= $this->size)
             {
-                throw new InvalidFigureCountException('Maximum allowed figure number reached : ' .$this->gridSize) ;
+                throw new InvalidFigureCountException('Maximum allowed figure number reached : ' .$this->size) ;
             }
             $this->values[] = $value ;
         }    
@@ -33,9 +33,9 @@ class Values {
 //        }    
     }
     
-    public function getGridSize()
+    public function getSize()
     {
-        return $this->gridSize ;
+        return $this->size ;
     }
     
     public function getValues()
@@ -46,7 +46,7 @@ class Values {
     public function reset()
     {
         $this->values = array() ;
-        //$this->gridSize = null ;
+        //$this->size = null ;
     }
     
     public function getValueByKey($key)

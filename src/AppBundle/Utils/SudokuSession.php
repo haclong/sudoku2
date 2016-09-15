@@ -27,6 +27,15 @@ class SudokuSession {
     
     public function clear()
     {
+        if($this->session->has('grid')) {
+            $this->session->get('grid')->reset() ;
+        }
+        if($this->session->has('values')) {
+            $this->session->get('values')->reset() ;
+        }
+        if($this->session->has('tiles')) {
+            $this->session->get('tiles')->reset() ;
+        }
         $this->session->clear() ;
     }
     

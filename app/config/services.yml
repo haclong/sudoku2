@@ -57,7 +57,7 @@ services:
             - { name: kernel.event_subscriber } 
     tilesAggregate:
         class: AppBundle\Subscriber\TilesAggregate
-        arguments: ['@sudokuSession']
+        arguments: ['@sudokuSession', '@tileService']
         tags: 
             - { name: kernel.event_subscriber }
 

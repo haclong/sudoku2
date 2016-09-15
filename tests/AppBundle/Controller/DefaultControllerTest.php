@@ -9,13 +9,13 @@ class DefaultControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->client = static::createClient();
-        $this->session = $this->client->getContainer()->get('session') ;
+        $this->session = $this->client->getContainer()->get('sudokuSession') ;
         $this->grid = $this->client->getContainer()->get('gridEntity') ;
         $this->values = $this->client->getContainer()->get('valuesEntity') ;
         $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
-        $this->session->set('grid', $this->grid) ;
-        $this->session->set('values', $this->values) ;
-        $this->session->set('tiles', $this->tiles) ;
+        $this->session->setGrid($this->grid) ;
+        $this->session->setValues($this->values) ;
+        $this->session->setTiles($this->tiles) ;
     }
     
     protected function tearDown()
@@ -31,11 +31,35 @@ class DefaultControllerTest extends WebTestCase
      */
     public function testHomepage()
     {
-        $crawler = $this->client->request('GET', '/');
+        // on remplit grid et tiles
+        $this->session->getGrid()->init(9) ;
+        $this->session->getTiles()->setTileset(9) ;
         
+        // on vérifie que grid est rempli
+        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que values est vide
+        $this->assertNull($this->session->getValues()->getSize()) ;
+        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+        // on vérifie que tiles est rempli
+        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
+        
+        $crawler = $this->client->request('GET', '/');
+       
+        // on vérifie ce qu'il se passe à l'écran
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertContains('Choisir une taille de grille', $crawler->text());
-        $this->assertEquals($this->grid, $this->session->get('grid')) ;
+
+        // on vérifie que grid est vide
+        $this->assertNull($this->session->getGrid()->getSize()) ;
+        $this->assertEquals(-1, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que tiles est vide
+        $this->assertEquals(0, count($this->session->getTiles()->getTileset())) ;
+        $this->assertNull($this->session->getTiles()->getSize()) ;
+        // on vérifie que values est vide
+        $this->assertNull($this->session->getValues()->getSize()) ;
+        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
     }
 
     /**
@@ -43,14 +67,32 @@ class DefaultControllerTest extends WebTestCase
      */
     public function testGrid()
     {
+        $this->session->clear() ;
+        // on vérifie que grid est vide
+        $this->assertNull($this->session->getGrid()->getSize()) ;
+        $this->assertEquals(-1, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que values est vide
+        $this->assertNull($this->session->getValues()->getSize()) ;
+        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+        // on vérifie que tiles est vide
+        $this->assertEquals(0, count($this->session->getTiles()->getTileset())) ;
+        $this->assertNull($this->session->getTiles()->getSize()) ;
+
         $crawler = $this->client->request('GET', '/9');
 
+        // on vérifie ce qu'il se passe à l'écran
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertContains('Charger une grille', $crawler->filter('button#loadGridButton')->text());
         $this->assertContains('t.8.8', $crawler->filter('td input')->last()->attr('id')) ;
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $this->session->get('grid')) ;
-        $this->assertEquals(9, $this->session->get('grid')->getSize()) ;
-        $this->assertFalse($this->session->get('grid')->isSolved()) ;
-        $this->assertEquals(0, count($this->session->get('grid')->getTiles())) ;
+
+        // on vérifie que grid est rempli
+        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que values est rempli
+        $this->assertNull($this->session->getValues()->getSize()) ;
+        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+        // on vérifie que tiles est rempli
+        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
     }
 }

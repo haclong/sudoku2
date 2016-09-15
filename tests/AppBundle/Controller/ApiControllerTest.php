@@ -13,27 +13,54 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class ApiControllerTest extends WebTestCase
 {
+    protected function setUp()
+    {
+        $this->client = static::createClient();
+        $this->session = $this->client->getContainer()->get('sudokuSession') ;
+        $this->grid = $this->client->getContainer()->get('gridEntity') ;
+        $this->values = $this->client->getContainer()->get('valuesEntity') ;
+        $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
+        $this->session->setGrid($this->grid) ;
+        $this->session->setValues($this->values) ;
+        $this->session->setTiles($this->tiles) ;
+        $this->session->clear() ;
+    }
+    
+    protected function tearDown()
+    {
+        $this->client = null ;
+        $this->session = null ;
+        $this->grid = null ;
+        $this->values = null ;
+        $this->tiles = null ;
+    }
+
     /**
      * @runInSeparateProcess
      */
     public function testLoadGrid()
     {
-        $client = static::createClient();
-        
-        $grid = $client->getContainer()->get('gridEntity') ;
-        $grid->init(9) ;
-        $values = $client->getContainer()->get('valuesEntity') ;
-        
-        $session = $client->getContainer()->get('session') ;
-        $session->set('grid', $grid) ;
-        $session->set('values', $values) ;
+        // initialise grid et tiles
+        $this->grid->init(9) ;
+        $this->tiles->setTileset(9) ;
 
-        $crawler = $client->request('GET', '/api/grid/load?size=9');
-        
+        // on vérifie que grid est rempli
+        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que values est rempli
+        $this->assertNull($this->session->getValues()->getSize()) ;
+        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+        // on vérifie que tiles est rempli
+        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
+
+        $crawler = $this->client->request('GET', '/api/grid/load?size=9');
+
         // tests sur le retour en json
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
+
         $json = json_decode($response->getContent()) ;
         $this->assertInstanceOf('stdClass', $json) ;
         $this->assertObjectHasAttribute('grid', $json) ;
@@ -41,15 +68,19 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(9, $json->grid->size) ;
         $this->assertObjectHasAttribute('tiles', $json->grid) ;
         $this->assertGreaterThan(9, count($json->grid->tiles)) ;
-        
-        // tests sur les données de grid dans la session
-        $mappedJson['grid'] = GridMapper::toArray($session->get('grid')) ;
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $session->get('grid')) ;
-        $this->assertEquals(9, $session->get('grid')->getSize()) ;
-        $this->assertFalse($session->get('grid')->isSolved()) ;
-        $this->assertGreaterThan(0, count($session->get('grid')->getTiles())) ;
-        $this->assertLessThanOrEqual(9, count($session->get('grid')->getTiles())) ;
+
+        // on vérifie que grid est rempli
+        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que la grille stockée dans l'objet $grid est la même qui est dans le json
+        $mappedJson['grid'] = GridMapper::toArray($this->session->getGrid()) ;
         $this->assertEquals($response->getContent(), json_encode($mappedJson)) ;
+        // on vérifie que values est rempli
+        $this->assertEquals(9, $this->session->getValues()->getSize()) ;
+        $this->assertEquals(9, count($this->session->getValues()->getValues())) ;
+        // on vérifie que tiles est rempli
+        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
     }
 
     /**
@@ -57,8 +88,8 @@ class ApiControllerTest extends WebTestCase
      */
     public function testReloadGrid()
     {
-        $client = static::createClient();
-        
+        $service = $this->client->getContainer()->get('tileService') ;
+
         // Créer une grille remplie
         $array = array() ;
         $array[0][2] = 2 ;
@@ -99,36 +130,53 @@ class ApiControllerTest extends WebTestCase
         $array[8][3] = 3 ;
         $array[8][6] = 9 ;  
         
-        $grid = $client->getContainer()->get('gridEntity') ;
-        $grid->init(9) ;
-        $grid->setTiles($array) ;
-        $values = $client->getContainer()->get('valuesEntity') ;
+        // on initialize les objets en session
+        // initialise grid et tiles
+        $this->grid->init(9) ;
+        $this->tiles->setTileset(9) ;
+        $this->values->setSize(9) ;
+        $service->setValues($this->values) ;
+        $this->grid->setTiles($array) ;
+        foreach($array as $row => $cols) {
+            foreach($cols as $col => $value) {
+                $this->values->add($value) ;
+                $getTile = $this->tiles->getTile($row, $col) ;
+                $service->set($getTile, $value) ;
+            }
+        }
         
-//        $gridToJson = GridMapper::toArray($grid) ;
-//        $expectedTiles = $gridToJson['tiles'] ;
+        // TODO
+        // on remplit $tiles avec les cases jouées
 
-        // Remplir la session avec la grille existante
-        $session = $client->getContainer()->get('session') ;
-        $session->set('grid', $grid) ;
-        $session->set('values', $values) ;
-
-        $crawler = $client->request('GET', '/api/grid/reload');
+//var_dump($this->grid) ;
+//var_dump($this->values) ;
+//var_dump($this->tiles) ;
+        
+        // on recharge
+        $crawler = $this->client->request('GET', '/api/grid/reload');
         
         // tests sur le retour en json
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
+        $responseArray = JsonMapper::toArray($response->getContent()) ;
+
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
-        $responseArray = JsonMapper::toArray($response->getContent()) ;
-        
-        $this->assertTrue(is_array($responseArray)) ;
         $this->assertEquals(9, $responseArray['size']) ;
         $this->assertEquals($array, $responseArray['tiles']) ;
-        
-        // tests sur les données de grid dans la session
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $session->get('grid')) ;
-        $this->assertEquals(9, $session->get('grid')->getSize()) ;
-        $this->assertFalse($session->get('grid')->isSolved()) ;
-        $this->assertEquals($array, $session->get('grid')->getTiles()) ;
+
+        // TODO
+        // il faut vérifier que grid est revenu à l'initial
+        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        $this->assertEquals($array, $this->session->getGrid()->getTiles()) ;
+        // TODO
+        // il faut vérifier que $values n'a pas changé
+        $this->assertEquals(9, $this->session->getValues()->getSize()) ;
+        $this->assertEquals(9, count($this->session->getValues()->getValues())) ;
+        // TODO
+        // il faut vérifier que $tiles est revenu à l'initial = $grid
+        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
     }
 
     /**
@@ -136,7 +184,7 @@ class ApiControllerTest extends WebTestCase
      */
     public function testResetGrid()
     {
-        $client = static::createClient();
+        $service = $this->client->getContainer()->get('tileService') ;
         
         // Créer une grille remplie
         $array = array() ;
@@ -178,20 +226,26 @@ class ApiControllerTest extends WebTestCase
         $array[8][3] = 3 ;
         $array[8][6] = 9 ;  
         
-        $grid = $client->getContainer()->get('gridEntity') ;
-        $grid->init(9) ;
-        $grid->setTiles($array) ;
-        $values = $client->getContainer()->get('valuesEntity') ;
-        
-        // Remplir la session avec la grille existante
-        $session = $client->getContainer()->get('session') ;
-        $session->set('grid', $grid) ;
-        $session->set('values', $values) ;
+        // on initialize les objets en session
+        // initialise grid et tiles
+        $this->grid->init(9) ;
+        $this->tiles->setTileset(9) ;
+        $this->values->setSize(9) ;
+        $service->setValues($this->values) ;
+        $this->grid->setTiles($array) ;
+        foreach($array as $row => $cols) {
+            foreach($cols as $col => $value) {
+                $this->values->add($value) ;
+                $getTile = $this->tiles->getTile($row, $col) ;
+                $service->set($getTile, $value) ;
+            }
+        }
 
-        $crawler = $client->request('GET', '/api/grid/reset');
+        // on réinitialise
+        $crawler = $this->client->request('GET', '/api/grid/reset');
         
         // tests sur le retour en json
-        $response = $client->getResponse();
+        $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
         
@@ -200,11 +254,15 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(9, $responseArray['size']) ;
         $this->assertEquals(array(), $responseArray['tiles']) ;
         
-        // tests sur les données de grid dans la session
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $session->get('grid')) ;
-        $this->assertEquals(9, $session->get('grid')->getSize()) ;
-        $this->assertFalse($session->get('grid')->isSolved()) ;
-        $this->assertEquals(array(), $session->get('grid')->getTiles()) ;
+        // on vérifie que grid est vide mais on garde size
+        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        // on vérifie que values est vide mais on garde size
+        $this->assertEquals(9, $this->session->getValues()->getSize()) ;
+        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+        // on vérifie que tiles est vide mais on garde size
+        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
     }
 
     /**
@@ -219,6 +277,7 @@ class ApiControllerTest extends WebTestCase
         
         $crawler = $client->request('GET', '/api/grid/save');
         
-        
+        $this->assertTrue(true) ;
     }
+    
 }

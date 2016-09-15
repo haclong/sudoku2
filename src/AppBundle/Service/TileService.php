@@ -2,8 +2,6 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Event\TileLastPossibility;
-use AppBundle\Entity\Event\TileSet;
 use AppBundle\Entity\Values;
 use AppBundle\Event\DeduceTileEvent;
 use AppBundle\Event\SetTileEvent;
@@ -41,12 +39,15 @@ class TileService {
      */
     public function __construct(EventDispatcherInterface $eventDispatcher, 
                                 SetTileEvent $setTileEvent,
-                                DeduceTileEvent $deduceTileEvent,
-                                Values $values)
+                                DeduceTileEvent $deduceTileEvent)
     {
         $this->dispatcher = $eventDispatcher ;
         $this->setTileEvent = $setTileEvent ;
         $this->deduceTileEvent = $deduceTileEvent ;
+    }
+    
+    public function setValues(Values $values)
+    {
         $this->values = $values ;
     }
     
