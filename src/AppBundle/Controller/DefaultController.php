@@ -21,13 +21,12 @@ class DefaultController extends Controller
         $session = $this->get('sudokuSession') ;
         $sessionMarker = $this->get('sessionMarker') ;
         $session->clear() ;
-
-////        $grid = $this->get('gridEntity') ;
-//        $values = $this->get('valuesEntity') ;
-//        $tiles = $this->get('tilesEntity') ;
-////        $session->set('grid', $grid) ;
-//        $session->set('values', $values) ;
-//        $session->set('tiles', $tiles) ;
+        $grid = $this->get('gridEntity') ;
+        $values = $this->get('valuesEntity') ;
+        $tiles = $this->get('tilesEntity') ;
+        $session->setGrid($grid) ;
+        $session->setValues($values) ;
+        $session->setTiles($tiles) ;
 //        $mappedTiles = TilesMapper::toArray($session->get('tiles')) ;
         $mappedTiles = GridMapper::toArray($session->getGrid()) ;
 

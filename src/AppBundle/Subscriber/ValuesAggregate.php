@@ -38,7 +38,7 @@ class ValuesAggregate implements EventSubscriberInterface {
         $values = $this->getValuesFromSession() ;
         $tiles = $event->getTiles() ;
         
-        $values->setGridSize($tiles->getSize()) ;
+        $values->setSize($tiles->getSize()) ;
         foreach($tiles->getTiles() as $row) 
         {
             foreach($row as $value)

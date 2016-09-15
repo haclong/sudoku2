@@ -34,6 +34,10 @@ class Tiles {
         return $this ;
     }
     
+    public function resetSize()
+    {
+        $this->size = null ;
+    }
     public function getSize()
     {
         return $this->size ;
@@ -52,6 +56,7 @@ class Tiles {
     public function reset() 
     {
         $this->resetTileset() ;
+        $this->resetSize() ;
         return $this ;
     }
     

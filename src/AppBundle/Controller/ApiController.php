@@ -30,16 +30,18 @@ class ApiController extends Controller
     public function loadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+            // récupération des objets dans le container
             $sessionMarker = $this->get('sessionMarker') ;
             $session = $this->get('sudokuSession') ;
 
+            // récupération des paramètres dans la requete
             $gridSize = $request->get('size') ;
 
             // on choisit une grille à afficher
             // les grilles sont stockées dans datas/
             $loadedTiles = $this->pickAGrid($gridSize) ;
             
-            // on charge la grille dans l'objet Grid
+            // on charge la grille dans l'objet TilesLoaded
             $loadedGrid = new TilesLoaded($gridSize, $loadedTiles) ;
             $sessionMarker->logSession("ApiController::loadGrid::pre") ;
 
@@ -49,6 +51,8 @@ class ApiController extends Controller
 
             // on récupère la grille en session
             $grid = $session->getGrid() ;
+            
+            // on prépare le format de la grille à renvoyer en json
             $response['grid'] = GridMapper::toArray($grid) ;
             $sessionMarker->logSession("ApiControllerTest::loadGrid::post") ;
             
@@ -68,6 +72,7 @@ class ApiController extends Controller
     public function reloadGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+            // récupération des objets dans le container
             $sessionMarker = $this->get('sessionMarker') ;
             $session = $this->get('sudokuSession') ;
             
@@ -75,7 +80,8 @@ class ApiController extends Controller
             $event = new ReloadGameEvent($session->getGrid()) ;
             $this->get('event_dispatcher')->dispatch('game.reload', $event) ;
 
-            // on récupère l'objet Grid qui est en session (qui a été reloader)
+            // on récupère l'objet Grid qui est en session (qui a été reloadé)
+            // on prépare le format de la grille à renvoyer en json
             $response['grid'] = GridMapper::toArray($session->getGrid()) ;
             $sessionMarker->logSession("ApiController::reloadGrid") ;
         
@@ -95,6 +101,7 @@ class ApiController extends Controller
     public function resetGridAction(Request $request)
     {
 //        if($request->isXmlHttpRequest()) {
+            // récupération des objets dans le container
             $sessionMarker = $this->get('sessionMarker') ;
             $session = $this->get('sudokuSession') ;
             // on crée l'événement reload pour réinitialiser toutes les sessions
@@ -102,6 +109,7 @@ class ApiController extends Controller
             $this->get('event_dispatcher')->dispatch('game.reset', $event) ;
 
             // on récupère l'objet Grid qui est en session
+            // on prépare le format de la grille à renvoyer en json
             $response['grid'] = GridMapper::toArray($session->getGrid()) ;
             $sessionMarker->logSession("ApiController::resetGrid") ;
         
