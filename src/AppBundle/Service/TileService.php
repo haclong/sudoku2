@@ -99,7 +99,6 @@ class TileService {
             $this->deduceTileEvent->getTile()->set($tile->getRow(), $tile->getCol(), $tile->getRegion(), current($tile->getMaybeValues())) ;
 
             $this->dispatcher->dispatch('tile.lastPossibility', $this->deduceTileEvent) ;
-            
         }
     }
 }
