@@ -94,7 +94,7 @@ class TileService {
     
     protected function checkOnePossibilityLast($tile) 
     {
-        if(count($tile->getMaybeValues()) == 1)
+        if(count($tile->getMaybeValues()) == 1) 
         {
             $this->deduceTileEvent->getTile()->set($tile->getRow(), $tile->getCol(), $tile->getRegion(), current($tile->getMaybeValues())) ;
 
