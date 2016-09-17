@@ -31,7 +31,7 @@ class TileService {
     
     /**
      *
-     * @var Event
+     * @var DeduceTileEvent
      */
     protected $deduceTileEvent ;
     
