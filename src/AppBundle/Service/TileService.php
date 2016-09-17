@@ -37,7 +37,7 @@ class TileService {
     
     /**
      *
-     * @var type 
+     * @var Event
      */
     protected $setTileEvent ;
     
