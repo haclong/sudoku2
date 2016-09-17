@@ -29,7 +29,16 @@ class TileService {
      */
     protected $values ;
     
+    /**
+     *
+     * @var Event
+     */
     protected $deduceTileEvent ;
+    
+    /**
+     *
+     * @var type 
+     */
     protected $setTileEvent ;
     
     /**
