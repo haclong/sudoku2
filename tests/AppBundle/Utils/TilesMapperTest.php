@@ -15,13 +15,15 @@ use AppBundle\Utils\TilesMapper;
 class TilesMapperTest extends \PHPUnit_Framework_TestCase {
     public function testToArray()
     {
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                        ->getMock() ;
         $tileset = new Tileset() ;
         $tile = new Tile() ;
         $tiles = new Tiles($tileset, $tile) ;
         $tiles->setTileset(9) ;
 
         $mapper = new TilesMapper() ;
-        $array = $mapper->toArray($tiles) ;
+        $array = $mapper->toArray($tiles, $values) ;
         
         $this->assertEquals(81, count($array['tiles'])) ;
     }
