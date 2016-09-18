@@ -19,6 +19,17 @@ class Tiles {
         $this->tileset = $tileset ;
         $this->tile = $tile ;
     }
+
+    public function reset() 
+    {
+        $this->resetTileset() ;
+        $this->resetSize() ;
+        return $this ;
+    }
+    public function reload(Grid $grid)
+    {
+        $this->reloadTileset($grid->getSize()) ;
+    }
     
     public function setTileset($size)
     {
@@ -34,44 +45,29 @@ class Tiles {
         return $this ;
     }
     
-    public function resetSize()
-    {
-        $this->size = null ;
-    }
     public function getSize()
     {
         return $this->size ;
     }
-    
     public function getTileset()
     {
         return $this->tileset ;
     }
-    
     public function getTile($row, $col)
     {
         return $this->tileset->offsetGet($row.'.'.$col) ;
     }
-
-    public function reset() 
-    {
-        $this->resetTileset() ;
-        $this->resetSize() ;
-        return $this ;
-    }
     
-    public function reload()
+    protected function resetSize()
     {
-        $this->reloadTileset() ;
+        $this->size = null ;
     }
-    
     protected function resetTileset()
     {
         return $this->tileset->exchangeArray(array()) ;
     }
-    
     protected function reloadTileset($grid)
     {
-        $this->setTiles($grid) ;
+        $this->setTileset($grid) ;
     }
 }

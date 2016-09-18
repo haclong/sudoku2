@@ -34,20 +34,12 @@ class Grid {
         $this->resetTiles() ;
         $this->resetSize() ;
     }
-    
-    protected function setSize($size)
-    {
-        $this->size = $size ;
-    }
-    protected function resetSize()
-    {
-        $this->size = null ;
-    }
+
     public function getSize()
     {
         return $this->size ;
     }
-    
+
     public function setTiles(array $array)
     {
         $this->tiles = $array ;
@@ -56,22 +48,10 @@ class Grid {
     {
         return $this->tiles ;
     }
-    protected function resetTiles()
-    {
-        $this->tiles = [] ;
-    }
-    
+
     public function getRemainingTiles()
     {
         return $this->remainingTiles ;
-    }
-    protected function reloadRemainingTiles()
-    {
-        $this->remainingTiles = $this->size * $this->size ;
-    }
-    protected function resetRemainingTiles()
-    {
-        $this->remainingTiles = -1 ;
     }
     public function decreaseRemainingTiles()
     {
@@ -85,7 +65,6 @@ class Grid {
         }
         $this->remainingTiles += 1 ;
     }
-            
     public function isSolved()
     {
         if($this->remainingTiles == 0)
@@ -94,7 +73,30 @@ class Grid {
         }
         return false ;
     }
+    
+    protected function setSize($size)
+    {
+        $this->size = $size ;
+    }
 
+    protected function resetSize()
+    {
+        $this->size = null ;
+    }
+    protected function resetTiles()
+    {
+        $this->tiles = [] ;
+    }
+    protected function resetRemainingTiles()
+    {
+        $this->remainingTiles = -1 ;
+    }
+
+    protected function reloadRemainingTiles()
+    {
+        $this->remainingTiles = $this->size * $this->size ;
+    }
+            
     protected function validateGridSize($size)
     {
         $root = sqrt($size) ;

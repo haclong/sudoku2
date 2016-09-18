@@ -260,8 +260,8 @@ class ApiControllerTest extends WebTestCase
         // on vérifie que grid est vide mais on garde size
         $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
         $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
-        // on vérifie que values est vide mais on garde size
-        $this->assertEquals(9, $this->session->getValues()->getSize()) ;
+        // on vérifie que values est vide
+        $this->assertNull($this->session->getValues()->getSize()) ;
         $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
         // on vérifie que tiles est vide mais on garde size
         $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
