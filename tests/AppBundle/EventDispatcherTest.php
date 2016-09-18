@@ -44,7 +44,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testReloadGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ReloadGameEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(ReloadGameEvent::NAME, 2) ;
     }
     
     /**
@@ -52,7 +52,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testResetGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 2) ;
+        $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 3) ;
     }
 
     protected function AreSubscriberAddedByEvent($event, $expected)

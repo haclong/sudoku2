@@ -6,6 +6,8 @@ use AppBundle\Entity\Tiles;
 use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\ReloadGameEvent;
+use AppBundle\Event\ResetGameEvent;
 use AppBundle\Service\TileService;
 use AppBundle\Utils\SudokuSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -30,6 +32,8 @@ class TilesAggregate implements EventSubscriberInterface{
             InitGameEvent::NAME => 'onInitGame',
             ChooseGameEvent::NAME => 'onChooseGame',
             LoadGameEvent::NAME => array('onLoadGame', -500),
+            ReloadGameEvent::NAME => 'onReloadGame',
+            ResetGameEvent::NAME => 'onResetGame',
         ) ;
     }
     
@@ -66,6 +70,21 @@ class TilesAggregate implements EventSubscriberInterface{
                 $this->service->set($getTile, $value) ;
             }
         }
+        $this->storeTiles($tiles) ;
+    }
+    
+    public function onReloadGame(ReloadGameEvent $event) {
+        $tiles = $this->getTilesFromSession() ;
+        $grid = $event->getGrid() ;
+        $tiles->reload($grid) ;
+        $this->storeTiles($tiles) ;
+    }
+
+    public function onResetGame(ResetGameEvent $event) {
+        $tiles = $this->getTilesFromSession() ;
+        $size = $tiles->getSize() ;
+        $tiles->reset() ;
+        $tiles->setTileset($size) ;
         $this->storeTiles($tiles) ;
     }
 }

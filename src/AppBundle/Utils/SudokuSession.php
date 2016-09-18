@@ -52,6 +52,7 @@ class SudokuSession {
         {
             $this->grid->reset() ;
         }
+        $this->session->set('grid', $this->grid) ;
     }
 
     public function getValues()
@@ -76,6 +77,7 @@ class SudokuSession {
         {
             $this->values->reset() ;
         }
+        $this->session->set('values', $this->values) ;
     }
 
     public function getTiles()
@@ -100,5 +102,6 @@ class SudokuSession {
         {
             $this->tiles->reset() ;
         }
+        $this->session->set('tiles', $this->tiles) ;
     }
 }

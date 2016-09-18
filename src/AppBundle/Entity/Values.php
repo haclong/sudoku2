@@ -13,6 +13,12 @@ class Values {
     protected $size ;
     protected $values = array() ;
     
+    public function reset()
+    {
+        $this->values = array() ;
+        $this->size = null ;
+    }
+
     public function setSize($size) {
         $this->size = $size;
     }
@@ -41,12 +47,6 @@ class Values {
     public function getValues()
     {
         return $this->values ;
-    }
-    
-    public function reset()
-    {
-        $this->values = array() ;
-        //$this->size = null ;
     }
     
     public function getValueByKey($key)
