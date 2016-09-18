@@ -25,9 +25,9 @@ class SudokuSession {
     public function clear()
     {
         $this->session->clear() ;
-        $this->grid = null ;
-        $this->values = null ;
-        $this->tiles = null ;
+        $this->resetGrid() ;
+        $this->resetValues() ;
+        $this->resetTiles() ;
     }
     
     public function getGrid()
@@ -46,6 +46,13 @@ class SudokuSession {
         }
         $this->session->set('grid', $grid) ;
     }
+    protected function resetGrid()
+    {
+        if($this->session->has('grid'))
+        {
+            $this->grid->reset() ;
+        }
+    }
 
     public function getValues()
     {
@@ -63,6 +70,13 @@ class SudokuSession {
         }
         $this->session->set('values', $values) ;
     }
+    protected function resetValues()
+    {
+        if($this->session->has('values'))
+        {
+            $this->values->reset() ;
+        }
+    }
 
     public function getTiles()
     {
@@ -79,5 +93,12 @@ class SudokuSession {
             $this->tiles = $tiles ;
         }
         $this->session->set('tiles', $tiles) ;
+    }
+    protected function resetTiles()
+    {
+        if($this->session->has('tiles'))
+        {
+            $this->tiles->reset() ;
+        }
     }
 }

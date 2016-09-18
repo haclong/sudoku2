@@ -21,7 +21,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testInitGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(InitGameEvent::NAME, 2) ;
+        $this->AreSubscriberAddedByEvent(InitGameEvent::NAME, 3) ;
     }
 
     /**
