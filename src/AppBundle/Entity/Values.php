@@ -51,7 +51,10 @@ class Values {
     
     public function getValueByKey($key)
     {
-        return $this->values[$key] ;
+        if(array_key_exists($key, $this->values)) {
+            return $this->values[$key] ;
+        }
+        return null ;
     }
     
     public function getKeyByValue($value)

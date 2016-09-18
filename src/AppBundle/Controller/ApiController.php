@@ -3,12 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\TilesLoaded;
-use AppBundle\Event\ResetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
-use AppBundle\Utils\GridMapper;
+use AppBundle\Event\ResetGameEvent;
 use AppBundle\Utils\JsonMapper;
 use AppBundle\Utils\SudokuFileMapper;
+use AppBundle\Utils\TilesMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
@@ -49,11 +49,7 @@ class ApiController extends Controller
             $event = new LoadGameEvent($loadedGrid) ;
             $this->get('event_dispatcher')->dispatch('game.load', $event) ;
 
-            // on récupère la grille en session
-            $grid = $session->getGrid() ;
-            
-            // on prépare le format de la grille à renvoyer en json
-            $response['grid'] = GridMapper::toArray($grid) ;
+            $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
             $sessionMarker->logSession("ApiControllerTest::loadGrid::post") ;
             
             return new JsonResponse($response) ;
@@ -82,7 +78,7 @@ class ApiController extends Controller
 
             // on récupère l'objet Grid qui est en session (qui a été reloadé)
             // on prépare le format de la grille à renvoyer en json
-            $response['grid'] = GridMapper::toArray($session->getGrid()) ;
+            $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
             $sessionMarker->logSession("ApiController::reloadGrid") ;
         
             return new JsonResponse($response) ;
@@ -110,7 +106,7 @@ class ApiController extends Controller
 
             // on récupère l'objet Grid qui est en session
             // on prépare le format de la grille à renvoyer en json
-            $response['grid'] = GridMapper::toArray($session->getGrid()) ;
+            $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
             $sessionMarker->logSession("ApiController::resetGrid") ;
         
             return new JsonResponse($response) ;
