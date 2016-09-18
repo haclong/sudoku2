@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
 use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Utils\GridMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,12 +22,19 @@ class DefaultController extends Controller
         $session = $this->get('sudokuSession') ;
         $sessionMarker = $this->get('sessionMarker') ;
         $session->clear() ;
+
         $grid = $this->get('gridEntity') ;
         $values = $this->get('valuesEntity') ;
         $tiles = $this->get('tilesEntity') ;
-        $session->setGrid($grid) ;
-        $session->setValues($values) ;
-        $session->setTiles($tiles) ;
+//        $session->setGrid($grid) ;
+//        $session->setValues($values) ;
+//        $session->setTiles($tiles) ;
+
+        // déclencher l'événement game.init
+        // on initialise le jeu (on charge des entités vides dans la session)
+        $event = new InitGameEvent($grid, $values, $tiles) ;
+        $this->get('event_dispatcher')->dispatch('game.init', $event) ;
+
 //        $mappedTiles = TilesMapper::toArray($session->get('tiles')) ;
         $mappedTiles = GridMapper::toArray($session->getGrid()) ;
 

@@ -3,10 +3,7 @@
 namespace Tests\AppBundle\Subscriber;
 
 use AppBundle\Subscriber\ValuesAggregate;
-use AppBundle\Utils\SudokuSession;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 /**
  * Description of ValuesAggregateTest
@@ -15,48 +12,59 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
  */
 class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
 {
-    protected $dispatcher ;
     protected $session ;
     protected $values ;
 
     protected function setUp()
     {
-        $mockSessionStorage = new MockArraySessionStorage() ;
-        $this->sess = new Session($mockSessionStorage) ;
         $this->values = $this->getMockBuilder('AppBundle\Entity\Values')
                      ->disableOriginalConstructor()
-                     ->setMethods(array('setGridSize', 'reset', 'add'))
+                     ->setMethods(array('setSize', 'reset', 'add'))
                      ->getMock() ;
-        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+
+        $this->session = $this->getMockBuilder('AppBundle\Utils\SudokuSession')
                      ->disableOriginalConstructor()
                      ->getMock() ;
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
-                     ->disableOriginalConstructor()
-                     ->getMock() ;
-        $this->session = new SudokuSession($this->sess, $grid, $this->values, $tiles) ;
-        $this->session->setValues($this->values) ;
-//        $this->service = $this->getMockBuilder('AppBundle\Service\SudokuSessionService')
-//                              //->setConstructorArgs(array($trueSession))
-//                              //->disableOriginalConstructor()
-//                              ->getMock() ;
-//        $this->service->method('setSession')
-//                    ->with($this->equalTo($trueSession))
-//                    ->will($this->returnSelf());
-//        $this->service->method('getGridFromSession')
-//                    ->willReturn($this->grid) ;
     }
     
     protected function tearDown()
     {
-//        $this->dispatcher = null ;
         $this->session = null ;
         $this->values = null ;
+    }
+
+    public function testInitGameSubscriber()
+    {
+        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
+        $this->assertTrue($result) ;
     }
 
     public function testLoadGameSubscriber()
     {
         $result = $this->commonEventSubscriber('LoadGameEvent', 'onLoadGame') ;
         $this->assertTrue($result) ;
+    }
+
+    public function testOnInitGame()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                        ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                        ->disableOriginalConstructor()
+                        ->getMock() ;
+        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
+                                    ->setConstructorArgs(array($grid,$this->values, $tiles))
+                                    ->getMock() ;
+        $event->method('getValues')
+                ->willReturn($this->values) ;
+        
+        $this->session->expects($this->once()) 
+                      ->method('setValues') ;
+        $this->values->expects($this->once())
+                ->method('reset') ;
+       
+        $valuesAggregate = new ValuesAggregate($this->session) ;
+        $valuesAggregate->onInitGame($event) ;
     }
     
     public function testOnLoadGame()
@@ -99,21 +107,40 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
         $array[8][2] = 6 ;
         $array[8][3] = 3 ;
         $array[8][6] = 9 ;
+        
+        // counting array values
+        $i = 0 ;
+        foreach($array as $row)
+        {
+            foreach($row as $value)
+            {
+                $i++ ;
+            }
+        }
 
         $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
                         ->disableOriginalConstructor()
                         ->getMock() ;
-        $tiles->method('getSize')
-                ->willReturn(9) ;
         $tiles->method('getTiles')
                 ->willReturn($array) ;
         $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
                                     ->setConstructorArgs(array($tiles))
                                     ->getMock() ;
+
+        $this->session->method('getValues')
+                ->willReturn($this->values) ;
+
         
-        $event->expects($this->exactly(1))
+        $event->expects($this->once())
               ->method('getTiles')
               ->will($this->returnValue($tiles));
+        $this->values->expects($this->once())
+                ->method('setSize')
+                ->with($this->equalTo($tiles->getSize())) ;
+        $this->session->expects($this->once()) 
+                      ->method('setValues') ;
+        $this->values->expects($this->exactly($i))
+                ->method('add') ;
         
         $valuesAggregate = new ValuesAggregate($this->session) ;
         $valuesAggregate->onLoadGame($event) ;
@@ -130,8 +157,13 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder('AppBundle\Event\ResetGameEvent')
                                     ->getMock() ;
         
+        $this->session->method('getValues')
+                ->willReturn($this->values) ;
+
         $this->values->expects($this->once())
                 ->method('reset') ;
+        $this->session->expects($this->once())
+                ->method('setValues') ;
         
         $valuesAggregate = new ValuesAggregate($this->session) ;
         $valuesAggregate->onResetGame($event) ;
