@@ -4,6 +4,7 @@ namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Tiles;
 use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Service\TileService;
 use AppBundle\Utils\SudokuSession;
@@ -26,6 +27,7 @@ class TilesAggregate implements EventSubscriberInterface{
     
     public static function getSubscribedEvents() {
         return array(
+            InitGameEvent::NAME => 'onInitGame',
             ChooseGameEvent::NAME => 'onChooseGame',
             LoadGameEvent::NAME => array('onLoadGame', -500),
         ) ;
@@ -38,6 +40,12 @@ class TilesAggregate implements EventSubscriberInterface{
         $this->session->setTiles($tiles) ;
     }
     
+    public function onInitGame(InitGameEvent $event) {
+        $tiles = $event->getTiles() ;
+        $tiles->reset() ;
+        $this->session->setTiles($tiles) ;
+    }
+
     public function onChooseGame(ChooseGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;
         $tiles->reset() ;

@@ -20,10 +20,13 @@ class ApiControllerTest extends WebTestCase
         $this->grid = $this->client->getContainer()->get('gridEntity') ;
         $this->values = $this->client->getContainer()->get('valuesEntity') ;
         $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
+        $this->grid->reset() ;
+        $this->values->reset() ;
+        $this->tiles->reset() ;
+        $this->session->clear() ;
         $this->session->setGrid($this->grid) ;
         $this->session->setValues($this->values) ;
         $this->session->setTiles($this->tiles) ;
-        $this->session->clear() ;
     }
     
     protected function tearDown()

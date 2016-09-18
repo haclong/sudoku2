@@ -3,6 +3,7 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Values;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ResetGameEvent;
 use AppBundle\Utils\SudokuSession;
@@ -22,6 +23,7 @@ class ValuesAggregate implements EventSubscriberInterface {
 
     public static function getSubscribedEvents() {
         return array(
+            InitGameEvent::NAME => 'onInitGame',
             LoadGameEvent::NAME => array('onLoadGame', 2048),
             ResetGameEvent::NAME => 'onResetGame',
         ) ;
@@ -31,6 +33,12 @@ class ValuesAggregate implements EventSubscriberInterface {
         return $this->session->getValues() ;
     }
     protected function storeValues(Values $values) {
+        $this->session->setValues($values) ;
+    }
+    
+    public function onInitGame(InitGameEvent $event) {
+        $values = $event->getValues() ;
+        $values->reset() ;
         $this->session->setValues($values) ;
     }
     

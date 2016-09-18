@@ -3,6 +3,7 @@
 namespace Tests\AppBundle;
 
 use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
@@ -15,6 +16,14 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class EventDispatcherTest extends WebTestCase
 {
+    /**
+     * @runInSeparateProcess
+     */
+    public function testInitGameSubscribersAdded()
+    {
+        $this->AreSubscriberAddedByEvent(InitGameEvent::NAME, 3) ;
+    }
+
     /**
      * @runInSeparateProcess
      */

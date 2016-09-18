@@ -3,8 +3,6 @@
 namespace Tests\AppBundle\Utils;
 
 use AppBundle\Utils\SudokuSession;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 /**
  * Description of SudokuSessionTest
@@ -12,49 +10,150 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
  * @author haclong
  */
 class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
-    protected $session ;
-    protected $grid ;
-    protected $values ;
-    protected $tiles ;
-    
-    public function setUp()
-    {
-        $mockSessionStorage = new MockArraySessionStorage() ;
-        $this->session = new Session($mockSessionStorage) ;
-        $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                     ->disableOriginalConstructor()
-                     ->getMock() ;
-        $this->values = $this->getMockBuilder('AppBundle\Entity\Values')
-                     ->disableOriginalConstructor()
-                     ->getMock() ;
-        $this->tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
-                     ->disableOriginalConstructor()
-                     ->getMock() ;
-    }
-    
-    public function tearDown()
-    {
-        $this->session = null ;
-        $this->grid = null ;
-        $this->values = null ;
-        $this->tiles = null ;
-    }
-    
-    public function testConstructor()
-    {
-        $sudokuSession = new SudokuSession($this->session, $this->grid, $this->values, $this->tiles) ;
-        $this->assertInstanceOf('AppBundle\Entity\Grid', $sudokuSession->getGrid()) ;
-        $this->assertInstanceOf('AppBundle\Entity\Values', $sudokuSession->getValues()) ;
-        $this->assertInstanceOf('AppBundle\Entity\Tiles', $sudokuSession->getTiles()) ;
-    }
-    
     public function testClear()
     {
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
                      ->getMock() ;
         $session->expects($this->once())
                 ->method('clear') ;
-        $sudokuSession = new SudokuSession($session, $this->grid, $this->values, $this->tiles) ;
+        $sudokuSession = new SudokuSession($session) ;
         $sudokuSession->clear() ;
+    }
+    
+    public function testGetGridCallsSessionGet()
+    {
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->expects($this->once())
+                ->method('get')
+                ->with($this->equalTo('grid')) ;
+        $session->method('has')
+                ->with('grid')
+                ->willReturn(true) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $sudokuSession->getGrid() ;
+    }
+        
+    public function testGetGridReturnsGrid()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get') 
+                ->with('grid')
+                ->willReturn($grid) ;
+        $session->method('has')
+                ->with('grid')
+                ->willReturn(true) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertEquals($grid, $sudokuSession->getGrid()) ;
+    }
+        
+    public function testSetGridCallsSessionSet()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->expects($this->once())
+                ->method('set')
+                ->with($this->equalTo('grid'), $grid) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertThat($sudokuSession, $this->logicalNot($this->attributeEqualTo('grid', $grid))) ;
+        $sudokuSession->setGrid($grid) ;
+        $this->assertThat($sudokuSession, $this->attributeEqualTo('grid', $grid)) ;
+    }
+    
+    public function testGetValuesCallsSessionGet()
+    {
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->expects($this->once())
+                ->method('get') 
+                ->with($this->equalTo('values'));
+        $session->method('has')
+                ->with('values')
+                ->willReturn(true) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $sudokuSession->getValues() ;
+    }
+
+    public function testGetValuesReturnsValues()
+    {
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->with('values')
+                ->willReturn($values) ;
+        $session->method('has')
+                ->with('values')
+                ->willReturn(true) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertEquals($values, $sudokuSession->getValues()) ;
+    }
+        
+    public function testSetValuesCallsSessionSet()
+    {
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->expects($this->once())
+                ->method('set') 
+                ->with($this->equalTo('values'));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertThat($sudokuSession, $this->logicalNot($this->attributeEqualTo('values', $values))) ;
+        $sudokuSession->setValues($values) ;
+        $this->assertThat($sudokuSession, $this->attributeEqualTo('values', $values)) ;
+    }
+    
+    public function testGetTilesCallsSessionGet()
+    {
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->expects($this->once())
+                ->method('get') 
+                ->with($this->equalTo('tiles'));
+        $session->method('has')
+                ->with('tiles')
+                ->willReturn(true) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $sudokuSession->getTiles() ;
+    }
+
+    public function testGetTilesReturnsValues()
+    {
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->with('tiles')
+                ->willReturn($tiles) ;
+        $session->method('has')
+                ->with('tiles')
+                ->willReturn(true) ;
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertEquals($tiles, $sudokuSession->getTiles()) ;
+    }
+        
+    public function testSetTilesCallsSessionSet()
+    {
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                     ->disableOriginalConstructor()
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->expects($this->once())
+                ->method('set') 
+                ->with($this->equalTo('tiles'));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertThat($sudokuSession, $this->logicalNot($this->attributeEqualTo('tiles', $tiles))) ;
+        $sudokuSession->setTiles($tiles) ;
+        $this->assertThat($sudokuSession, $this->attributeEqualTo('tiles', $tiles)) ;
     }
 }

@@ -32,7 +32,7 @@ services:
         arguments: ['@eventTileSetEntity']
     sudokuSession:
         class: AppBundle\Utils\SudokuSession
-        arguments: ['@session', '@gridEntity', '@valuesEntity', '@tilesEntity']
+        arguments: ['@session']
 
     tileService:
         class: AppBundle\Service\TileService
