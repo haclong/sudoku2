@@ -21,7 +21,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     {
         $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->disableOriginalConstructor()
-                     ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'reload'))
+                     ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'reload', 'decreaseRemainingTiles'))
                      ->getMock() ;
         $this->grid->method('getSize')
                    ->willReturn(9) ;
@@ -198,7 +198,30 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $gridAggregate = new GridAggregate($this->session) ;
         $gridAggregate->onResetGame($event) ;
     }
-   
+
+    public function testSetTileSubscriber()
+    {
+        $result = $this->commonEventSubscriber('SetTileEvent', 'onSetTile') ;
+        $this->assertTrue($result) ;
+    }
+    
+    public function testOnSetTile()
+    {
+        $event = $this->getMockBuilder('AppBundle\Event\SetTileEvent')
+                                    ->disableOriginalConstructor()
+                                    ->getMock() ;
+        
+        $this->session->method('getGrid')
+                ->willReturn($this->grid) ;
+        $this->grid->expects($this->once())
+                   ->method('decreaseRemainingTiles') ;                   
+        $this->session->expects($this->once())
+                ->method('setGrid') ;
+        
+        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate->onSetTile($event) ;
+    }
+
     protected function commonEventSubscriber($eventName, $method)
     {
         $dispatcher = new EventDispatcher() ;

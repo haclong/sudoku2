@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Tile;
 use AppBundle\Exception\AlreadyDiscardedException;
+use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Exception\ImpossibleToDiscardException;
 
 /**
@@ -80,5 +81,19 @@ class TileTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($tile->getSize(), 4) ;
         $this->assertEquals($tile->getId(), '3.4') ;
         $this->assertNull($tile->getValue()) ;
+    }
+    
+    public function testGetMaybeValues() {
+        $tile = new Tile() ;
+        $this->assertEquals(0, count($tile->getMaybeValues())) ;
+        $tile->initialize(3, 4, 4) ;
+        $this->assertEquals([0, 1, 2, 3], $tile->getMaybeValues()) ;
+    }
+    
+    public function testGetDiscardValues() {
+        $tile = new Tile() ;
+        $this->assertEquals(0, count($tile->getDiscardValues())) ;
+        $tile->discard(3) ;
+        $this->assertEquals([3 => 3], $tile->getDiscardValues()) ;
     }
 }

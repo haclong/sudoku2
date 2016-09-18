@@ -77,7 +77,7 @@ class ApiControllerTest extends WebTestCase
 
         // on vérifie que grid est rempli
         $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
-        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+        $this->assertEquals(44, $this->session->getGrid()->getRemainingTiles()) ;
         // on vérifie que values est rempli
         $this->assertEquals(9, $this->session->getValues()->getSize()) ;
         $this->assertEquals(9, count($this->session->getValues()->getValues())) ;

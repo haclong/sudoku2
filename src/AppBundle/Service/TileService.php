@@ -75,13 +75,16 @@ class TileService {
     public function set($tile, $figure) 
     {
         $value = $this->values->getKeyByValue($figure) ;
-        $tile->set($value) ;
+        if(is_null($tile->getValue()))
+        {
+            $tile->set($value) ;
 
-        $this->checkFiguresCount($tile) ;
-        
-        $this->setTileEvent->getTile()->set($tile->getRow(), $tile->getCol(), $tile->getRegion(), $tile->getValue()) ;
+            $this->checkFiguresCount($tile) ;
 
-        $this->dispatcher->dispatch('tile.set', $this->setTileEvent) ;
+            $this->setTileEvent->getTile()->set($tile->getRow(), $tile->getCol(), $tile->getRegion(), $tile->getValue()) ;
+
+            $this->dispatcher->dispatch('tile.set', $this->setTileEvent) ;
+        }
     }
 
     protected function checkFiguresCount($tile) 

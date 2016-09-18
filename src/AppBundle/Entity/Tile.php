@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Exception\AlreadyDiscardedException;
+use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Exception\ImpossibleToDiscardException;
 use AppBundle\Utils\RegionGetter;
 
@@ -85,6 +86,9 @@ class Tile {
     }
     
     public function set($figure) {
+        // pas la peine de vérifier si on set sur une case qui est déjà settée :
+        // la nouvelle $figure aura été écartée
+        // c'est une exception "AlreadyDiscardedException" qu'on récupèrera
         if(in_array($figure, $this->discardValues)) {
             throw new AlreadyDiscardedException() ;
         }

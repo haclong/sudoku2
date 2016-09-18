@@ -88,7 +88,33 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $service->discard($tile, 3) ;
     }
     
-    public function testSet()
+    public function testSetTriggeringEvent()
+    {
+        $this->values->method('getKeyByValue')
+                ->willReturn(2) ;
+        $tile = $this->getMockBuilder('AppBundle\Entity\Tile')
+                     ->getMock() ;
+
+        $tile->method('getValue')
+                ->will($this->onConsecutiveCalls(null, 2)) ;
+        $tile->method('getDiscardValues')
+                ->willReturn(array(0, 1, 3)) ;
+        $tile->method('getSize')
+                ->willReturn(4) ;
+
+        $tile->expects($this->once())
+                ->method('set')
+                ->with($this->EqualTo(2)) ;
+        $this->dispatcher->expects($this->once())
+                   ->method('dispatch')
+                   ->with('tile.set', $this->equalTo($this->tileSetEvent));
+
+        $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
+        $service->setValues($this->values) ;
+        $service->set($tile, 3) ;
+    }
+    
+    public function testSetNotTriggeringEvent()
     {
         $this->values->method('getKeyByValue')
                 ->willReturn(2) ;
@@ -101,10 +127,9 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $tile->method('getSize')
                 ->willReturn(4) ;
 
-        $tile->expects($this->once())
-                ->method('set')
-                ->with($this->EqualTo(2)) ;
-        $this->dispatcher->expects($this->once())
+        $tile->expects($this->never())
+                ->method('set') ;
+        $this->dispatcher->expects($this->never())
                    ->method('dispatch')
                    ->with('tile.set', $this->equalTo($this->tileSetEvent));
         $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
@@ -122,7 +147,7 @@ class TileServiceTest extends \PHPUnit_Framework_TestCase {
         $tile->method('getDiscardValues')
                 ->willReturn(array(0, 1, 3)) ;
         $tile->method('getValue')
-                ->willReturn(2) ;
+                ->will($this->onConsecutiveCalls(null, 2)) ;
 
         $service = new TileService($this->dispatcher, $this->tileSetEvent, $this->lastPossibilityEvent) ;
         $service->setValues($this->values) ;
