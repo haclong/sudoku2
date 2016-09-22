@@ -21,9 +21,9 @@ class TilesMapper {
         $array['size'] = $tiles->getSize() ;
 
         $tileset = array() ;
-        foreach($tiles->getTileset() as $tile)
+        foreach($tiles->getTileset() as $id => $value)
         {
-            $tileset[] = array('id' => 't.'.$tile->getRow().'.'.$tile->getCol(), 'value' => $values->getValueByKey($tile->getValue())) ;
+            $tileset[] = array('id' => 't.'.$id, 'value' => $values->getValueByKey($value)) ;
         }
         $array['tiles'] = $tileset ;
         return $array ;

@@ -18,9 +18,8 @@ class TilesMapperTest extends \PHPUnit_Framework_TestCase {
         $values = $this->getMockBuilder('AppBundle\Entity\Values')
                         ->getMock() ;
         $tileset = new Tileset() ;
-        $tile = new Tile() ;
-        $tiles = new Tiles($tileset, $tile) ;
-        $tiles->setTileset(9) ;
+        $tiles = new Tiles($tileset) ;
+        $tiles->init(9) ;
 
         $mapper = new TilesMapper() ;
         $array = $mapper->toArray($tiles, $values) ;

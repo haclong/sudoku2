@@ -8,7 +8,6 @@ use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
-use AppBundle\Service\TileService;
 use AppBundle\Utils\SudokuSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -19,12 +18,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class TilesAggregate implements EventSubscriberInterface{
     protected $session ;
-    protected $service ;
     
-    public function __construct(SudokuSession $session, TileService $service)
+    public function __construct(SudokuSession $session)
     {
         $this->session = $session ;
-        $this->service = $service ;
     }
     
     public static function getSubscribedEvents() {
@@ -53,21 +50,19 @@ class TilesAggregate implements EventSubscriberInterface{
     public function onChooseGame(ChooseGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;
         $tiles->reset() ;
-        $tiles->setTileset($event->getGridSize()->get()) ;
+        $tiles->init($event->getGridSize()->get()) ;
         $this->storeTiles($tiles) ;
     }
     
     public function onLoadGame(LoadGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;
-        $this->service->setValues($this->session->getValues()) ;
 
         $loadedTiles = $event->getTiles()->getTiles() ;
         foreach($loadedTiles as $row => $cols)
         {
             foreach($cols as $col => $value)
             {
-                $getTile = $tiles->getTile($row, $col) ;
-                $this->service->set($getTile, $value) ;
+                $tiles->set($row, $col, $value) ;
             }
         }
         $this->storeTiles($tiles) ;
@@ -84,7 +79,7 @@ class TilesAggregate implements EventSubscriberInterface{
         $tiles = $this->getTilesFromSession() ;
         $size = $tiles->getSize() ;
         $tiles->reset() ;
-        $tiles->setTileset($size) ;
+        $tiles->init($size) ;
         $this->storeTiles($tiles) ;
     }
 }

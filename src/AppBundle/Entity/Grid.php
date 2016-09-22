@@ -3,13 +3,14 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Exception\InvalidGridSizeException;
+use AppBundle\Exception\MaxRemainingTilesLimitException;
 
 /**
  * Description of Grid
  *
  * @author haclong
  */
-class Grid {
+class Grid implements InitInterface, ResetInterface, ReloadInterface {
     protected $size ;
     protected $tiles = array() ;
     protected $remainingTiles = -1 ;
@@ -24,7 +25,7 @@ class Grid {
 //        } catch (InvalidGridSizeException $ex) {
 //        }
     }
-    public function reload()
+    public function reload(Grid $grid = null)
     {
         $this->reloadRemainingTiles() ;
     }

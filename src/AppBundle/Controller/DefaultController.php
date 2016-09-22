@@ -30,11 +30,11 @@ class DefaultController extends Controller
         // on initialise le jeu (on charge des entités vides dans la session)
         $event = new InitGameEvent($grid, $values, $tiles) ;
         $this->get('event_dispatcher')->dispatch('game.init', $event) ;
+        // pour la suite du debug, voir ce qui se passe dans les différents subscriber
         
         $sessionMarker->logSession("DefaultController::indexAction") ;
         
-        return $this->render(
-                    'sudoku/index.html.twig') ;
+        return $this->render('sudoku/index.html.twig') ;
     }
 
     /**
@@ -53,8 +53,7 @@ class DefaultController extends Controller
         $this->get('event_dispatcher')->dispatch('game.choose', $event) ;
         
         $sessionMarker->logSession("DefaultController::gridAction") ;
-        $mappedTiles = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
-        
+        $mappedTiles = TilesMapper::toArray($session->getTiles()) ;
         return $this->render(
                 'sudoku/grid.html.twig',
                 $mappedTiles) ;

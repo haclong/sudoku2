@@ -13,16 +13,15 @@ services:
         class: AppBundle\Entity\Grid
     tilesEntity:
         class: AppBundle\Entity\Tiles
-        arguments: ['@tilesetEntity', '@tileEntity']
+        arguments: ['@tilesetEntity']
+
+    tilesetEntity:
+        class: AppBundle\Entity\Tiles\Tileset
 
     eventTileLastPossibilityEntity:
         class: AppBundle\Entity\Event\TileLastPossibility
     eventTileSetEntity:
         class: AppBundle\Entity\Event\TileSet
-    tileEntity:
-        class: AppBundle\Entity\Tile
-    tilesetEntity:
-        class: AppBundle\Entity\Tiles\Tileset
 
     deduceTileEvent:
         class: AppBundle\Event\DeduceTileEvent

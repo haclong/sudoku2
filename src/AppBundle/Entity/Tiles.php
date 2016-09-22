@@ -11,15 +11,19 @@ use AppBundle\Entity\Tiles\Tileset;
  */
 class Tiles {
     protected $tileset ;
-    protected $tile ;
     protected $size ;
 
-    public function __construct(Tileset $tileset, Tile $tile)
+    public function __construct(Tileset $tileset)
     {
         $this->tileset = $tileset ;
-        $this->tile = $tile ;
     }
-
+    
+    public function init($size)
+    {
+        $this->setTileset($size) ;
+        $this->setSize($size) ;
+        return $this ;
+    }
     public function reset() 
     {
         $this->resetTileset() ;
@@ -30,21 +34,6 @@ class Tiles {
     {
         $this->reloadTileset($grid->getSize()) ;
     }
-    
-    public function setTileset($size)
-    {
-        for($row=0; $row<$size; $row++)
-        {
-            for($col=0; $col<$size; $col++)
-            {
-                $tile = clone $this->tile ;
-                $this->tileset->offsetSet($row.'.'.$col, $tile->initialize($row, $col, $size)) ;
-            }
-        }
-        $this->size = $size ;
-        return $this ;
-    }
-    
     public function getSize()
     {
         return $this->size ;
@@ -56,6 +45,27 @@ class Tiles {
     public function getTile($row, $col)
     {
         return $this->tileset->offsetGet($row.'.'.$col) ;
+    }
+    public function set($row, $col, $value)
+    {
+        $this->tileset->offsetSet($row.'.'.$col, $value) ;
+    }
+    
+    protected function setTileset($size)
+    {
+        for($row=0; $row<$size; $row++)
+        {
+            for($col=0; $col<$size; $col++)
+            {
+                $this->tileset->offsetSet($row.'.'.$col, NULL) ;
+            }
+        }
+        return $this ;
+    }
+    protected function setSize($size)
+    {
+        $this->size = $size ;
+        return $this ;
     }
     
     protected function resetSize()
