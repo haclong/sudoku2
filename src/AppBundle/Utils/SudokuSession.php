@@ -17,6 +17,7 @@ class SudokuSession {
     protected $grid ;
     protected $values ; 
     protected $tiles ;
+    protected $tilesToSolved ;
     
     public function __construct(Session $session) {
         $this->session = $session;
@@ -103,5 +104,30 @@ class SudokuSession {
             $this->tiles->reset() ;
         }
         $this->session->set('tiles', $this->tiles) ;
+    }
+    
+    public function getTilesToSolved()
+    {
+        if(!$this->session->has('tilesToSolved'))
+        {
+            $this->session->set('tilesToSolved', $this->tilesToSolved) ;
+        }
+        return $this->session->get('tilesToSolved') ;
+    }
+    public function setTilesToSolved($tiles)
+    {
+        if(empty($this->tilesToSolved))
+        {
+            $this->tilesToSolved = $tiles ;
+        }
+        $this->session->set('tilesToSolved', $tiles) ;
+    }
+    protected function resetTilesToSolved()
+    {
+        if($this->session->has('tilesToSolved'))
+        {
+            $this->getTilesToSolved()->exchangeArray(array()) ;
+        }
+        $this->session->set('tilesToSolved', $this->tilesToSolved) ;
     }
 }
