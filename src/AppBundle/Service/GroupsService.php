@@ -7,6 +7,7 @@ use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Utils\RegionGetter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use \Exception ;
 
 /**
  * Description of GroupsService
@@ -132,7 +133,7 @@ class GroupsService {
                         //$array[$type][$index][$value] = count($tileId) ;
                         //$tileId = id de la case
                         //$value = valeur de la case
-                        $tile = explode($tileId) ;
+                        $tile = explode('.', current($tileId)) ;
                         $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $value) ;
                         $this->dispatcher->dispatch('tile.deduce', $this->deduceTileEvent) ;
                     }
@@ -153,9 +154,9 @@ class GroupsService {
                 // $tileId = id de la case
                 // $datas['col'][0] = dernière valeur de la case
                 // dispatch last value in tile ;
-                $tile = explode($tileId) ;
+                $tile = explode('.', $tileId) ;
                 $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $datas['col'][0]) ;
-                $this->dispatcher->dispatch('tile.deduce', $this->deduceTileSetEvent) ;
+                $this->dispatcher->dispatch('tile.deduce', $this->deduceTileEvent) ;
             }
         }
     }

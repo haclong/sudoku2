@@ -95,18 +95,18 @@ class DebugController  extends Controller {
 //            }
 //        }
 //        
-//        foreach($groups->getValuesByGroup() as $k => $grouptype)
-//        {
-//            foreach($grouptype as $index => $group)
-//            {
-//                foreach($group as $value => $tile)
-//                {
-//                    echo $k . '.' . $index . '.' . $value ;
-//                    var_dump($tile) ;
-//                    $array[$k][$index][$value] = count($tile) ;
-//                }
-//            }
-//        }
+        foreach($groups->getValuesByGroup() as $k => $grouptype)
+        {
+            foreach($grouptype as $index => $group)
+            {
+                foreach($group as $value => $tile)
+                {
+                    echo $k . '.' . $index . '.' . $value ;
+                    var_dump($tile) ;
+                    $array[$k][$index][$value] = count($tile) ;
+                }
+            }
+        }
 //            foreach($groups->getValuesByGroup() as $type => $grouptype)
 //            {
 //                foreach($grouptype as $index => $group)
@@ -120,7 +120,7 @@ class DebugController  extends Controller {
 //                    }
 //                }
 //            }
-//        var_dump($array) ;
+        var_dump($array) ;
         return $this->render('sudoku/debug.html.twig', []);
     }
 //    protected function discard(&$groups, $value, $impactedTiles)
