@@ -31,23 +31,43 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
         $tiles = new Tiles($this->tileset) ;
         $tiles->init(9) ;
         $this->assertEquals(81, count($tiles->getTileset())) ;
+        $this->assertEquals(9, $tiles->getSize()) ;
     }
-    
+//    
 //    public function testReload()
 //    {
-//        $tiles = new Tiles($this->tileset, $this->tile) ;
-//
-//        $this->tile->expects($this->exactly(9*9))
-//                   ->method('initialize') ;
-//        
+//        $tiles = new Tiles($this->tileset) ;
+//        $tiles->init(9) ;
 //        $tiles->reload() ;
 //    }
-//
+
     public function testReset()
     {
         $tiles = new Tiles($this->tileset) ;
         $tiles->reset() ;
         $this->assertEquals(0, count($tiles->getTileset())) ;
         $this->assertInstanceOf('AppBundle\Entity\Tiles\Tileset', $tiles->getTileset()) ;
+    }
+    
+    public function testGetTile()
+    {
+        $tileset = $this->getMockBuilder('AppBundle\Entity\Tiles\Tileset')
+                              ->getMock() ;
+        $tileset->expects($this->once())
+              ->method('offsetGet')
+              ->with('3.5') ;
+        $tiles = new Tiles($tileset) ;
+        $tiles->getTile(3, 5) ;
+    }
+    
+    public function testSet()
+    {
+        $tileset = $this->getMockBuilder('AppBundle\Entity\Tiles\Tileset')
+                              ->getMock() ;
+        $tileset->expects($this->once())
+              ->method('offsetSet')
+              ->with('3.5', 4) ;
+        $tiles = new Tiles($tileset) ;
+        $tiles->set(3, 5, 4) ;
     }
 }

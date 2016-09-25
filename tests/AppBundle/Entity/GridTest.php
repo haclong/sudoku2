@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Grid;
 use AppBundle\Exception\InvalidGridSizeException;
+use AppBundle\Exception\MaxRemainingTilesLimitException;
 
 /**
  * Description of GridTest
@@ -66,6 +67,14 @@ class GridTest  extends \PHPUnit_Framework_TestCase
         $this->assertEquals(15, $grid->getRemainingTiles()) ;
         $grid->increaseRemainingTiles() ;
         $this->assertEquals(16, $grid->getRemainingTiles()) ;
+    }
+
+    public function testIncreaseRemainingTilesThrowsException() {
+        $this->setExpectedException(MaxRemainingTilesLimitException::class) ;
+                
+        $grid = new Grid() ;
+        $grid->init(4) ;
+        $grid->increaseRemainingTiles() ;
     }
 
     public function testSolved() {

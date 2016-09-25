@@ -19,11 +19,6 @@ class SudokuSession {
         $this->session = $session;
     }
     
-    public function getSession()
-    {
-        return $this->session ;
-    }
-    
     public function isReady()
     {
         $flag = 0 ;
@@ -83,13 +78,5 @@ class SudokuSession {
     public function setTilesToSolved($tiles)
     {
         $this->session->set('tilesToSolved', $tiles) ;
-    }
-    protected function resetTilesToSolved()
-    {
-        if($this->session->has('tilesToSolved'))
-        {
-            $this->getTilesToSolved()->exchangeArray(array()) ;
-        }
-        $this->session->set('tilesToSolved', $this->tilesToSolved) ;
     }
 }

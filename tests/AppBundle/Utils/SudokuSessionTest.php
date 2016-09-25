@@ -38,6 +38,67 @@ class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($sudokuSession->getTiles()) ;
     }
     
+    public function testSessionReady()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                    ->disableOriginalConstructor()
+                    ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->will($this->onConsecutiveCalls($grid, $values, $tiles));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertTrue($sudokuSession->isReady()) ;
+    }
+    
+    public function testSessionNotReadyWhenMissingGrid()
+    {
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                    ->disableOriginalConstructor()
+                    ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->will($this->onConsecutiveCalls(null, $values, $tiles));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertFalse($sudokuSession->isReady()) ;
+    }
+    
+    public function testSessionNotReadyWhenMissingValues()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                    ->disableOriginalConstructor()
+                    ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->will($this->onConsecutiveCalls($grid, null, $tiles));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertFalse($sudokuSession->isReady()) ;
+    }
+    
+    public function testSessionNotReadyWhenMissingTiles()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->will($this->onConsecutiveCalls($grid, $values, null));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertFalse($sudokuSession->isReady()) ;
+    }
+
     public function testGetGridCallsSessionGet()
     {
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
