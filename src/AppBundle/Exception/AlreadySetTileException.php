@@ -8,5 +8,4 @@ namespace AppBundle\Exception;
  * @author haclong
  */
 class AlreadySetTileException extends \Exception {
-    //put your code here
 }

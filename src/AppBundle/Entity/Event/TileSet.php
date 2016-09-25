@@ -19,21 +19,15 @@ class TileSet {
      */
     protected $col ;
     /**
-     * index de la region
-     * @var int
-     */
-    protected $region ;
-    /**
      * numéro de la case
      * @var int
      */
-    protected $figure ;
+    protected $value ;
     
-    public function set($row, $col, $region, $figure) {
+    public function set($row, $col, $value) {
         $this->row = $row;
         $this->col = $col;
-        $this->region = $region;
-        $this->figure = $figure;
+        $this->value = $value;
     }
 
     public function getRow() {
@@ -44,11 +38,7 @@ class TileSet {
         return $this->col;
     }
 
-    public function getRegion() {
-        return $this->region;
-    }
-
-    public function getFigure() {
-        return $this->figure;
+    public function getValue() {
+        return $this->value;
     }
 }

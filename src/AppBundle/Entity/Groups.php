@@ -13,7 +13,7 @@ class Groups {
     protected $valuesByGroup = array() ;
     protected $tilesByGroup = array() ;
     protected $size ;
-    
+
     public function init($size)
     {
         $this->size = $size ;
@@ -36,23 +36,54 @@ class Groups {
         $this->buildValuesByGroup($this->size) ;
     }
     
-    public function setTile($row, $col, $value) 
+    public function getSize()
     {
-        
+        return $this->size ;
     }
-    
-    public function getCol($index)
+    public function &getCol($index)
     {
         return $this->valuesByGroup['col'][$index] ;
     }
-    public function getRow($index)
+    public function &getRow($index)
     {
         return $this->valuesByGroup['row'][$index] ;
     }
-    public function getRegion($index)
+    public function &getRegion($index)
     {
         return $this->valuesByGroup['region'][$index] ;
     }
+    public function getImpactedTiles($row, $col)
+    {
+        $region = RegionGetter::getRegion($row, $col, $this->size) ;
+        $tilesByCol = $this->getTilesByCol($col) ;
+        $tilesByRow = $this->getTilesByRow($row) ;
+        $tilesByRegion = $this->getTilesByRegion($region) ;
+        $tiles = array_merge($tilesByCol, $tilesByRow, $tilesByRegion) ;
+        return array_unique($tiles) ;
+    }
+    public function &getValuesByGroup()
+    {
+        return $this->valuesByGroup ;
+    }
+    public function getValuesByTile()
+    {
+        $valuesByTile = [] ;
+        foreach($this->valuesByGroup as $type => $grouptype)
+        {
+            foreach($grouptype as $index => $group)
+            {
+                foreach($group as $value => $figure)
+                {
+                    foreach($figure as $key => $tileId)
+                    {
+                        $valuesByTile[$tileId][$type][] = $value ;
+                    }
+                }
+            }
+        }
+        return $valuesByTile ;
+    }
+
     // getTilesByGroup
     /**
      * Retourne la liste de tous les id des cases de la colonne numéro $index
@@ -167,8 +198,8 @@ class Groups {
             for($col=0; $col<$size; $col++)
             {
                 $region = RegionGetter::getRegion($row, $col, $size) ;
-                $this->tilesByGroup['col'][$row][] = $row.'.'.$col ;
-                $this->tilesByGroup['row'][$col][] = $row.'.'.$col ;
+                $this->tilesByGroup['col'][$col][] = $row.'.'.$col ;
+                $this->tilesByGroup['row'][$row][] = $row.'.'.$col ;
                 $this->tilesByGroup['region'][$region][] = $row.'.'.$col ;
             }
         }
