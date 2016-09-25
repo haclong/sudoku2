@@ -19,14 +19,17 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
-        $service = $this->get('groupsService') ;
-        $groups = $this->get('groupsEntity') ;
-        $groups->init(9) ;
+        $session = $this->get('sudokuSession') ;
+        $session->setGrid($this->get('gridEntity')) ;
+//        var_dump($session->getGrid()) ;
+//        $service = $this->get('groupsService') ;
+//        $groups = $this->get('groupsEntity') ;
+//        $groups->init(9) ;
 //        var_dump($groups->getCol(5)) ;
 //        var_dump($groups->getRow(3)) ;
 //        var_dump($groups->getRegion(RegionGetter::getRegion(3, 5, 9))) ;
 
-        $service->set($groups, 1, 0, 2) ;
+//        $service->set($groups, 1, 0, 2) ;
 //        $service->set($groups, 8, 0, 5) ;
 //        $service->set($groups, 0, 0, 6) ;
 //        $service->set($groups, 5, 0, 8) ;
@@ -77,11 +80,11 @@ class DebugController  extends Controller {
 //        var_dump($groups->getCol(5)) ;
 //        var_dump($groups->getRow(3)) ;
 //        var_dump($groups->getRegion(RegionGetter::getRegion(3, 5, 9))) ;
-        $impactedTiles = $groups->getImpactedTiles(3, 5) ;
+//        $impactedTiles = $groups->getImpactedTiles(3, 5) ;
 //        var_dump($impactedTiles) ;
         
 //        $this->discard($groups->getValuesByGroup(), 2, $impactedTiles) ;
-        $array = [] ;
+//        $array = [] ;
 //        foreach($groups->getValuesByTile() as $tileId => $datas)
 //        {
 //            if((count($datas['col']) != count($datas['row'])) && (count($datas['col']) != count($datas['region'])))
@@ -95,18 +98,18 @@ class DebugController  extends Controller {
 //            }
 //        }
 //        
-        foreach($groups->getValuesByGroup() as $k => $grouptype)
-        {
-            foreach($grouptype as $index => $group)
-            {
-                foreach($group as $value => $tile)
-                {
-                    echo $k . '.' . $index . '.' . $value ;
-                    var_dump($tile) ;
-                    $array[$k][$index][$value] = count($tile) ;
-                }
-            }
-        }
+//        foreach($groups->getValuesByGroup() as $k => $grouptype)
+//        {
+//            foreach($grouptype as $index => $group)
+//            {
+//                foreach($group as $value => $tile)
+//                {
+////                    echo $k . '.' . $index . '.' . $value ;
+////                    var_dump($tile) ;
+//                    $array[$k][$index][$value] = count($tile) ;
+//                }
+//            }
+//        }
 //            foreach($groups->getValuesByGroup() as $type => $grouptype)
 //            {
 //                foreach($grouptype as $index => $group)

@@ -54,6 +54,7 @@ class ValuesAggregate implements EventSubscriberInterface {
                 $values->add($value) ;
             }
         }
+//        var_dump($values) ;
         $this->storeValues($values) ;
     }
 
