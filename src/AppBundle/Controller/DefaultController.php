@@ -53,9 +53,10 @@ class DefaultController extends Controller
         $this->get('event_dispatcher')->dispatch('game.choose', $event) ;
         
         $sessionMarker->logSession("DefaultController::gridAction") ;
-        $mappedTiles = TilesMapper::toArray($session->getTiles()) ;
+        $mappedTiles = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
         return $this->render(
                 'sudoku/grid.html.twig',
                 $mappedTiles) ;
+//        return $this->render('sudoku/grid.html.twig') ;
     }
 }

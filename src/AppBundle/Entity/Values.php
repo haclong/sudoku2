@@ -11,7 +11,7 @@ use AppBundle\Exception\InvalidFigureCountException;
  */
 class Values implements InitInterface, ResetInterface {
     protected $size ;
-    protected $values ;
+    protected $values = [] ;
     
     public function init($size)
     {

@@ -120,7 +120,7 @@ class DebugController  extends Controller {
 //                    }
 //                }
 //            }
-        var_dump($array) ;
+//        var_dump($array) ;
         return $this->render('sudoku/debug.html.twig', []);
     }
 //    protected function discard(&$groups, $value, $impactedTiles)
