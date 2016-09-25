@@ -59,7 +59,7 @@ class Groups {
         $tilesByRow = $this->getTilesByRow($row) ;
         $tilesByRegion = $this->getTilesByRegion($region) ;
         $tiles = array_merge($tilesByCol, $tilesByRow, $tilesByRegion) ;
-        return array_unique($tiles) ;
+        return $tiles ;
     }
     public function &getValuesByGroup()
     {

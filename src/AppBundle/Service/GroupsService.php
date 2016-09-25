@@ -63,7 +63,7 @@ class GroupsService {
         $impactedTiles = $groups->getImpactedTiles($row, $col) ;
         
         // écarter le numéro de toutes les cases de la grille
-        $this->discard($groups->getValuesByGroup(), $value, $impactedTiles) ;
+        $this->discard($groups->getValuesByGroup(), $value, array_unique($impactedTiles)) ;
         
         // vérifier qu'il n'y a pas de dernières valeurs dans le groupe
         $this->checkLastValueInGroup($groups) ;
