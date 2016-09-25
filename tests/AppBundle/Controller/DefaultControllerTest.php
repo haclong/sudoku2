@@ -33,7 +33,7 @@ class DefaultControllerTest extends WebTestCase
     {
         // on remplit grid et tiles
         $this->session->getGrid()->init(9) ;
-        $this->session->getTiles()->setTileset(9) ;
+        $this->session->getTiles()->init(9) ;
         
         // on vérifie que grid est rempli
         $this->assertEquals(9, $this->session->getGrid()->getSize()) ;

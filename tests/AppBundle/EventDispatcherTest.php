@@ -7,6 +7,7 @@ use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\SetTileEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -53,6 +54,14 @@ class EventDispatcherTest extends WebTestCase
     public function testResetGameSubscribersAdded()
     {
         $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 3) ;
+    }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetTileSubscribersAdded()
+    {
+        $this->AreSubscriberAddedByEvent(SetTileEvent::NAME, 1) ;
     }
 
     protected function AreSubscriberAddedByEvent($event, $expected)

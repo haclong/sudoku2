@@ -43,14 +43,13 @@ class ApiController extends Controller
             
             // on charge la grille dans l'objet TilesLoaded
             $loadedGrid = new TilesLoaded($gridSize, $loadedTiles) ;
-            $sessionMarker->logSession("ApiController::loadGrid::pre") ;
 
             // on déclenche l'événement avec la grille à résoudre
             $event = new LoadGameEvent($loadedGrid) ;
             $this->get('event_dispatcher')->dispatch('game.load', $event) ;
 
             $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
-            $sessionMarker->logSession("ApiControllerTest::loadGrid::post") ;
+            $sessionMarker->logSession("ApiControllerTest::loadGrid") ;
             
             return new JsonResponse($response) ;
 //        } else {

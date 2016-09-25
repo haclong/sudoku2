@@ -11,31 +11,26 @@ use AppBundle\Entity\Tiles;
  */
 class TilesTest extends \PHPUnit_Framework_TestCase {
     protected $tileset ;
-    protected $tile ;
     
     protected function setUp()
     {
         $this->tileset = $this->getMockBuilder('AppBundle\Entity\Tiles\Tileset')
-                              ->setMethods(array('offsetGet', 'getTile'))
+                              ->setMethods(array('offsetGet'))
                               ->getMock() ;
-        $this->tile = $this->getMockBuilder('AppBundle\Entity\Tile')
-                           ->setMethods(array('getValue', 'set', 'initialize'))
-                           ->getMock() ;
         $this->tileset->method('offsetGet')
-                      ->willReturn($this->tile) ;
+                      ->willReturn(3) ;
     }
     public function testConstructor()
     {
-        $tiles = new Tiles($this->tileset, $this->tile) ;
+        $tiles = new Tiles($this->tileset) ;
         $this->assertEquals($this->tileset, $tiles->getTileset()) ;
     }
 
     public function testSetTileset()
     {
-        $tiles = new Tiles($this->tileset, $this->tile) ;
-        $tiles->setTileset(9) ;
+        $tiles = new Tiles($this->tileset) ;
+        $tiles->init(9) ;
         $this->assertEquals(81, count($tiles->getTileset())) ;
-        $this->assertInstanceOf('AppBundle\Entity\Tile', $tiles->getTile(0,0)) ;
     }
     
 //    public function testReload()
@@ -50,7 +45,7 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
 //
     public function testReset()
     {
-        $tiles = new Tiles($this->tileset, $this->tile) ;
+        $tiles = new Tiles($this->tileset) ;
         $tiles->reset() ;
         $this->assertEquals(0, count($tiles->getTileset())) ;
         $this->assertInstanceOf('AppBundle\Entity\Tiles\Tileset', $tiles->getTileset()) ;

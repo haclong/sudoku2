@@ -13,16 +13,20 @@ services:
         class: AppBundle\Entity\Grid
     tilesEntity:
         class: AppBundle\Entity\Tiles
-        arguments: ['@tilesetEntity', '@tileEntity']
+        arguments: ['@tilesetEntity']
+    groupsEntity:
+        class: AppBundle\Entity\Groups
+        arguments: ['@groupEntity']
+
+    tilesetEntity:
+        class: AppBundle\Entity\Tiles\Tileset
+    groupEntity:
+        class: AppBundle\Entity\Group
 
     eventTileLastPossibilityEntity:
         class: AppBundle\Entity\Event\TileLastPossibility
     eventTileSetEntity:
         class: AppBundle\Entity\Event\TileSet
-    tileEntity:
-        class: AppBundle\Entity\Tile
-    tilesetEntity:
-        class: AppBundle\Entity\Tiles\Tileset
 
     deduceTileEvent:
         class: AppBundle\Event\DeduceTileEvent
@@ -30,13 +34,22 @@ services:
     setTileEvent:
         class: AppBundle\Event\SetTileEvent
         arguments: ['@eventTileSetEntity']
+    validateTileSetEvent:
+        class: AppBundle\Event\ValidateTileSetEvent
+        arguments: ['@eventTileSetEntity']
+
     sudokuSession:
         class: AppBundle\Utils\SudokuSession
         arguments: ['@session']
 
-    tileService:
-        class: AppBundle\Service\TileService
-        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
+    groupsService:
+        class: AppBundle\Service\GroupsService
+        arguments: ['@event_dispatcher', '@validateTileSetEvent', '@deduceTileEvent']
+#        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
+
+#    tileService:
+#        class: AppBundle\Service\TileService
+#        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
 #    sudokuSessionService:
 #        class: AppBundle\Service\SudokuSessionService
 #        factory: [AppBundle\Service\SudokuSessionServiceFactory, create]
@@ -57,7 +70,7 @@ services:
             - { name: kernel.event_subscriber } 
     tilesAggregate:
         class: AppBundle\Subscriber\TilesAggregate
-        arguments: ['@sudokuSession', '@tileService']
+        arguments: ['@sudokuSession']
         tags: 
             - { name: kernel.event_subscriber }
 

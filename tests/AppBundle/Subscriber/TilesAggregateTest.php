@@ -13,7 +13,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
     protected $session ;
     protected $tiles ;
-    protected $service ;
     
     protected function setUp()
     {
@@ -24,17 +23,12 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->session = $this->getMockBuilder('AppBundle\Utils\SudokuSession')
                               ->disableOriginalConstructor()
                               ->getMock() ;
-        
-        $this->service = $this->getMockBuilder('AppBundle\Service\TileService')
-                              ->disableOriginalConstructor()
-                              ->getMock() ;
     }
     
     protected function tearDown()
     {
         $this->session = null ;
         $this->tiles = null ;
-        $this->service = null ;
     }
 
     public function testInitGameSubscriber()
@@ -60,7 +54,7 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->session->expects($this->once())
                 ->method('setTiles') ;
         
-        $tilesAggregate = new TilesAggregate($this->session, $this->service) ;
+        $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onInitGame($event) ;
     }
 
@@ -90,10 +84,10 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->tiles->expects($this->once())
                 ->method('reset') ;
         $this->tiles->expects($this->once())
-                ->method('setTileset')
+                ->method('init')
                 ->with($this->equalTo($size->get())) ;
         
-        $tilesAggregate = new TilesAggregate($this->session, $this->service) ;
+        $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onChooseGame($event) ;
     }
 
@@ -122,9 +116,9 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $values = $this->getMockBuilder('AppBundle\Entity\Values')
                         ->getMock() ;
         
-        $this->session->expects($this->once())
-                ->method('getValues') 
-                ->will($this->returnValue($values)) ;
+//        $this->session->expects($this->once())
+//                ->method('getValues') 
+//                ->will($this->returnValue($values)) ;
         $event->expects($this->once())
                 ->method('getTiles') 
                 ->will($this->returnValue($tiles)) ;
@@ -133,11 +127,9 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->session->expects($this->once())
                 ->method('setTiles') ;
         $this->tiles->expects($this->exactly(2))
-                ->method('getTile') ;
-        $this->service->expects($this->exactly(2))
                 ->method('set') ;
 
-        $tilesAggregate = new TilesAggregate($this->session, $this->service) ;
+        $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onLoadGame($event) ;
     }
     
@@ -164,7 +156,7 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->session->expects($this->once())
                 ->method('setTiles') ;
         
-        $tilesAggregate = new TilesAggregate($this->session, $this->service) ;
+        $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onReloadGame($event) ;
     }
 
@@ -186,9 +178,9 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->session->expects($this->once())
                 ->method('setTiles') ;
         $this->tiles->expects($this->once())
-                ->method('setTileset') ;
+                ->method('init') ;
         
-        $tilesAggregate = new TilesAggregate($this->session, $this->service) ;
+        $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onResetGame($event) ;
     }
    
@@ -199,7 +191,7 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
                                     ->disableOriginalConstructor()
                                     ->getMock() ;
         
-        $subscriber = $this->getMockBuilder('AppBundle\Subscriber\GridAggregate')
+        $subscriber = $this->getMockBuilder('AppBundle\Subscriber\TilesAggregate')
                                    ->disableOriginalConstructor()
                                    ->setMethods(array($method))
                                    ->getMock() ;

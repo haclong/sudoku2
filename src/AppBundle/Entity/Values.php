@@ -9,18 +9,19 @@ use AppBundle\Exception\InvalidFigureCountException;
  *
  * @author haclong
  */
-class Values {
+class Values implements InitInterface, ResetInterface {
     protected $size ;
-    protected $values = array() ;
+    protected $values = [] ;
     
+    public function init($size)
+    {
+        $this->setSize($size) ;
+        $this->values = [] ;
+    }
     public function reset()
     {
         $this->values = array() ;
         $this->size = null ;
-    }
-
-    public function setSize($size) {
-        $this->size = $size;
     }
 
     public function add($value)
@@ -61,5 +62,9 @@ class Values {
     {
         $array = array_flip($this->values) ;
         return $array[$value] ;
+    }
+
+    protected function setSize($size) {
+        $this->size = $size;
     }
 }

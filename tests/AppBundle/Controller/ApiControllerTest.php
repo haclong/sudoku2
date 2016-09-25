@@ -45,7 +45,7 @@ class ApiControllerTest extends WebTestCase
     {
         // initialise grid et tiles
         $this->grid->init(9) ;
-        $this->tiles->setTileset(9) ;
+        $this->tiles->init(9) ;
         $this->session->setGrid($this->grid) ;
         $this->session->setValues($this->values) ;
         $this->session->setTiles($this->tiles) ;
@@ -94,8 +94,6 @@ class ApiControllerTest extends WebTestCase
      */
     public function testReloadGrid()
     {
-        $service = $this->client->getContainer()->get('tileService') ;
-
         // Créer une grille remplie
         $array = array() ;
         $array[0][2] = 2 ;
@@ -139,15 +137,13 @@ class ApiControllerTest extends WebTestCase
         // on initialize les objets en session
         // initialise grid et tiles
         $this->grid->init(9) ;
-        $this->tiles->setTileset(9) ;
-        $this->values->setSize(9) ;
-        $service->setValues($this->values) ;
+        $this->tiles->init(9) ;
+        $this->values->init(9) ;
         $this->grid->setTiles($array) ;
         foreach($array as $row => $cols) {
             foreach($cols as $col => $value) {
                 $this->values->add($value) ;
-                $getTile = $this->tiles->getTile($row, $col) ;
-                $service->set($getTile, $value) ;
+                $this->tiles->set($row, $col, $value) ;
             }
         }
         $this->session->setGrid($this->grid) ;
@@ -193,8 +189,6 @@ class ApiControllerTest extends WebTestCase
      */
     public function testResetGrid()
     {
-        $service = $this->client->getContainer()->get('tileService') ;
-        
         // Créer une grille remplie
         $array = array() ;
         $array[0][2] = 2 ;
@@ -238,15 +232,13 @@ class ApiControllerTest extends WebTestCase
         // on initialize les objets en session
         // initialise grid et tiles
         $this->grid->init(9) ;
-        $this->tiles->setTileset(9) ;
-        $this->values->setSize(9) ;
-        $service->setValues($this->values) ;
+        $this->tiles->init(9) ;
+        $this->values->init(9) ;
         $this->grid->setTiles($array) ;
         foreach($array as $row => $cols) {
             foreach($cols as $col => $value) {
                 $this->values->add($value) ;
-                $getTile = $this->tiles->getTile($row, $col) ;
-                $service->set($getTile, $value) ;
+                $this->tiles->set($row, $col, $value) ;
             }
         }
         $this->session->setGrid($this->grid) ;
