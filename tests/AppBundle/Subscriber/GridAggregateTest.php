@@ -26,7 +26,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->grid->method('getSize')
                    ->willReturn(9) ;
 
-        $this->session = $this->getMockBuilder('AppBundle\Utils\SudokuSession')
+        $this->session = $this->getMockBuilder('AppBundle\Persistence\GridSession')
                               ->disableOriginalConstructor()
                               ->getMock() ;
     }
@@ -199,15 +199,15 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $gridAggregate->onResetGame($event) ;
     }
 
-    public function testSetTileSubscriber()
+    public function testValidatedTileSubscriber()
     {
-        $result = $this->commonEventSubscriber('SetTileEvent', 'onSetTile') ;
+        $result = $this->commonEventSubscriber('ValidateTileSetEvent', 'onValidatedTile') ;
         $this->assertTrue($result) ;
     }
     
-    public function testOnSetTile()
+    public function testOnValidatedTile()
     {
-        $event = $this->getMockBuilder('AppBundle\Event\SetTileEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\ValidateTileSetEvent')
                                     ->disableOriginalConstructor()
                                     ->getMock() ;
         
@@ -219,7 +219,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                 ->method('setGrid') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onSetTile($event) ;
+        $gridAggregate->onValidatedTile($event) ;
     }
 
     protected function commonEventSubscriber($eventName, $method)

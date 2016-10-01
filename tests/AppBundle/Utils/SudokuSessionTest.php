@@ -9,7 +9,8 @@ use AppBundle\Utils\SudokuSession;
  *
  * @author haclong
  */
-class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
+//class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
+class SudokuSessionTest {
     /**
      * @runInSeparateProcess
      */
@@ -25,6 +26,8 @@ class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
         $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
                     ->disableOriginalConstructor()
                     ->getMock() ;
+        $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                    ->getMock() ;
         
         $session->expects($this->once())
                 ->method('clear') ;
@@ -32,10 +35,12 @@ class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
         $sudokuSession->setGrid($grid) ;
         $sudokuSession->setValues($values) ;
         $sudokuSession->setTiles($tiles) ;
+        $sudokuSession->setGroups($groups) ;
         $sudokuSession->clear() ;
         $this->assertNull($sudokuSession->getGrid()) ;
         $this->assertNull($sudokuSession->getValues()) ;
         $this->assertNull($sudokuSession->getTiles()) ;
+        $this->assertNull($sudokuSession->getGroups()) ;
     }
     
     public function testSessionReady()
@@ -47,10 +52,12 @@ class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
         $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
                     ->disableOriginalConstructor()
                     ->getMock() ;
+        $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                    ->getMock() ;
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
                      ->getMock() ;
         $session->method('get')
-                ->will($this->onConsecutiveCalls($grid, $values, $tiles));
+                ->will($this->onConsecutiveCalls($grid, $values, $tiles, $groups));
         $sudokuSession = new SudokuSession($session) ;
         $this->assertTrue($sudokuSession->isReady()) ;
     }
@@ -62,10 +69,12 @@ class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
         $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
                     ->disableOriginalConstructor()
                     ->getMock() ;
+        $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                    ->getMock() ;
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
                      ->getMock() ;
         $session->method('get')
-                ->will($this->onConsecutiveCalls(null, $values, $tiles));
+                ->will($this->onConsecutiveCalls(null, $values, $tiles, $groups));
         $sudokuSession = new SudokuSession($session) ;
         $this->assertFalse($sudokuSession->isReady()) ;
     }
@@ -77,24 +86,45 @@ class SudokuSessionTest extends \PHPUnit_Framework_TestCase {
         $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
                     ->disableOriginalConstructor()
                     ->getMock() ;
+        $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                    ->getMock() ;
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
                      ->getMock() ;
         $session->method('get')
-                ->will($this->onConsecutiveCalls($grid, null, $tiles));
+                ->will($this->onConsecutiveCalls($grid, null, $tiles, $groups));
         $sudokuSession = new SudokuSession($session) ;
         $this->assertFalse($sudokuSession->isReady()) ;
     }
-    
+
     public function testSessionNotReadyWhenMissingTiles()
     {
         $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->getMock() ;
         $values = $this->getMockBuilder('AppBundle\Entity\Values')
                      ->getMock() ;
+        $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                    ->getMock() ;
         $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
                      ->getMock() ;
         $session->method('get')
-                ->will($this->onConsecutiveCalls($grid, $values, null));
+                ->will($this->onConsecutiveCalls($grid, $values, null, $groups));
+        $sudokuSession = new SudokuSession($session) ;
+        $this->assertFalse($sudokuSession->isReady()) ;
+    }
+    
+    public function testSessionNotReadyWhenMissingGroups()
+    {
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+                     ->getMock() ;
+        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+                    ->disableOriginalConstructor()
+                    ->getMock() ;
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+                     ->getMock() ;
+        $session->method('get')
+                ->will($this->onConsecutiveCalls($grid, $values, $tiles, null));
         $sudokuSession = new SudokuSession($session) ;
         $this->assertFalse($sudokuSession->isReady()) ;
     }

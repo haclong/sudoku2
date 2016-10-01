@@ -53,7 +53,7 @@ class ApiController extends Controller
             $this->get('event_dispatcher')->dispatch('game.load', $event) ;
 
             $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
-            $sessionMarker->logSession("ApiControllerTest::loadGrid") ;
+            $sessionMarker->logSession("ApiController::loadGrid") ;
             
             return new JsonResponse($response) ;
 //        } else {

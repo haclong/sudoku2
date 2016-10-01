@@ -8,7 +8,7 @@ use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
-use AppBundle\Utils\SudokuSession;
+use AppBundle\Persistence\TilesSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class TilesAggregate implements EventSubscriberInterface{
     protected $session ;
     
-    public function __construct(SudokuSession $session)
+    public function __construct(TilesSession $session)
     {
         $this->session = $session ;
     }

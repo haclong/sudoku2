@@ -10,18 +10,24 @@ class DefaultControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->session = $this->client->getContainer()->get('sudokuSession') ;
+        $this->gridsession = $this->client->getContainer()->get('gridSession') ;
+        $this->valuessession = $this->client->getContainer()->get('valuesSession') ;
+        $this->tilessession = $this->client->getContainer()->get('tilesSession') ;
         $this->grid = $this->client->getContainer()->get('gridEntity') ;
         $this->values = $this->client->getContainer()->get('valuesEntity') ;
         $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
-        $this->session->setGrid($this->grid) ;
-        $this->session->setValues($this->values) ;
-        $this->session->setTiles($this->tiles) ;
-    }
+        $this->gridsession->setGrid($this->grid) ;
+        $this->valuessession->setValues($this->values) ;
+        $this->tilessession->setTiles($this->tiles) ;
+     }
     
     protected function tearDown()
     {
         $this->client = null ;
         $this->session = null ;
+        $this->gridsession = null ;
+        $this->valuessession = null ;
+        $this->tilessession = null ;
         $this->grid = null ;
         $this->values = null ;
         $this->tiles = null ;
@@ -77,9 +83,9 @@ class DefaultControllerTest extends WebTestCase
         $this->grid->reset() ;
         $this->values->reset() ;
         $this->tiles->reset() ;
-        $this->session->setGrid($this->grid) ;
-        $this->session->setValues($this->values) ;
-        $this->session->setTiles($this->tiles) ;
+        $this->gridsession->setGrid($this->grid) ;
+        $this->valuessession->setValues($this->values) ;
+        $this->tilessession->setTiles($this->tiles) ;
 
         $crawler = $this->client->request('GET', '/9');
 
