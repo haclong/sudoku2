@@ -16,12 +16,10 @@ services:
         arguments: ['@tilesetEntity']
     groupsEntity:
         class: AppBundle\Entity\Groups
-        arguments: ['@groupEntity']
+#        arguments: ['@groupEntity']
 
     tilesetEntity:
         class: AppBundle\Entity\Tiles\Tileset
-    groupEntity:
-        class: AppBundle\Entity\Group
 
     eventTileLastPossibilityEntity:
         class: AppBundle\Entity\Event\TileLastPossibility
@@ -38,9 +36,27 @@ services:
         class: AppBundle\Event\ValidateTileSetEvent
         arguments: ['@eventTileSetEntity']
 
-    sudokuSession:
-        class: AppBundle\Utils\SudokuSession
+    sessionContent:
+        class: AppBundle\Entity\Persistence\SessionContent
+    gridSession:
+        class: AppBundle\Persistence\GridSession
         arguments: ['@session']
+        tags:
+            -  { name: session.content }
+    valuesSession:
+        class: AppBundle\Persistence\ValuesSession
+        arguments: ['@session']
+        tags:
+            -  { name: session.content }
+    tilesSession:
+        class: AppBundle\Persistence\TilesSession
+        arguments: ['@session']
+        tags:
+            -  { name: session.content }
+
+    sudokuSession:
+        class: AppBundle\Persistence\SudokuSession
+        arguments: ['@session', '@sessionContent']
 
     groupsService:
         class: AppBundle\Service\GroupsService
@@ -60,17 +76,17 @@ services:
         arguments: ['@sudokuSession', '@logger']
     gridAggregate:
         class: AppBundle\Subscriber\GridAggregate
-        arguments: ['@sudokuSession']
+        arguments: ['@gridSession']
         tags:
             - { name: kernel.event_subscriber } 
     valuesAggregate:
         class: AppBundle\Subscriber\ValuesAggregate
-        arguments: ['@sudokuSession']
+        arguments: ['@valuesSession']
         tags:
             - { name: kernel.event_subscriber } 
     tilesAggregate:
         class: AppBundle\Subscriber\TilesAggregate
-        arguments: ['@sudokuSession']
+        arguments: ['@tilesSession']
         tags: 
             - { name: kernel.event_subscriber }
 

@@ -20,7 +20,7 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
                             ->disableOriginalConstructor()
                             ->getMock() ;
 
-        $this->session = $this->getMockBuilder('AppBundle\Utils\SudokuSession')
+        $this->session = $this->getMockBuilder('AppBundle\Persistence\TilesSession')
                               ->disableOriginalConstructor()
                               ->getMock() ;
     }

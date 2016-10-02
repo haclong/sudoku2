@@ -33,7 +33,7 @@ class DefaultController extends Controller
         // pour la suite du debug, voir ce qui se passe dans les différents subscriber
         
         $sessionMarker->logSession("DefaultController::indexAction") ;
-        
+
         return $this->render('sudoku/index.html.twig') ;
     }
 
@@ -44,19 +44,23 @@ class DefaultController extends Controller
     {
         $sessionMarker = $this->get('sessionMarker') ;
         $session = $this->get('sudokuSession') ;
-        
+
+        if(!$session->isReady()) {
+            return $this->redirectToRoute('homepage');
+        }
+
         $gridSize = new GridSize($size) ;
-        
+
         // déclencher l'événement game.choose
         // on vient de choisir la taille de la grille de sudoku
         $event = new ChooseGameEvent($gridSize) ;
         $this->get('event_dispatcher')->dispatch('game.choose', $event) ;
-        
+
         $sessionMarker->logSession("DefaultController::gridAction") ;
         $mappedTiles = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
         return $this->render(
                 'sudoku/grid.html.twig',
                 $mappedTiles) ;
-//        return $this->render('sudoku/grid.html.twig') ;
+//        return $this->render('sudoku/grid.html.twig', ['size' => 9]) ;
     }
 }

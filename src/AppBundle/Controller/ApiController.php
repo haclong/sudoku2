@@ -34,6 +34,10 @@ class ApiController extends Controller
             $sessionMarker = $this->get('sessionMarker') ;
             $session = $this->get('sudokuSession') ;
 
+            if(!$session->isReady()) {
+                return $this->redirectToRoute('homepage');
+            }
+
             // récupération des paramètres dans la requete
             $gridSize = $request->get('size') ;
 
@@ -49,7 +53,7 @@ class ApiController extends Controller
             $this->get('event_dispatcher')->dispatch('game.load', $event) ;
 
             $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
-            $sessionMarker->logSession("ApiControllerTest::loadGrid") ;
+            $sessionMarker->logSession("ApiController::loadGrid") ;
             
             return new JsonResponse($response) ;
 //        } else {
@@ -70,6 +74,10 @@ class ApiController extends Controller
             // récupération des objets dans le container
             $sessionMarker = $this->get('sessionMarker') ;
             $session = $this->get('sudokuSession') ;
+
+            if(!$session->isReady()) {
+                return $this->redirectToRoute('homepage');
+            }
             
             // on crée l(événement reload pour réinitialiser toutes les sessions
             $event = new ReloadGameEvent($session->getGrid()) ;
@@ -99,6 +107,10 @@ class ApiController extends Controller
             // récupération des objets dans le container
             $sessionMarker = $this->get('sessionMarker') ;
             $session = $this->get('sudokuSession') ;
+
+            if(!$session->isReady()) {
+                return $this->redirectToRoute('homepage');
+            }
             // on crée l'événement reload pour réinitialiser toutes les sessions
             $event = new ResetGameEvent() ;
             $this->get('event_dispatcher')->dispatch('game.reset', $event) ;

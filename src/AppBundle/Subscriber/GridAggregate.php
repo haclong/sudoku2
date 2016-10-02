@@ -8,8 +8,8 @@ use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
-use AppBundle\Event\SetTileEvent;
-use AppBundle\Utils\SudokuSession;
+use AppBundle\Event\ValidateTileSetEvent;
+use AppBundle\Persistence\GridSession;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -22,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class GridAggregate implements EventSubscriberInterface {
     protected $session ;
     
-    public function __construct(SudokuSession $sessionService) {
+    public function __construct(GridSession $sessionService) {
         $this->session = $sessionService ;
     }
     
@@ -33,7 +33,7 @@ class GridAggregate implements EventSubscriberInterface {
             LoadGameEvent::NAME => 'onLoadGame',
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
-            SetTileEvent::NAME => 'onSetTile',
+            ValidateTileSetEvent::NAME => 'onValidatedTile',
         ) ;
     }
 
@@ -82,7 +82,7 @@ class GridAggregate implements EventSubscriberInterface {
         $this->storeGrid($grid) ;
     }
 
-    public function onSetTile(SetTileEvent $event) {
+    public function onValidatedTile(ValidateTileSetEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->decreaseRemainingTiles() ;
         $this->storeGrid($grid) ;

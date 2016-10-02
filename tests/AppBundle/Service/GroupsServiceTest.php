@@ -70,6 +70,12 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
     
     public function testSetDispatchSetTileValidateEvent()
     {
+        $impactedTiles = ['0.1', '0.3'] ;
+        $valuesByGroup['col'][0][0] = ['0.0', '0.1', '0.2', '0.3'] ;
+        $valuesByGroup['col'][0][1] = ['0.0', '0.1', '0.2', '0.3'] ;
+        $valuesByGroup['col'][0][2] = ['0.0', '0.1', '0.2', '0.3'] ;
+        $valuesByGroup['col'][0][3] = ['0.0', '0.1', '0.2', '0.3'] ;
+
         $this->dispatcher->expects($this->once())
                          ->method('dispatch')
                          ->with('settile.validate', $this->equalTo($this->validateTileSetEvent)) ;
@@ -81,9 +87,9 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->groups->method('getRegion')
                      ->willReturn(['0.0', '0.1', '1.0', '1.1']) ;
         $this->groups->method('getImpactedTiles')
-                     ->willReturn(array()) ;
+                     ->willReturn($impactedTiles) ;
         $this->groups->method('getValuesByGroup')
-                    ->willReturn(array()) ;
+                    ->willReturn($valuesByGroup) ;
         $this->groups->method('getValuesByTile')
                     ->willReturn(array()) ;
         $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;

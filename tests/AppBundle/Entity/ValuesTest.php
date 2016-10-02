@@ -70,6 +70,12 @@ class ValuesTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($value->getValueByKey(2), 7) ;
     }
     
+    public function testGetValueByKeyReturnNull()
+    {
+        $value = new Values() ;
+        $this->assertNull($value->getValueByKey(2)) ;
+    }
+    
     public function testGetKeyByValue()
     {
         $value = new Values() ;

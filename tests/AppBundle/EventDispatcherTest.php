@@ -8,6 +8,7 @@ use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
 use AppBundle\Event\SetTileEvent;
+use AppBundle\Event\ValidateTileSetEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
@@ -37,7 +38,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testLoadGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 3) ;
+        $this->AreSubscriberAddedByEvent(LoadGameEvent::NAME, 2) ;
     }
     
     /**
@@ -56,12 +57,20 @@ class EventDispatcherTest extends WebTestCase
         $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 3) ;
     }
     
+//    /**
+//     * @runInSeparateProcess
+//     */
+//    public function testSetTileSubscribersAdded()
+//    {
+//        $this->AreSubscriberAddedByEvent(SetTileEvent::NAME, 0) ;
+//    }
+
     /**
      * @runInSeparateProcess
      */
-    public function testSetTileSubscribersAdded()
+    public function testValidateTileSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(SetTileEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(ValidateTileSetEvent::NAME, 1) ;
     }
 
     protected function AreSubscriberAddedByEvent($event, $expected)
