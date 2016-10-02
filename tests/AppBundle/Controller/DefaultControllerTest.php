@@ -71,6 +71,16 @@ class DefaultControllerTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
+    public function testGetGridRedirectToHomepage()
+    {
+        $this->session->clear() ;
+        $this->client->request('GET', '/9');
+        $this->assertTrue($this->client->getResponse()->isRedirect('/'));
+    }    
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testGrid()
     {
         $this->session->clear() ;

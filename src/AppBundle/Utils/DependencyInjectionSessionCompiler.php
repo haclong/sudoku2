@@ -1,8 +1,10 @@
 <?php
 
 namespace AppBundle\Utils;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+use AppBundle\Exception\MissingSessionContentException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -15,7 +17,7 @@ class DependencyInjectionSessionCompiler implements CompilerPassInterface {
     {
         // always first check if the primary service is defined
         if (!$container->has('sessionContent')) {
-            return;
+            throw new MissingSessionContentException() ;
         }
 
         $definition = $container->findDefinition('sessionContent');

@@ -19,8 +19,10 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
-        $session = $this->get('gridSession') ;
-        $session->setGrid($this->get('gridEntity')) ;
+        $session = $this->get('sudokuSession') ;
+        $this->get('session')->remove('grid') ;
+        
+//        echo $session->isReady() ? "oui" : "non" ;
 //        var_dump($session->getGrid()) ;
 //        $service = $this->get('groupsService') ;
 //        $groups = $this->get('groupsEntity') ;
