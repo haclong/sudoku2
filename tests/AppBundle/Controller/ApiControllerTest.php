@@ -24,9 +24,6 @@ class ApiControllerTest extends WebTestCase
         $this->values = $this->client->getContainer()->get('valuesEntity') ;
         $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
         $this->session->clear() ;
-        $this->gridsession->setGrid($this->grid) ;
-        $this->valuessession->setValues($this->values) ;
-        $this->tilessession->setTiles($this->tiles) ;
     }
     
     protected function tearDown()
@@ -40,6 +37,15 @@ class ApiControllerTest extends WebTestCase
         $this->values = null ;
         $this->tiles = null ;
     }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testLoadGridRedirectToHomepage()
+    {
+        $this->client->request('GET', '/api/grid/load?size=9');
+        $this->assertTrue($this->client->getResponse()->isRedirect('/'));
+    }    
 
     /**
      * @runInSeparateProcess
@@ -64,7 +70,7 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
 
         $crawler = $this->client->request('GET', '/api/grid/load?size=9');
-
+        
         // tests sur le retour en json
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -91,6 +97,15 @@ class ApiControllerTest extends WebTestCase
         $mappedJson['grid'] = TilesMapper::toArray($this->session->getTiles(), $this->session->getValues()) ;
         $this->assertEquals($response->getContent(), json_encode($mappedJson)) ;
     }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testReloadGridRedirectToHomepage()
+    {
+        $this->client->request('GET', '/api/grid/reload');
+        $this->assertTrue($this->client->getResponse()->isRedirect('/'));
+    }    
 
     /**
      * @runInSeparateProcess
@@ -186,6 +201,15 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
         $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
     }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testResetGridRedirectToHomepage()
+    {
+        $this->client->request('GET', '/api/grid/reset');
+        $this->assertTrue($this->client->getResponse()->isRedirect('/'));
+    }    
 
     /**
      * @runInSeparateProcess
