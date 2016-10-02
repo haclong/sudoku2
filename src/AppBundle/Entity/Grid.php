@@ -20,20 +20,20 @@ class Grid implements InitInterface, ResetInterface, ReloadInterface {
         $gridSize = (int) $size ;
 //        try {
             $this->validateGridSize($gridSize) ;
-            $this->setSize($gridSize) ;
-            $this->reloadRemainingTiles() ;
+            $this->size = $gridSize ;
+            $this->remainingTiles = $this->sizeAuCarre($gridSize) ;
 //        } catch (InvalidGridSizeException $ex) {
 //        }
     }
     public function reload(Grid $grid = null)
     {
-        $this->reloadRemainingTiles() ;
+        $this->remainingTiles = $this->sizeAuCarre($this->size) ;
     }
     public function reset()
     {
-        $this->resetRemainingTiles() ;
-        $this->resetTiles() ;
-        $this->resetSize() ;
+        $this->remainingTiles = -1 ;
+        $this->tiles = [] ;
+        $this->size = null ;
     }
 
     public function getSize()
@@ -60,7 +60,7 @@ class Grid implements InitInterface, ResetInterface, ReloadInterface {
     }
     public function increaseRemainingTiles()
     {
-        if($this->remainingTiles == $this->size * $this->size)
+        if($this->remainingTiles == $this->sizeAuCarre($this->size))
         {
             throw new MaxRemainingTilesLimitException() ;
         }
@@ -75,27 +75,9 @@ class Grid implements InitInterface, ResetInterface, ReloadInterface {
         return false ;
     }
     
-    protected function setSize($size)
+    protected function sizeAuCarre($size)
     {
-        $this->size = $size ;
-    }
-
-    protected function resetSize()
-    {
-        $this->size = null ;
-    }
-    protected function resetTiles()
-    {
-        $this->tiles = [] ;
-    }
-    protected function resetRemainingTiles()
-    {
-        $this->remainingTiles = -1 ;
-    }
-
-    protected function reloadRemainingTiles()
-    {
-        $this->remainingTiles = $this->size * $this->size ;
+        return $size * $size ;
     }
             
     protected function validateGridSize($size)

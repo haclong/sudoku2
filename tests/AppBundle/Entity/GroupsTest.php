@@ -74,6 +74,9 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
         $reloadedValuesByGroup[2] = ['0.0', '0.1', '1.0', '1.1'] ; 
         $reloadedValuesByGroup[3] = ['0.0', '0.1', '1.0', '1.1'] ; 
 
+        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
+                     ->getMock() ;
+        $grid->method('getSize')->willReturn(4) ;
         $groups = new Groups() ;
         $groups->init(4) ;
         
@@ -83,7 +86,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
         array_pop($groups->getRegion(0)[2]) ;
         $this->assertEquals($valuesByGroup, $groups->getValuesByGroup()['region'][0]) ;
         
-        $groups->reload() ;
+        $groups->reload($grid) ;
         $this->assertEquals($reloadedValuesByGroup, $groups->getValuesByGroup()['region'][0]) ;
     }
     
