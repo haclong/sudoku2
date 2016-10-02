@@ -15,13 +15,13 @@ class Values implements InitInterface, ResetInterface {
     
     public function init($size)
     {
-        $this->setSize($size) ;
+        $this->size = $size;
         $this->values = [] ;
     }
     public function reset()
     {
-        $this->values = array() ;
         $this->size = null ;
+        $this->values = array() ;
     }
 
     public function add($value)
@@ -62,9 +62,5 @@ class Values implements InitInterface, ResetInterface {
     {
         $array = array_flip($this->values) ;
         return $array[$value] ;
-    }
-
-    protected function setSize($size) {
-        $this->size = $size;
     }
 }

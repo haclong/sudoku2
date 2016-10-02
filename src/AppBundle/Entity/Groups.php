@@ -1,7 +1,6 @@
 <?php
 
 namespace AppBundle\Entity;
-
 use AppBundle\Utils\RegionGetter;
 
 /**
@@ -9,7 +8,7 @@ use AppBundle\Utils\RegionGetter;
  *
  * @author haclong
  */
-class Groups {
+class Groups implements InitInterface, ReloadInterface, ResetInterface {
     protected $valuesByGroup = array() ;
     protected $tilesByGroup = array() ;
     protected $size ;
@@ -19,9 +18,9 @@ class Groups {
         $this->size = $size ;
         // construit les colonnes / lignes / regions
         // répartit les id des cases par colonne / ligne / region
-        $this->sortTilesByGroup($size) ;
+        $this->tilesByGroup = $this->setTilesByGroup($size) ;
         // par colonne / ligne / region, répartit les cases contenant les valeurs
-        $this->buildValuesByGroup($size) ;
+        $this->valuesByGroup = $this->setValuesByGroup($size) ;
     }
     
     public function reset()
@@ -31,9 +30,9 @@ class Groups {
         $this->tilesByGroup = array() ;
     }
     
-    public function reload()
+    public function reload(Grid $grid)
     {
-        $this->buildValuesByGroup($this->size) ;
+        $this->valuesByGroup = $this->setValuesByGroup($grid->getSize()) ;
     }
     
     public function getSize()
@@ -114,18 +113,21 @@ class Groups {
     }
     
     // set $valuesByGroup
-    protected function buildValuesByGroup($size)
+    protected function setValuesByGroup($size)
     {
-        $this->valuesByGroup['col'] = $this->buildValuesByCols($size) ;
-        $this->valuesByGroup['row'] = $this->buildValuesByRows($size) ;
-        $this->valuesByGroup['region'] = $this->buildValuesByRegions($size) ;
+        $array = [] ;
+        $array['col'] = $this->sortValuesByCols($size) ;
+        $array['row'] = $this->sortValuesByRows($size) ;
+        $array['region'] = $this->sortValuesByRegions($size) ;
+        
+        return $array ;
     }
     /**
      * retourne la liste des id de cases par valeurs par colonne
      * @param int $size
      * @return array
      */
-    protected function buildValuesByCols($size)
+    protected function sortValuesByCols($size)
     {
         $array = [] ;
         for($groupindex=0; $groupindex<$size; $groupindex++)
@@ -142,7 +144,7 @@ class Groups {
      * @param int $size
      * @return array
      */
-    protected function buildValuesByRows($size)
+    protected function sortValuesByRows($size)
     {
         $array = [] ;
         for($groupindex=0; $groupindex<$size; $groupindex++)
@@ -159,7 +161,7 @@ class Groups {
      * @param int $size
      * @return array
      */
-    protected function buildValuesByRegions($size)
+    protected function sortValuesByRegions($size)
     {
         $array = [] ;
         for($groupindex=0; $groupindex<$size; $groupindex++)
@@ -173,35 +175,30 @@ class Groups {
     }
     
     // set $tilesByGroup
-    protected function sortTilesByGroup($size)
+    protected function setTilesByGroup($size)
     {
-        $this->buildGroup($size) ;
-        $this->sortTiles($size) ;
-    }
-    protected function buildGroup($size)
-    {
+        $array = [] ;
         for($i=0; $i<$size; $i++)
         {
             // initialize les 3 types de groupe : col, row et region
             // nb de col = taille de la grille
             // nb de row = taille de la grille
             // nb de région = taille de la grille
-            $this->tilesByGroup['col'][$i] = [] ;
-            $this->tilesByGroup['row'][$i] = [] ;
-            $this->tilesByGroup['region'][$i] = [] ;
+            $array['col'][$i] = [] ;
+            $array['row'][$i] = [] ;
+            $array['region'][$i] = [] ;
         }
-    }
-    protected function sortTiles($size)
-    {
+
         for($row=0; $row<$size; $row++)
         {
             for($col=0; $col<$size; $col++)
             {
                 $region = RegionGetter::getRegion($row, $col, $size) ;
-                $this->tilesByGroup['col'][$col][] = $row.'.'.$col ;
-                $this->tilesByGroup['row'][$row][] = $row.'.'.$col ;
-                $this->tilesByGroup['region'][$region][] = $row.'.'.$col ;
+                $array['col'][$col][] = $row.'.'.$col ;
+                $array['row'][$row][] = $row.'.'.$col ;
+                $array['region'][$region][] = $row.'.'.$col ;
             }
         }
+        return $array ;
     }
 }

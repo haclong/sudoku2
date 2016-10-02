@@ -7,5 +7,5 @@ namespace AppBundle\Entity;
  * @author haclong
  */
 interface ReloadInterface {
-    public function reload(Grid $grid=null) ;
+    public function reload(Grid $grid) ;
 }

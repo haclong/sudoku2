@@ -9,7 +9,7 @@ use AppBundle\Entity\Tiles\Tileset;
  *
  * @author haclong
  */
-class Tiles {
+class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     protected $tileset ;
     protected $size ;
 
@@ -21,18 +21,18 @@ class Tiles {
     public function init($size)
     {
         $this->setTileset($size) ;
-        $this->setSize($size) ;
+        $this->size = $size ;
         return $this ;
     }
     public function reset() 
     {
-        $this->resetTileset() ;
-        $this->resetSize() ;
+        $this->tileset->exchangeArray(array()) ;
+        $this->size = null ;
         return $this ;
     }
     public function reload(Grid $grid)
     {
-        $this->reloadTileset($grid->getSize()) ;
+        $this->setTileset($grid->getSize()) ;
     }
     public function getSize()
     {
@@ -61,23 +61,5 @@ class Tiles {
             }
         }
         return $this ;
-    }
-    protected function setSize($size)
-    {
-        $this->size = $size ;
-        return $this ;
-    }
-    
-    protected function resetSize()
-    {
-        $this->size = null ;
-    }
-    protected function resetTileset()
-    {
-        return $this->tileset->exchangeArray(array()) ;
-    }
-    protected function reloadTileset($grid)
-    {
-        $this->setTileset($grid) ;
     }
 }
