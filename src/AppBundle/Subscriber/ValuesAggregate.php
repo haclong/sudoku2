@@ -37,7 +37,7 @@ class ValuesAggregate implements EventSubscriberInterface {
     }
     
     public function onInitGame(InitGameEvent $event) {
-        $values = $event->getValues() ;
+        $values = $event->getEntity('valuesentity') ;
         $values->reset() ;
         $this->session->setValues($values) ;
     }

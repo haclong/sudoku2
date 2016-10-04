@@ -7,16 +7,25 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    sudokuEntities:
+        class: AppBundle\Entity\Event\SudokuEntities
     valuesEntity:
         class: AppBundle\Entity\Values
+        tags:
+            -  { name: sudoku.entity }
     gridEntity:
         class: AppBundle\Entity\Grid
+        tags:
+            -  { name: sudoku.entity }
     tilesEntity:
         class: AppBundle\Entity\Tiles
         arguments: ['@tilesetEntity']
+        tags:
+            -  { name: sudoku.entity }
     groupsEntity:
         class: AppBundle\Entity\Groups
-#        arguments: ['@groupEntity']
+        tags:
+            -  { name: sudoku.entity }
 
     tilesetEntity:
         class: AppBundle\Entity\Tiles\Tileset

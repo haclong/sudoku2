@@ -4,21 +4,21 @@ namespace Tests\AppBundle\Utils;
 
 use AppBundle\Entity\Persistence\SessionContent;
 use AppBundle\Exception\MissingSessionContentException;
-use AppBundle\Utils\DependencyInjectionSessionCompiler;
+use AppBundle\Utils\SessionCompiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 /**
- * Description of DependencyInjectionSessionCompilerTest
+ * Description of SessionCompilerTest
  *
  * @author haclong
  */
-class DependencyInjectionSessionCompilerTest extends \PHPUnit_Framework_TestCase {
+class SessionCompilerTest extends \PHPUnit_Framework_TestCase {
     public function testCompilerReturnsMissingSessionContentException() {
         $this->setExpectedException(MissingSessionContentException::class) ;
         $container = new ContainerBuilder();
 
-        $compiler = new DependencyInjectionSessionCompiler() ;
+        $compiler = new SessionCompiler() ;
         $compiler->process($container) ;
     }
     
@@ -27,7 +27,7 @@ class DependencyInjectionSessionCompilerTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $container->register('sessionContent', '\AppBundle\Entity\Persistence\SessionContent') ;
 
-        $compiler = new DependencyInjectionSessionCompiler() ;
+        $compiler = new SessionCompiler() ;
         $compiler->process($container) ;
         
         $this->assertEquals(0, count($container->get('sessionContent'))) ;
@@ -44,7 +44,7 @@ class DependencyInjectionSessionCompilerTest extends \PHPUnit_Framework_TestCase
         $taggedService2->addTag('session.content') ;
         $container->setDefinition('taggedService2', $taggedService2) ;
 
-        $compiler = new DependencyInjectionSessionCompiler() ;
+        $compiler = new SessionCompiler() ;
         $compiler->process($container) ;
         
         $expectedArray = new SessionContent() ;

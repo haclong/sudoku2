@@ -45,7 +45,7 @@ class GridAggregate implements EventSubscriberInterface {
     }
     
     public function onInitGame(InitGameEvent $event) {
-        $grid = $event->getGrid() ;
+        $grid = $event->getEntity('gridentity') ;
         $grid->reset() ;
         $this->session->setGrid($grid) ;
     }

@@ -41,15 +41,11 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
 
     public function testOnInitGame()
     {
-        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                        ->getMock() ;
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
-                        ->disableOriginalConstructor()
-                        ->getMock() ;
         $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
-                                    ->setConstructorArgs(array($grid,$this->values, $tiles))
+                                    ->disableOriginalConstructor()
                                     ->getMock() ;
-        $event->method('getValues')
+        $event->method('getEntity')
+                ->with('valuesentity')
                 ->willReturn($this->values) ;
         
         $this->session->expects($this->once()) 

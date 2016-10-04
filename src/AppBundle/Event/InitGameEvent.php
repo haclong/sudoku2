@@ -2,9 +2,7 @@
 
 namespace AppBundle\Event;
 
-use AppBundle\Entity\Grid;
-use AppBundle\Entity\Tiles;
-use AppBundle\Entity\Values;
+use AppBundle\Entity\Event\SudokuEntities;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -14,27 +12,14 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class InitGameEvent extends Event {
     const NAME = 'game.init' ;
-    protected $grid ;
-    protected $values ;
-    protected $tiles ;
+    protected $entities ;
     
-    public function __construct(Grid $grid, Values $values, Tiles $tiles)
+    public function __construct(SudokuEntities $entities)
     {
-        $this->grid = $grid ;
-        $this->values = $values ;
-        $this->tiles = $tiles ;
+        $this->entities = $entities ;
     }
     
-    public function getGrid() {
-        return $this->grid;
+    public function getEntity($key) {
+        return $this->entities->offsetGet($key) ;
     }
-
-    public function getValues() {
-        return $this->values;
-    }
-
-    public function getTiles() {
-        return $this->tiles;
-    }
-
 }

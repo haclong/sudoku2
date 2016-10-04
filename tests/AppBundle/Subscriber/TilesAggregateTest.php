@@ -39,14 +39,11 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
 
     public function testOnInitGame()
     {
-        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                        ->getMock() ;
-        $values = $this->getMockBuilder('AppBundle\Entity\Values')
-                        ->getMock() ;
         $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
-                                    ->setConstructorArgs(array($grid, $values, $this->tiles))
+                                    ->disableOriginalConstructor()
                                     ->getMock() ;
-        $event->method('getTiles')
+        $event->method('getEntity')
+              ->with('tilesentity')
               ->willReturn($this->tiles) ;
         
         $this->tiles->expects($this->once())

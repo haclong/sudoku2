@@ -45,15 +45,11 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
 
     public function testOnInitGame()
     {
-        $values = $this->getMockBuilder('AppBundle\Entity\Values')
-                        ->getMock() ;
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
-                        ->disableOriginalConstructor()
-                        ->getMock() ;
         $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
-                                    ->setConstructorArgs(array($this->grid,$values, $tiles))
+                                    ->disableOriginalConstructor()
                                     ->getMock() ;
-        $event->method('getGrid')
+        $event->method('getEntity')
+                ->with('gridentity')
                 ->willReturn($this->grid) ;
         
         $this->grid->expects($this->once())

@@ -42,7 +42,7 @@ class TilesAggregate implements EventSubscriberInterface{
     }
     
     public function onInitGame(InitGameEvent $event) {
-        $tiles = $event->getTiles() ;
+        $tiles = $event->getEntity('tilesentity') ;
         $tiles->reset() ;
         $this->session->setTiles($tiles) ;
     }

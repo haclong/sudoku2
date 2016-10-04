@@ -21,14 +21,11 @@ class DefaultController extends Controller
         $session = $this->get('sudokuSession') ;
         $sessionMarker = $this->get('sessionMarker') ;
         $session->clear() ;
-
-        $grid = $this->get('gridEntity') ;
-        $values = $this->get('valuesEntity') ;
-        $tiles = $this->get('tilesEntity') ;
+        $sudokuEntities = $this->get('sudokuEntities') ;
 
         // déclencher l'événement game.init
         // on initialise le jeu (on charge des entités vides dans la session)
-        $event = new InitGameEvent($grid, $values, $tiles) ;
+        $event = new InitGameEvent($sudokuEntities) ;
         $this->get('event_dispatcher')->dispatch('game.init', $event) ;
         // pour la suite du debug, voir ce qui se passe dans les différents subscriber
         
