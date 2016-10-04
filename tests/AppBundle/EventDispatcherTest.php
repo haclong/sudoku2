@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle;
 
-use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
@@ -29,9 +29,9 @@ class EventDispatcherTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
-    public function testChooseGameSubscribersAdded()
+    public function testInitGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ChooseGameEvent::NAME, 2) ;
+        $this->AreSubscriberAddedByEvent(InitGameEvent::NAME, 2) ;
     }
     /**
      * @runInSeparateProcess

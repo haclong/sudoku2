@@ -3,7 +3,7 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Grid;
-use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
@@ -29,7 +29,7 @@ class GridAggregate implements EventSubscriberInterface {
     public static function getSubscribedEvents() {
         return array(
             SetGameEvent::NAME => 'onSetGame',
-            ChooseGameEvent::NAME => 'onChooseGame',
+            InitGameEvent::NAME => 'onInitGame',
             LoadGameEvent::NAME => 'onLoadGame',
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
@@ -50,7 +50,7 @@ class GridAggregate implements EventSubscriberInterface {
         $this->session->setGrid($grid) ;
     }
     
-    public function onChooseGame(ChooseGameEvent $event) {
+    public function onInitGame(InitGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->reset() ;
         $grid->init($event->getGridSize()->get()) ;

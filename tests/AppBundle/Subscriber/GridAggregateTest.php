@@ -61,20 +61,20 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $gridAggregate->onSetGame($event) ;
     }
 
-    public function testChooseGameSubscriber()
+    public function testInitGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('ChooseGameEvent', 'onChooseGame') ;
+        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
         $this->assertTrue($result) ;
     }
 
-    public function testOnChooseGame()
+    public function testOnInitGame()
     {
         $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                         ->disableOriginalConstructor()
                         ->getMock() ;
         $size->method('get')
                 ->willReturn(9) ;
-        $event = $this->getMockBuilder('AppBundle\Event\ChooseGameEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
                                     ->setConstructorArgs(array($size))
                                     ->getMock() ;
         $event->method('getGridSize')
@@ -88,7 +88,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
                 ->method('reset') ;
         
         $gridAggregate = new GridAggregate($this->session) ;
-        $gridAggregate->onChooseGame($event) ;
+        $gridAggregate->onInitGame($event) ;
     }
 
     public function testLoadGameSubscriber()

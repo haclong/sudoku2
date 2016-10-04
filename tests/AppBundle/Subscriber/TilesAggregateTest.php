@@ -55,20 +55,20 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $tilesAggregate->onSetGame($event) ;
     }
 
-    public function testChooseGameSubscriber()
+    public function testInitGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('ChooseGameEvent', 'onChooseGame') ;
+        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
         $this->assertTrue($result) ;
     }
 
-    public function testOnChooseGame()
+    public function testOnInitGame()
     {
         $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                         ->disableOriginalConstructor()
                         ->getMock() ;
         $size->method('get')
                 ->willReturn(9) ;
-        $event = $this->getMockBuilder('AppBundle\Event\ChooseGameEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
                                     ->setConstructorArgs(array($size))
                                     ->getMock() ;
         $event->method('getGridSize')
@@ -85,7 +85,7 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
                 ->with($this->equalTo($size->get())) ;
         
         $tilesAggregate = new TilesAggregate($this->session) ;
-        $tilesAggregate->onChooseGame($event) ;
+        $tilesAggregate->onInitGame($event) ;
     }
 
     public function testLoadGameSubscriber()

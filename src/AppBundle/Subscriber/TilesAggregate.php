@@ -3,7 +3,7 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Tiles;
-use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
@@ -27,7 +27,7 @@ class TilesAggregate implements EventSubscriberInterface{
     public static function getSubscribedEvents() {
         return array(
             SetGameEvent::NAME => 'onSetGame',
-            ChooseGameEvent::NAME => 'onChooseGame',
+            InitGameEvent::NAME => 'onInitGame',
             LoadGameEvent::NAME => array('onLoadGame', -500),
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
@@ -47,7 +47,7 @@ class TilesAggregate implements EventSubscriberInterface{
         $this->session->setTiles($tiles) ;
     }
 
-    public function onChooseGame(ChooseGameEvent $event) {
+    public function onInitGame(InitGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;
         $tiles->reset() ;
         $tiles->init($event->getGridSize()->get()) ;

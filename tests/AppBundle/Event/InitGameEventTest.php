@@ -2,22 +2,22 @@
 
 namespace Tests\AppBundle\Event;
 
-use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Event\InitGameEvent;
 
 /**
- * Description of ChooseGameEventTest
+ * Description of InitGameEventTest
  *
  * @author haclong
  */
-class ChooseGameEventTest extends \PHPUnit_Framework_TestCase  {
+class InitGameEventTest extends \PHPUnit_Framework_TestCase  {
     public function testConstructor()
     {
         $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                      ->disableOriginalConstructor()
                      ->getMock() ;
 
-        $event = new ChooseGameEvent($size) ;
-        $this->assertEquals($event::NAME, 'game.choose') ;
+        $event = new InitGameEvent($size) ;
+        $this->assertEquals($event::NAME, 'game.init') ;
         $this->assertInstanceOf('AppBundle\Entity\Event\GridSize', $event->getGridSize()) ;
     }
 }
