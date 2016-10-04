@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
 use AppBundle\Event\ChooseGameEvent;
-use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\SetGameEvent;
 use AppBundle\Utils\TilesMapper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,10 +23,10 @@ class DefaultController extends Controller
         $session->clear() ;
         $sudokuEntities = $this->get('sudokuEntities') ;
 
-        // déclencher l'événement game.init
+        // déclencher l'événement game.set
         // on initialise le jeu (on charge des entités vides dans la session)
-        $event = new InitGameEvent($sudokuEntities) ;
-        $this->get('event_dispatcher')->dispatch('game.init', $event) ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->get('event_dispatcher')->dispatch('game.set', $event) ;
         // pour la suite du debug, voir ce qui se passe dans les différents subscriber
         
         $sessionMarker->logSession("DefaultController::indexAction") ;

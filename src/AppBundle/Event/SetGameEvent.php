@@ -6,12 +6,12 @@ use AppBundle\Entity\Event\SudokuEntities;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Description of InitGameEvent
+ * Description of SetGameEvent
  *
  * @author haclong
  */
-class InitGameEvent extends Event {
-    const NAME = 'game.init' ;
+class SetGameEvent extends Event {
+    const NAME = 'game.set' ;
     protected $entities ;
     
     public function __construct(SudokuEntities $entities)

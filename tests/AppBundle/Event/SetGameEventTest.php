@@ -2,14 +2,14 @@
 
 namespace Tests\AppBundle\Event;
 
-use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\SetGameEvent;
 
 /**
- * Description of InitGameEventTest
+ * Description of SetGameEventTest
  *
  * @author haclong
  */
-class InitGameEventTest extends \PHPUnit_Framework_TestCase  {
+class SetGameEventTest extends \PHPUnit_Framework_TestCase  {
     public function testConstructor()
     {
         $entities = $this->getMockBuilder('AppBundle\Entity\Event\SudokuEntities')
@@ -27,8 +27,8 @@ class InitGameEventTest extends \PHPUnit_Framework_TestCase  {
         $entities->method('offsetGet')
                  ->will($this->onConsecutiveCalls($grid, $values, $tiles)) ;
 
-        $event = new InitGameEvent($entities) ;
-        $this->assertEquals($event::NAME, 'game.init') ;
+        $event = new SetGameEvent($entities) ;
+        $this->assertEquals($event::NAME, 'game.set') ;
         $this->assertSame($grid, $event->getEntity('gridentity')) ;
         $this->assertSame($values, $event->getEntity('valuesentity')) ;
         $this->assertSame($tiles, $event->getEntity('tilesentity')) ;
