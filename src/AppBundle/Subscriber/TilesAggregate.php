@@ -28,7 +28,7 @@ class TilesAggregate implements EventSubscriberInterface{
         return array(
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-            LoadGameEvent::NAME => array('onLoadGame', -500),
+//            LoadGameEvent::NAME => array('onLoadGame', -500),
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
         ) ;
@@ -53,20 +53,20 @@ class TilesAggregate implements EventSubscriberInterface{
         $tiles->init($event->getGridSize()->get()) ;
         $this->storeTiles($tiles) ;
     }
-    
-    public function onLoadGame(LoadGameEvent $event) {
-        $tiles = $this->getTilesFromSession() ;
-
-        $loadedTiles = $event->getTiles()->getTiles() ;
-        foreach($loadedTiles as $row => $cols)
-        {
-            foreach($cols as $col => $value)
-            {
-                $tiles->set($row, $col, $value) ;
-            }
-        }
-        $this->storeTiles($tiles) ;
-    }
+//    
+//    public function onLoadGame(LoadGameEvent $event) {
+//        $tiles = $this->getTilesFromSession() ;
+//
+//        $loadedTiles = $event->getTiles()->getTiles() ;
+//        foreach($loadedTiles as $row => $cols)
+//        {
+//            foreach($cols as $col => $value)
+//            {
+//                $tiles->set($row, $col, $value) ;
+//            }
+//        }
+//        $this->storeTiles($tiles) ;
+//    }
     
     public function onReloadGame(ReloadGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;

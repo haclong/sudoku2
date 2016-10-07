@@ -16,6 +16,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
 //    protected $dispatcher ;
     protected $session ;
     protected $grid ;
+    protected $service ;
 
     protected function setUp()
     {
@@ -29,12 +30,16 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->getMockBuilder('AppBundle\Persistence\GridSession')
                               ->disableOriginalConstructor()
                               ->getMock() ;
+        $this->service = $this->getMockBuilder('AppBundle\Service\SetTileService')
+                              ->disableOriginalConstructor()
+                              ->getMock() ;
     }
     
     protected function tearDown()
     {
         $this->session = null ;
         $this->grid = null ;
+        $this->service = null ;
     }
 
     public function testSetGameSubscriber()
@@ -57,7 +62,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->once())
                 ->method('setGrid') ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onSetGame($event) ;
     }
 
@@ -87,7 +92,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->grid->expects($this->once())
                 ->method('reset') ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onInitGame($event) ;
     }
 
@@ -115,11 +120,11 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->once())
                 ->method('setGrid') ;
         
-        $event->expects($this->exactly(2))
+        $event->expects($this->exactly(3))
               ->method('getTiles')
               ->will($this->returnValue($tiles));
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onLoadGame($event) ;
     }
 
@@ -142,7 +147,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session->method('getGrid')
                 ->willReturn($this->grid) ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onLoadGame($event) ;
     }
     
@@ -165,7 +170,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->once())
                 ->method('setGrid') ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onReloadGame($event) ;
     }
 
@@ -191,7 +196,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->grid->expects($this->once())
                 ->method('init') ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onResetGame($event) ;
     }
 
@@ -214,7 +219,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->once())
                 ->method('setGrid') ;
         
-        $gridAggregate = new GridAggregate($this->session) ;
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onValidatedTile($event) ;
     }
 

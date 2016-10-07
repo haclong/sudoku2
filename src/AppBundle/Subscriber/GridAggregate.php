@@ -4,12 +4,13 @@ namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Grid;
 use AppBundle\Event\InitGameEvent;
-use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Persistence\GridSession;
+use AppBundle\Service\SetTileService;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -21,9 +22,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class GridAggregate implements EventSubscriberInterface {
     protected $session ;
+    protected $service ;
     
-    public function __construct(GridSession $sessionService) {
+    public function __construct(GridSession $sessionService, SetTileService $setTileService) {
         $this->session = $sessionService ;
+        $this->service = $setTileService ;
     }
     
     public static function getSubscribedEvents() {
@@ -65,6 +68,14 @@ class GridAggregate implements EventSubscriberInterface {
             throw new RuntimeException('event grid size differs from session grid size') ;
         }
         $grid->setTiles($event->getTiles()->getTiles()) ;
+        foreach($event->getTiles()->getTiles() as $row => $cols)
+        {
+            foreach($cols as $col => $value)
+            {
+                $this->service->setTile($row, $col, $value) ;
+            }
+        }
+        
         $this->storeGrid($grid) ;
     }
     

@@ -7,6 +7,7 @@ use AppBundle\Exception\MissingSessionContentException;
 use AppBundle\Utils\SessionCompiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Description of SessionCompilerTest
@@ -37,11 +38,14 @@ class SessionCompilerTest extends \PHPUnit_Framework_TestCase {
     {
         $container = new ContainerBuilder();
         $container->register('sessionContent', '\AppBundle\Entity\Persistence\SessionContent') ;
-        $taggedService1 = new Definition('stdClass') ;
+        $container->register('session', 'Symfony\Component\HttpFoundation\Session\Session') ;
+        $taggedService1 = new Definition('\AppBundle\Persistence\GridSession') ;
         $taggedService1->addTag('session.content') ;
+        $taggedService1->addArgument(new Reference('session')) ;
         $container->setDefinition('taggedService1', $taggedService1) ;
-        $taggedService2 = new Definition('stdClass') ;
+        $taggedService2 = new Definition('\AppBundle\Persistence\TilesSession') ;
         $taggedService2->addTag('session.content') ;
+        $taggedService2->addArgument(new Reference('session')) ;
         $container->setDefinition('taggedService2', $taggedService2) ;
 
         $compiler = new SessionCompiler() ;
