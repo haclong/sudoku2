@@ -2,13 +2,13 @@
 
 namespace AppBundle\Subscriber;
 
-use AppBundle\Event\ChooseGameEvent;
+use AppBundle\Entity\Groups;
 use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
-use AppBundle\Service\ValuesService;
-use AppBundle\Utils\SudokuSession;
+use AppBundle\Event\SetGameEvent;
+use AppBundle\Persistence\GroupsSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -18,17 +18,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class GroupsAggregate implements EventSubscriberInterface{
     protected $session ;
-    protected $service ;
     
-    public function __construct(SudokuSession $sessionService, ValuesService $service) {
-        $this->session = $sessionService ;
-        $this->service = $service ;
+    public function __construct(GroupsSession $session) {
+        $this->session = $session ;
     }
 
     public static function getSubscribedEvents() {
         return array(
+            SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-            ChooseGameEvent::NAME => 'onChooseGame',
             LoadGameEvent::NAME => 'onLoadGame',
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
@@ -42,19 +40,19 @@ class GroupsAggregate implements EventSubscriberInterface{
         $this->session->setGroups($groups) ;
     }
     
-//    public function onInitGame(InitGameEvent $event) {
-//        $tiles = $event->getTiles() ;
-//        $tiles->reset() ;
-//        $this->session->setTiles($tiles) ;
-//    }
-//
-//    public function onChooseGame(ChooseGameEvent $event) {
-//        $tiles = $this->getTilesFromSession() ;
-//        $tiles->reset() ;
-//        $tiles->init($event->getGridSize()->get()) ;
-//        $this->storeTiles($tiles) ;
-//    }
-//    
+    public function onSetGame(SetGameEvent $event) {
+        $groups = $event->getEntity('groupsentity') ;
+        $groups->reset() ;
+        $this->session->setGroups($groups) ;
+    }
+
+    public function onInitGame(InitGameEvent $event) {
+        $groups = $this->getGroupsFromSession() ;
+        $groups->reset() ;
+        $groups->init($event->getGridSize()->get()) ;
+        $this->storeGroups($groups) ;
+    }
+
 //    public function onLoadGame(LoadGameEvent $event) {
 //        $tiles = $this->getTilesFromSession() ;
 //

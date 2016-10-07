@@ -2,39 +2,24 @@
 
 namespace AppBundle\Event;
 
-use AppBundle\Entity\Grid;
-use AppBundle\Entity\Tiles;
-use AppBundle\Entity\Values;
+use AppBundle\Entity\Event\GridSize;
 use Symfony\Component\EventDispatcher\Event;
-
 /**
- * Description of InitGameEvent
+ * Description of InitGridEvent
  *
  * @author haclong
  */
 class InitGameEvent extends Event {
     const NAME = 'game.init' ;
-    protected $grid ;
-    protected $values ;
-    protected $tiles ;
+    protected $gridSize ;
     
-    public function __construct(Grid $grid, Values $values, Tiles $tiles)
+    public function __construct(GridSize $size)
     {
-        $this->grid = $grid ;
-        $this->values = $values ;
-        $this->tiles = $tiles ;
+        $this->gridSize = $size ;
     }
     
-    public function getGrid() {
-        return $this->grid;
+    public function getGridSize()
+    {
+        return $this->gridSize ;
     }
-
-    public function getValues() {
-        return $this->values;
-    }
-
-    public function getTiles() {
-        return $this->tiles;
-    }
-
 }

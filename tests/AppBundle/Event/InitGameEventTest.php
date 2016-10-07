@@ -12,20 +12,12 @@ use AppBundle\Event\InitGameEvent;
 class InitGameEventTest extends \PHPUnit_Framework_TestCase  {
     public function testConstructor()
     {
-        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                     ->disableOriginalConstructor()
-                     ->getMock() ;
-        $values = $this->getMockBuilder('AppBundle\Entity\Values')
-                     ->disableOriginalConstructor()
-                     ->getMock() ;
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
+        $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                      ->disableOriginalConstructor()
                      ->getMock() ;
 
-        $event = new InitGameEvent($grid, $values, $tiles) ;
+        $event = new InitGameEvent($size) ;
         $this->assertEquals($event::NAME, 'game.init') ;
-        $this->assertSame($grid, $event->getGrid()) ;
-        $this->assertSame($values, $event->getValues()) ;
-        $this->assertSame($tiles, $event->getTiles()) ;
+        $this->assertInstanceOf('AppBundle\Entity\Event\GridSize', $event->getGridSize()) ;
     }
 }

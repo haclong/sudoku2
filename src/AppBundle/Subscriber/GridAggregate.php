@@ -3,13 +3,14 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Grid;
-use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Persistence\GridSession;
+use AppBundle\Service\SetTileService;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -21,15 +22,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class GridAggregate implements EventSubscriberInterface {
     protected $session ;
+    protected $service ;
     
-    public function __construct(GridSession $sessionService) {
+    public function __construct(GridSession $sessionService, SetTileService $setTileService) {
         $this->session = $sessionService ;
+        $this->service = $setTileService ;
     }
     
     public static function getSubscribedEvents() {
         return array(
+            SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-            ChooseGameEvent::NAME => 'onChooseGame',
             LoadGameEvent::NAME => 'onLoadGame',
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
@@ -44,13 +47,13 @@ class GridAggregate implements EventSubscriberInterface {
         $this->session->setGrid($grid) ;
     }
     
-    public function onInitGame(InitGameEvent $event) {
-        $grid = $event->getGrid() ;
+    public function onSetGame(SetGameEvent $event) {
+        $grid = $event->getEntity('gridentity') ;
         $grid->reset() ;
         $this->session->setGrid($grid) ;
     }
     
-    public function onChooseGame(ChooseGameEvent $event) {
+    public function onInitGame(InitGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->reset() ;
         $grid->init($event->getGridSize()->get()) ;
@@ -65,6 +68,14 @@ class GridAggregate implements EventSubscriberInterface {
             throw new RuntimeException('event grid size differs from session grid size') ;
         }
         $grid->setTiles($event->getTiles()->getTiles()) ;
+        foreach($event->getTiles()->getTiles() as $row => $cols)
+        {
+            foreach($cols as $col => $value)
+            {
+                $this->service->setTile($row, $col, $value) ;
+            }
+        }
+        
         $this->storeGrid($grid) ;
     }
     

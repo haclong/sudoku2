@@ -4,21 +4,22 @@ namespace Tests\AppBundle\Utils;
 
 use AppBundle\Entity\Persistence\SessionContent;
 use AppBundle\Exception\MissingSessionContentException;
-use AppBundle\Utils\DependencyInjectionSessionCompiler;
+use AppBundle\Utils\SessionCompiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Description of DependencyInjectionSessionCompilerTest
+ * Description of SessionCompilerTest
  *
  * @author haclong
  */
-class DependencyInjectionSessionCompilerTest extends \PHPUnit_Framework_TestCase {
+class SessionCompilerTest extends \PHPUnit_Framework_TestCase {
     public function testCompilerReturnsMissingSessionContentException() {
         $this->setExpectedException(MissingSessionContentException::class) ;
         $container = new ContainerBuilder();
 
-        $compiler = new DependencyInjectionSessionCompiler() ;
+        $compiler = new SessionCompiler() ;
         $compiler->process($container) ;
     }
     
@@ -27,7 +28,7 @@ class DependencyInjectionSessionCompilerTest extends \PHPUnit_Framework_TestCase
         $container = new ContainerBuilder();
         $container->register('sessionContent', '\AppBundle\Entity\Persistence\SessionContent') ;
 
-        $compiler = new DependencyInjectionSessionCompiler() ;
+        $compiler = new SessionCompiler() ;
         $compiler->process($container) ;
         
         $this->assertEquals(0, count($container->get('sessionContent'))) ;
@@ -37,14 +38,17 @@ class DependencyInjectionSessionCompilerTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
         $container->register('sessionContent', '\AppBundle\Entity\Persistence\SessionContent') ;
-        $taggedService1 = new Definition('stdClass') ;
+        $container->register('session', 'Symfony\Component\HttpFoundation\Session\Session') ;
+        $taggedService1 = new Definition('\AppBundle\Persistence\GridSession') ;
         $taggedService1->addTag('session.content') ;
+        $taggedService1->addArgument(new Reference('session')) ;
         $container->setDefinition('taggedService1', $taggedService1) ;
-        $taggedService2 = new Definition('stdClass') ;
+        $taggedService2 = new Definition('\AppBundle\Persistence\TilesSession') ;
         $taggedService2->addTag('session.content') ;
+        $taggedService2->addArgument(new Reference('session')) ;
         $container->setDefinition('taggedService2', $taggedService2) ;
 
-        $compiler = new DependencyInjectionSessionCompiler() ;
+        $compiler = new SessionCompiler() ;
         $compiler->process($container) ;
         
         $expectedArray = new SessionContent() ;

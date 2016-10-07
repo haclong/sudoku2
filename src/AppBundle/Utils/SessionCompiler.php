@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Description of DependencyInjectionSessionCompiler
+ * Description of SessionCompiler
  *
  * @author haclong
  */
-class DependencyInjectionSessionCompiler implements CompilerPassInterface {
+class SessionCompiler implements CompilerPassInterface {
     public function process(ContainerBuilder $container)
     {
         // always first check if the primary service is defined

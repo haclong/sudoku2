@@ -33,23 +33,19 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
         $this->values = null ;
     }
 
-    public function testInitGameSubscriber()
+    public function testSetGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
+        $result = $this->commonEventSubscriber('SetGameEvent', 'onSetGame') ;
         $this->assertTrue($result) ;
     }
 
-    public function testOnInitGame()
+    public function testOnSetGame()
     {
-        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                        ->getMock() ;
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')
-                        ->disableOriginalConstructor()
-                        ->getMock() ;
-        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
-                                    ->setConstructorArgs(array($grid,$this->values, $tiles))
+        $event = $this->getMockBuilder('AppBundle\Event\SetGameEvent')
+                                    ->disableOriginalConstructor()
                                     ->getMock() ;
-        $event->method('getValues')
+        $event->method('getEntity')
+                ->with('valuesentity')
                 ->willReturn($this->values) ;
         
         $this->session->expects($this->once()) 
@@ -58,7 +54,7 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
                 ->method('reset') ;
        
         $valuesAggregate = new ValuesAggregate($this->session) ;
-        $valuesAggregate->onInitGame($event) ;
+        $valuesAggregate->onSetGame($event) ;
     }
     
 //    public function testLoadGameSubscriber()

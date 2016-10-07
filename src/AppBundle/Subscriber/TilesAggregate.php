@@ -3,8 +3,8 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Tiles;
-use AppBundle\Event\ChooseGameEvent;
 use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\SetGameEvent;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
@@ -26,9 +26,9 @@ class TilesAggregate implements EventSubscriberInterface{
     
     public static function getSubscribedEvents() {
         return array(
+            SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-            ChooseGameEvent::NAME => 'onChooseGame',
-            LoadGameEvent::NAME => array('onLoadGame', -500),
+//            LoadGameEvent::NAME => array('onLoadGame', -500),
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
         ) ;
@@ -41,32 +41,32 @@ class TilesAggregate implements EventSubscriberInterface{
         $this->session->setTiles($tiles) ;
     }
     
-    public function onInitGame(InitGameEvent $event) {
-        $tiles = $event->getTiles() ;
+    public function onSetGame(SetGameEvent $event) {
+        $tiles = $event->getEntity('tilesentity') ;
         $tiles->reset() ;
         $this->session->setTiles($tiles) ;
     }
 
-    public function onChooseGame(ChooseGameEvent $event) {
+    public function onInitGame(InitGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;
         $tiles->reset() ;
         $tiles->init($event->getGridSize()->get()) ;
         $this->storeTiles($tiles) ;
     }
-    
-    public function onLoadGame(LoadGameEvent $event) {
-        $tiles = $this->getTilesFromSession() ;
-
-        $loadedTiles = $event->getTiles()->getTiles() ;
-        foreach($loadedTiles as $row => $cols)
-        {
-            foreach($cols as $col => $value)
-            {
-                $tiles->set($row, $col, $value) ;
-            }
-        }
-        $this->storeTiles($tiles) ;
-    }
+//    
+//    public function onLoadGame(LoadGameEvent $event) {
+//        $tiles = $this->getTilesFromSession() ;
+//
+//        $loadedTiles = $event->getTiles()->getTiles() ;
+//        foreach($loadedTiles as $row => $cols)
+//        {
+//            foreach($cols as $col => $value)
+//            {
+//                $tiles->set($row, $col, $value) ;
+//            }
+//        }
+//        $this->storeTiles($tiles) ;
+//    }
     
     public function onReloadGame(ReloadGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;

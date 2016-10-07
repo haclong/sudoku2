@@ -31,22 +31,19 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $this->tiles = null ;
     }
 
-    public function testInitGameSubscriber()
+    public function testSetGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
+        $result = $this->commonEventSubscriber('SetGameEvent', 'onSetGame') ;
         $this->assertTrue($result) ;
     }
 
-    public function testOnInitGame()
+    public function testOnSetGame()
     {
-        $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
-                        ->getMock() ;
-        $values = $this->getMockBuilder('AppBundle\Entity\Values')
-                        ->getMock() ;
-        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
-                                    ->setConstructorArgs(array($grid, $values, $this->tiles))
+        $event = $this->getMockBuilder('AppBundle\Event\SetGameEvent')
+                                    ->disableOriginalConstructor()
                                     ->getMock() ;
-        $event->method('getTiles')
+        $event->method('getEntity')
+              ->with('tilesentity')
               ->willReturn($this->tiles) ;
         
         $this->tiles->expects($this->once())
@@ -55,23 +52,23 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
                 ->method('setTiles') ;
         
         $tilesAggregate = new TilesAggregate($this->session) ;
-        $tilesAggregate->onInitGame($event) ;
+        $tilesAggregate->onSetGame($event) ;
     }
 
-    public function testChooseGameSubscriber()
+    public function testInitGameSubscriber()
     {
-        $result = $this->commonEventSubscriber('ChooseGameEvent', 'onChooseGame') ;
+        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
         $this->assertTrue($result) ;
     }
 
-    public function testOnChooseGame()
+    public function testOnInitGame()
     {
         $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
                         ->disableOriginalConstructor()
                         ->getMock() ;
         $size->method('get')
                 ->willReturn(9) ;
-        $event = $this->getMockBuilder('AppBundle\Event\ChooseGameEvent')
+        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
                                     ->setConstructorArgs(array($size))
                                     ->getMock() ;
         $event->method('getGridSize')
@@ -88,50 +85,50 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
                 ->with($this->equalTo($size->get())) ;
         
         $tilesAggregate = new TilesAggregate($this->session) ;
-        $tilesAggregate->onChooseGame($event) ;
+        $tilesAggregate->onInitGame($event) ;
     }
-
-    public function testLoadGameSubscriber()
-    {
-        $result = $this->commonEventSubscriber('LoadGameEvent', 'onLoadGame') ;
-        $this->assertTrue($result) ;
-    }
-    
-    public function testOnLoadGame()
-    {
-        $array = [] ;
-        $array[0][0] = 3 ;
-        $array[2][4] = 7 ;
-        
-        $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
-                        ->disableOriginalConstructor()
-                        ->getMock() ;
-//        $tiles->method('getSize')
-//                ->willReturn(9) ;
-        $tiles->method('getTiles')
-                ->willReturn($array) ;
-        $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
-                                    ->setConstructorArgs(array($tiles))
-                                    ->getMock() ;
-        $values = $this->getMockBuilder('AppBundle\Entity\Values')
-                        ->getMock() ;
-        
+//
+//    public function testLoadGameSubscriber()
+//    {
+//        $result = $this->commonEventSubscriber('LoadGameEvent', 'onLoadGame') ;
+//        $this->assertTrue($result) ;
+//    }
+//    
+//    public function testOnLoadGame()
+//    {
+//        $array = [] ;
+//        $array[0][0] = 3 ;
+//        $array[2][4] = 7 ;
+//        
+//        $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
+//                        ->disableOriginalConstructor()
+//                        ->getMock() ;
+////        $tiles->method('getSize')
+////                ->willReturn(9) ;
+//        $tiles->method('getTiles')
+//                ->willReturn($array) ;
+//        $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
+//                                    ->setConstructorArgs(array($tiles))
+//                                    ->getMock() ;
+//        $values = $this->getMockBuilder('AppBundle\Entity\Values')
+//                        ->getMock() ;
+//        
+////        $this->session->expects($this->once())
+////                ->method('getValues') 
+////                ->will($this->returnValue($values)) ;
+//        $event->expects($this->once())
+//                ->method('getTiles') 
+//                ->will($this->returnValue($tiles)) ;
+//        $this->session->method('getTiles')
+//                ->willReturn($this->tiles) ;
 //        $this->session->expects($this->once())
-//                ->method('getValues') 
-//                ->will($this->returnValue($values)) ;
-        $event->expects($this->once())
-                ->method('getTiles') 
-                ->will($this->returnValue($tiles)) ;
-        $this->session->method('getTiles')
-                ->willReturn($this->tiles) ;
-        $this->session->expects($this->once())
-                ->method('setTiles') ;
-        $this->tiles->expects($this->exactly(2))
-                ->method('set') ;
-
-        $tilesAggregate = new TilesAggregate($this->session) ;
-        $tilesAggregate->onLoadGame($event) ;
-    }
+//                ->method('setTiles') ;
+//        $this->tiles->expects($this->exactly(2))
+//                ->method('set') ;
+//
+//        $tilesAggregate = new TilesAggregate($this->session) ;
+//        $tilesAggregate->onLoadGame($event) ;
+//    }
     
     public function testReloadGameSubscriber()
     {
