@@ -56,6 +56,36 @@ class ValuesAggregateTest extends \PHPUnit_Framework_TestCase
         $valuesAggregate = new ValuesAggregate($this->session) ;
         $valuesAggregate->onSetGame($event) ;
     }
+
+    public function testInitGameSubscriber()
+    {
+        $result = $this->commonEventSubscriber('InitGameEvent', 'onInitGame') ;
+        $this->assertTrue($result) ;
+    }
+
+    public function testOnInitGame()
+    {
+        $size = $this->getMockBuilder('AppBundle\Entity\Event\GridSize')
+                        ->disableOriginalConstructor()
+                        ->getMock() ;
+        $size->method('get')
+                ->willReturn(9) ;
+        $event = $this->getMockBuilder('AppBundle\Event\InitGameEvent')
+                                    ->setConstructorArgs(array($size))
+                                    ->getMock() ;
+        $event->method('getGridSize')
+                ->willReturn($size) ;
+        
+        $this->session->method('getValues')
+                ->willReturn($this->values) ;
+        $this->session->expects($this->once())
+                ->method('setValues') ;
+        $this->values->expects($this->once())
+                ->method('reset') ;
+        
+        $valuesAggregate = new ValuesAggregate($this->session) ;
+        $valuesAggregate->onInitGame($event) ;
+    }
     
 //    public function testLoadGameSubscriber()
 //    {

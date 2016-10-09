@@ -4,11 +4,12 @@ namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Groups;
 use AppBundle\Event\InitGameEvent;
-use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
 use AppBundle\Event\SetGameEvent;
+use AppBundle\Event\SetTileEvent;
 use AppBundle\Persistence\GroupsSession;
+use AppBundle\Service\GroupsService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -27,9 +28,9 @@ class GroupsAggregate implements EventSubscriberInterface{
         return array(
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-            LoadGameEvent::NAME => 'onLoadGame',
+//            LoadGameEvent::NAME => 'onLoadGame',
             ReloadGameEvent::NAME => 'onReloadGame',
-            ResetGameEvent::NAME => 'onResetGame',
+            ResetGameEvent::NAME => 'onResetGame'
         ) ;
     }
     
@@ -66,19 +67,19 @@ class GroupsAggregate implements EventSubscriberInterface{
 //        }
 //        $this->storeTiles($tiles) ;
 //    }
-//    
-//    public function onReloadGame(ReloadGameEvent $event) {
-//        $tiles = $this->getTilesFromSession() ;
-//        $grid = $event->getGrid() ;
-//        $tiles->reload($grid) ;
-//        $this->storeTiles($tiles) ;
-//    }
-//
-//    public function onResetGame(ResetGameEvent $event) {
-//        $tiles = $this->getTilesFromSession() ;
-//        $size = $tiles->getSize() ;
-//        $tiles->reset() ;
-//        $tiles->init($size) ;
-//        $this->storeTiles($tiles) ;
-//    }
+    
+    public function onReloadGame(ReloadGameEvent $event) {
+        $groups = $this->getGroupsFromSession() ;
+        $grid = $event->getGrid() ;
+        $groups->reload($grid) ;
+        $this->storeGroups($groups) ;
+    }
+
+    public function onResetGame(ResetGameEvent $event) {
+        $groups = $this->getGroupsFromSession() ;
+        $size = $groups->getSize() ;
+        $groups->reset() ;
+        $groups->init($size) ;
+        $this->storeGroups($groups) ;
+    }
 }

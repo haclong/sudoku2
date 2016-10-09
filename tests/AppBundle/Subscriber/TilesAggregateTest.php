@@ -180,6 +180,36 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onResetGame($event) ;
     }
+
+    public function testValidatedTileSubscriber()
+    {
+        $result = $this->commonEventSubscriber('ValidateTileSetEvent', 'onValidatedTile') ;
+        $this->assertTrue($result) ;
+    }
+    
+    public function testOnValidatedTile()
+    {
+        $event = $this->getMockBuilder('AppBundle\Event\ValidateTileSetEvent')
+                      ->disableOriginalConstructor()
+                      ->getMock() ;
+        $tileset = $this->getMockBuilder('AppBundle\Entity\Event\TileSet')
+                        ->getMock() ;
+        $tileset->method('getRow')->willReturn(3) ;
+        $tileset->method('getCol')->willReturn(3) ;
+        $tileset->method('getValue')->willReturn(3) ;
+        $event->expects($this->once())
+                ->method('getTile')
+                ->willReturn($tileset) ;
+        $this->session->method('getTiles')
+                ->willReturn($this->tiles) ;
+        $this->session->expects($this->once())
+                ->method('setTiles') ;
+        $this->tiles->expects($this->once())
+                ->method('set') ;
+        
+        $tilesAggregate = new TilesAggregate($this->session) ;
+        $tilesAggregate->onValidatedTile($event) ;
+    }
    
     protected function commonEventSubscriber($eventName, $method)
     {

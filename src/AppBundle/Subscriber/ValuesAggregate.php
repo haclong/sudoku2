@@ -3,9 +3,9 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Values;
-use AppBundle\Event\SetGameEvent;
-use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\SetGameEvent;
 use AppBundle\Persistence\ValuesSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -24,6 +24,7 @@ class ValuesAggregate implements EventSubscriberInterface {
     public static function getSubscribedEvents() {
         return array(
             SetGameEvent::NAME => 'onSetGame',
+            InitGameEvent::NAME => 'onInitGame', 
 //            LoadGameEvent::NAME => array('onLoadGame', 2048),
             ResetGameEvent::NAME => 'onResetGame',
         ) ;
@@ -39,7 +40,14 @@ class ValuesAggregate implements EventSubscriberInterface {
     public function onSetGame(SetGameEvent $event) {
         $values = $event->getEntity('valuesentity') ;
         $values->reset() ;
-        $this->session->setValues($values) ;
+        $this->storeValues($values) ;
+    }
+    
+    public function onInitGame(InitGameEvent $event) {
+        $values = $this->getValuesFromSession() ;
+        $values->reset() ;
+        $values->init($event->getGridSize()->get()) ;
+        $this->storeValues($values) ;
     }
 //    
 //    public function onLoadGame(LoadGameEvent $event) {

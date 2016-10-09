@@ -2,9 +2,11 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\Event\DeduceTileEvent;
+use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Service\GroupsService;
-use \Exception ;
+use Exception;
 /**
  * Description of GroupsServiceTest
  *
@@ -55,7 +57,7 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->setExpectedException(AlreadySetTileException::class) ;
         $this->dispatcher->expects($this->never())
                          ->method('dispatch')
-                         ->with('settile.validate', $this->equalTo($this->validateTileSetEvent)) ;
+                         ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
         
         $this->groups->method('getRow')
                      ->willReturn($this->onConsecutiveCalls(['0.0', '0.1', '0.2', '0.3'], ['3.0', '3.1', '3.2', '3.3'])) ;
@@ -78,7 +80,7 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
 
         $this->dispatcher->expects($this->once())
                          ->method('dispatch')
-                         ->with('settile.validate', $this->equalTo($this->validateTileSetEvent)) ;
+                         ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
         
         $this->groups->method('getRow')
                      ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;
@@ -105,7 +107,7 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         
         $this->dispatcher->expects($this->at(1))
                          ->method('dispatch')
-                         ->with('tile.deduce', $this->equalTo($this->deduceTileEvent)) ;
+                         ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
         
         $this->groups->method('getRow')
                      ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;
@@ -131,7 +133,7 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         
         $this->dispatcher->expects($this->at(1))
                          ->method('dispatch')
-                         ->with('tile.deduce', $this->equalTo($this->deduceTileEvent)) ;
+                         ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
         
         $this->groups->method('getRow')
                      ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;

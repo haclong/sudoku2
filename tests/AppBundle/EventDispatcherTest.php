@@ -23,7 +23,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testSetGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(SetGameEvent::NAME, 3) ;
+        $this->AreSubscriberAddedByEvent(SetGameEvent::NAME, 4) ;
     }
 
     /**
@@ -31,7 +31,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testInitGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(InitGameEvent::NAME, 2) ;
+        $this->AreSubscriberAddedByEvent(InitGameEvent::NAME, 4) ;
     }
     /**
      * @runInSeparateProcess
@@ -46,7 +46,7 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testReloadGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ReloadGameEvent::NAME, 2) ;
+        $this->AreSubscriberAddedByEvent(ReloadGameEvent::NAME, 3) ;
     }
     
     /**
@@ -54,23 +54,23 @@ class EventDispatcherTest extends WebTestCase
      */
     public function testResetGameSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 3) ;
+        $this->AreSubscriberAddedByEvent(ResetGameEvent::NAME, 4) ;
     }
     
-//    /**
-//     * @runInSeparateProcess
-//     */
-//    public function testSetTileSubscribersAdded()
-//    {
-//        $this->AreSubscriberAddedByEvent(SetTileEvent::NAME, 0) ;
-//    }
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetTileSubscribersAdded()
+    {
+        $this->AreSubscriberAddedByEvent(SetTileEvent::NAME, 1) ;
+    }
 
     /**
      * @runInSeparateProcess
      */
     public function testValidateTileSubscribersAdded()
     {
-        $this->AreSubscriberAddedByEvent(ValidateTileSetEvent::NAME, 1) ;
+        $this->AreSubscriberAddedByEvent(ValidateTileSetEvent::NAME, 2) ;
     }
 
     protected function AreSubscriberAddedByEvent($event, $expected)

@@ -19,113 +19,39 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
-        $session = $this->get('sudokuEntities') ;
-//        var_dump($session) ;
+        $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
+        $array = include($file) ;
         
-//        echo $session->isReady() ? "oui" : "non" ;
-//        var_dump($session->getGrid()) ;
-//        $service = $this->get('groupsService') ;
-//        $groups = $this->get('groupsEntity') ;
-//        $groups->init(9) ;
-//        var_dump($groups->getCol(5)) ;
-//        var_dump($groups->getRow(3)) ;
-//        var_dump($groups->getRegion(RegionGetter::getRegion(3, 5, 9))) ;
+        $gridSession = $this->get('gridSession') ;
+        $tilesSession = $this->get('tilesSession') ;
+        
+        $values = $this->get('valuesEntity') ;
+        $service = $this->get('groupsService') ;
+        $groups = $this->get('groupsEntity') ;
+        $grid = $this->get('gridEntity') ;
+        $tiles = $this->get('tilesEntity') ;
+        $gridSession->setGrid($grid) ;
+        $tilesSession->setTiles($tiles) ;
+        
+        $grid = $gridSession->getGrid() ;
+        $grid->init(9) ;
+        $gridSession->setGrid($grid) ;
+        $groups->init(9) ;
+        $values->init(9) ;
+        foreach($array as $row => $cols)
+        {
+            foreach($cols as $col => $value)
+            {
+                if(is_null($values->getKeyByValue($value)))
+                {
+                    $values->add($value) ;
+                }
+                $service->set($groups, $values->getKeyByValue($value), $row, $col) ;
+//                var_dump($values) ;
+            }
+        }
 
-//        $service->set($groups, 1, 0, 2) ;
-//        $service->set($groups, 8, 0, 5) ;
-//        $service->set($groups, 0, 0, 6) ;
-//        $service->set($groups, 5, 0, 8) ;
-//
-//        $service->set($groups, 2, 1, 0) ;
-//        $service->set($groups, 4, 1, 2) ;
-//        $service->set($groups, 3, 1, 4) ;
-//        $service->set($groups, 1, 1, 6) ;
-//
-//        $service->set($groups, 6, 2, 1) ;
-//        $service->set($groups, 8, 2, 2) ;
-//        $service->set($groups, 1, 2, 3) ;
-//        $service->set($groups, 5, 2, 4) ;
-//
-//        $service->set($groups, 4, 3, 1) ;
-//        $service->set($groups, 0, 3, 7) ;
-//        $service->set($groups, 8, 3, 8) ;
-//
-//        $service->set($groups, 1, 4, 1) ;
-//        $service->set($groups, 0, 4, 2) ;
-//        $service->set($groups, 8, 4, 3) ;
-//        $service->set($groups, 6, 4, 4) ;
-//        $service->set($groups, 4, 4, 5) ;
-//        $service->set($groups, 7, 4, 6) ;
-//        $service->set($groups, 3, 4, 7) ;
-//
-//        $service->set($groups, 8, 5, 0) ;
-//        $service->set($groups, 7, 5, 1) ;
-//        $service->set($groups, 1, 5, 7) ;
-//
-//        $service->set($groups, 8, 6, 4) ;
-//        $service->set($groups, 0, 6, 5) ;
-//        $service->set($groups, 6, 6, 6) ;
-//        $service->set($groups, 5, 6, 7) ;
-// 
-//        $service->set($groups, 3, 7, 2) ;
-//        $service->set($groups, 4, 7, 4) ;
-//        $service->set($groups, 2, 7, 6) ;
-//        $service->set($groups, 0, 7, 8) ;
-// 
-//        $service->set($groups, 6, 8, 0) ;
-//        $service->set($groups, 5, 8, 2) ;
-//        $service->set($groups, 2, 8, 3) ;
-//        $service->set($groups, 8, 8, 6) ;
-        
-        
-        
-//        var_dump($groups->getCol(5)) ;
-//        var_dump($groups->getRow(3)) ;
-//        var_dump($groups->getRegion(RegionGetter::getRegion(3, 5, 9))) ;
-//        $impactedTiles = $groups->getImpactedTiles(3, 5) ;
-//        var_dump($impactedTiles) ;
-        
-//        $this->discard($groups->getValuesByGroup(), 2, $impactedTiles) ;
-//        $array = [] ;
-//        foreach($groups->getValuesByTile() as $tileId => $datas)
-//        {
-//            if((count($datas['col']) != count($datas['row'])) && (count($datas['col']) != count($datas['region'])))
-//            {
-//                throw new Exception() ;
-//            }
-//            if(count($datas['col']) == 1)
-//            {
-//                
-//                var_dump($tileId .'-'.$datas['col'][0]) ;
-//            }
-//        }
-//        
-//        foreach($groups->getValuesByGroup() as $k => $grouptype)
-//        {
-//            foreach($grouptype as $index => $group)
-//            {
-//                foreach($group as $value => $tile)
-//                {
-////                    echo $k . '.' . $index . '.' . $value ;
-////                    var_dump($tile) ;
-//                    $array[$k][$index][$value] = count($tile) ;
-//                }
-//            }
-//        }
-//            foreach($groups->getValuesByGroup() as $type => $grouptype)
-//            {
-//                foreach($grouptype as $index => $group)
-//                {
-//                    foreach($group as $value => $figure)
-//                    {
-//                        foreach($figure as $key => $tileId)
-//                        {
-//                        $array[$tileId][$type][] = $value ;
-//                        }
-//                    }
-//                }
-//            }
-//        var_dump($array) ;
+//        var_dump($groups->getValuesByGroup()['col']) ;
         return $this->render('sudoku/debug.html.twig', []);
     }
 //    protected function discard(&$groups, $value, $impactedTiles)

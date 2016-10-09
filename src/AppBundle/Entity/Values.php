@@ -61,6 +61,10 @@ class Values implements InitInterface, ResetInterface {
     public function getKeyByValue($value)
     {
         $array = array_flip($this->values) ;
-        return $array[$value] ;
+        if(array_key_exists($value, $array))
+        {
+            return $array[$value] ;
+        }
+        return null ;
     }
 }
