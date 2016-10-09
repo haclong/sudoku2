@@ -50,7 +50,7 @@ class ApiController extends Controller
 
             // on déclenche l'événement avec la grille à résoudre
             $event = new LoadGameEvent($loadedGrid) ;
-            $this->get('event_dispatcher')->dispatch('game.load', $event) ;
+            $this->get('event_dispatcher')->dispatch(LoadGameEvent::NAME, $event) ;
 
             $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
             $sessionMarker->logSession("ApiController::loadGrid") ;
@@ -81,7 +81,7 @@ class ApiController extends Controller
             
             // on crée l(événement reload pour réinitialiser toutes les sessions
             $event = new ReloadGameEvent($session->getGrid()) ;
-            $this->get('event_dispatcher')->dispatch('game.reload', $event) ;
+            $this->get('event_dispatcher')->dispatch(ReloadGameEvent::NAME, $event) ;
 
             // on récupère l'objet Grid qui est en session (qui a été reloadé)
             // on prépare le format de la grille à renvoyer en json
@@ -113,7 +113,7 @@ class ApiController extends Controller
             }
             // on crée l'événement reload pour réinitialiser toutes les sessions
             $event = new ResetGameEvent() ;
-            $this->get('event_dispatcher')->dispatch('game.reset', $event) ;
+            $this->get('event_dispatcher')->dispatch(ResetGameEvent::NAME, $event) ;
 
             // on récupère l'objet Grid qui est en session
             // on prépare le format de la grille à renvoyer en json

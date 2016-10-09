@@ -26,7 +26,7 @@ class DefaultController extends Controller
         // déclencher l'événement game.set
         // on initialise le jeu (on charge des entités vides dans la session)
         $event = new SetGameEvent($sudokuEntities) ;
-        $this->get('event_dispatcher')->dispatch('game.set', $event) ;
+        $this->get('event_dispatcher')->dispatch(SetGameEvent::NAME, $event) ;
         // pour la suite du debug, voir ce qui se passe dans les différents subscriber
         
         $sessionMarker->logSession("DefaultController::indexAction") ;
@@ -51,7 +51,7 @@ class DefaultController extends Controller
         // déclencher l'événement game.init
         // on vient de choisir la taille de la grille de sudoku
         $event = new InitGameEvent($gridSize) ;
-        $this->get('event_dispatcher')->dispatch('game.init', $event) ;
+        $this->get('event_dispatcher')->dispatch(InitGameEvent::NAME, $event) ;
 
         $sessionMarker->logSession("DefaultController::gridAction") ;
         $mappedTiles = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;

@@ -1,4 +1,4 @@
-php bin/console debug:event-dispatcher > events
+
 Registered Listeners Grouped by Event
 =====================================
 
@@ -22,14 +22,61 @@ Registered Listeners Grouped by Event
   #2      Symfony\Bridge\Monolog\Handler\ConsoleHandler::onTerminate()                        -255      
  ------- ----------------------------------------------------------------------------------- ---------- 
 
-"grid.get" event
+"game.init" event
+-----------------
+
+ ------- ---------------------------------------------------- ---------- 
+  Order   Callable                                             Priority  
+ ------- ---------------------------------------------------- ---------- 
+  #1      AppBundle\Subscriber\GridAggregate::onInitGame()     0         
+  #2      AppBundle\Subscriber\ValuesAggregate::onInitGame()   0         
+  #3      AppBundle\Subscriber\TilesAggregate::onInitGame()    0         
+  #4      AppBundle\Subscriber\GroupsAggregate::onInitGame()   0         
+ ------- ---------------------------------------------------- ---------- 
+
+"game.load" event
+-----------------
+
+ ------- -------------------------------------------------- ---------- 
+  Order   Callable                                           Priority  
+ ------- -------------------------------------------------- ---------- 
+  #1      AppBundle\Subscriber\GridAggregate::onLoadGame()   0         
+ ------- -------------------------------------------------- ---------- 
+
+"game.reload" event
+-------------------
+
+ ------- ------------------------------------------------------ ---------- 
+  Order   Callable                                               Priority  
+ ------- ------------------------------------------------------ ---------- 
+  #1      AppBundle\Subscriber\GridAggregate::onReloadGame()     0         
+  #2      AppBundle\Subscriber\TilesAggregate::onReloadGame()    0         
+  #3      AppBundle\Subscriber\GroupsAggregate::onReloadGame()   0         
+ ------- ------------------------------------------------------ ---------- 
+
+"game.reset" event
+------------------
+
+ ------- ----------------------------------------------------- ---------- 
+  Order   Callable                                              Priority  
+ ------- ----------------------------------------------------- ---------- 
+  #1      AppBundle\Subscriber\GridAggregate::onResetGame()     0         
+  #2      AppBundle\Subscriber\ValuesAggregate::onResetGame()   0         
+  #3      AppBundle\Subscriber\TilesAggregate::onResetGame()    0         
+  #4      AppBundle\Subscriber\GroupsAggregate::onResetGame()   0         
+ ------- ----------------------------------------------------- ---------- 
+
+"game.set" event
 ----------------
 
- ------- ---------------------------------------------- ---------- 
-  Order   Callable                                       Priority  
- ------- ---------------------------------------------- ---------- 
-  #1      AppBundle\Service\GridAggregate::onGetGrid()   0         
- ------- ---------------------------------------------- ---------- 
+ ------- --------------------------------------------------- ---------- 
+  Order   Callable                                            Priority  
+ ------- --------------------------------------------------- ---------- 
+  #1      AppBundle\Subscriber\GridAggregate::onSetGame()     0         
+  #2      AppBundle\Subscriber\ValuesAggregate::onSetGame()   0         
+  #3      AppBundle\Subscriber\TilesAggregate::onSetGame()    0         
+  #4      AppBundle\Subscriber\GroupsAggregate::onSetGame()   0         
+ ------- --------------------------------------------------- ---------- 
 
 "kernel.controller" event
 -------------------------
@@ -71,18 +118,20 @@ Registered Listeners Grouped by Event
 "kernel.request" event
 ----------------------
 
- ------- ---------------------------------------------------------------------------------- ---------- 
-  Order   Callable                                                                           Priority  
- ------- ---------------------------------------------------------------------------------- ---------- 
-  #1      Symfony\Component\HttpKernel\EventListener\DebugHandlersListener::configure()      2048      
-  #2      Symfony\Component\HttpKernel\EventListener\DumpListener::configure()               1024      
-  #3      Symfony\Bundle\FrameworkBundle\EventListener\SessionListener::onKernelRequest()    128       
-  #4      Symfony\Component\HttpKernel\EventListener\FragmentListener::onKernelRequest()     48        
-  #5      Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest()       32        
-  #6      Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()       16        
-  #7      Symfony\Component\HttpKernel\EventListener\TranslatorListener::onKernelRequest()   10        
-  #8      Symfony\Component\Security\Http\Firewall::onKernelRequest()                        8         
- ------- ---------------------------------------------------------------------------------- ---------- 
+ ------- --------------------------------------------------------------------------------------- ---------- 
+  Order   Callable                                                                                Priority  
+ ------- --------------------------------------------------------------------------------------- ---------- 
+  #1      Symfony\Component\HttpKernel\EventListener\DebugHandlersListener::configure()           2048      
+  #2      Symfony\Component\HttpKernel\EventListener\DumpListener::configure()                    1024      
+  #3      Symfony\Component\HttpKernel\EventListener\ValidateRequestListener::onKernelRequest()   256       
+  #4      Symfony\Bundle\FrameworkBundle\EventListener\SessionListener::onKernelRequest()         128       
+  #5      Symfony\Component\HttpKernel\EventListener\FragmentListener::onKernelRequest()          48        
+  #6      Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest()            32        
+  #7      Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()            16        
+  #8      Symfony\Component\HttpKernel\EventListener\TranslatorListener::onKernelRequest()        10        
+  #9      Symfony\Component\Security\Http\Firewall::onKernelRequest()                             8         
+  #10     Symfony\Bundle\AsseticBundle\EventListener\RequestListener::onKernelRequest()           0         
+ ------- --------------------------------------------------------------------------------------- ---------- 
 
 "kernel.response" event
 -----------------------
@@ -118,4 +167,23 @@ Registered Listeners Grouped by Event
  ------- ----------------------------------------------------------------------------------- ---------- 
   #1      Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener::onKernelView()   0         
  ------- ----------------------------------------------------------------------------------- ---------- 
+
+"settile.validated" event
+-------------------------
+
+ ------- -------------------------------------------------------- ---------- 
+  Order   Callable                                                 Priority  
+ ------- -------------------------------------------------------- ---------- 
+  #1      AppBundle\Subscriber\GridAggregate::onValidatedTile()    0         
+  #2      AppBundle\Subscriber\TilesAggregate::onValidatedTile()   0         
+ ------- -------------------------------------------------------- ---------- 
+
+"tile.set" event
+----------------
+
+ ------- ----------------------------------------------------- ---------- 
+  Order   Callable                                              Priority  
+ ------- ----------------------------------------------------- ---------- 
+  #1      AppBundle\Subscriber\SetTileSubscriber::onSetTile()   0         
+ ------- ----------------------------------------------------- ---------- 
 

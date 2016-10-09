@@ -4,10 +4,10 @@ namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Tiles;
 use AppBundle\Event\InitGameEvent;
-use AppBundle\Event\SetGameEvent;
-use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\SetGameEvent;
+use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Persistence\TilesSession;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -28,9 +28,9 @@ class TilesAggregate implements EventSubscriberInterface{
         return array(
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-//            LoadGameEvent::NAME => array('onLoadGame', -500),
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
+            ValidateTileSetEvent::NAME => 'onValidatedTile',
         ) ;
     }
     
@@ -53,20 +53,6 @@ class TilesAggregate implements EventSubscriberInterface{
         $tiles->init($event->getGridSize()->get()) ;
         $this->storeTiles($tiles) ;
     }
-//    
-//    public function onLoadGame(LoadGameEvent $event) {
-//        $tiles = $this->getTilesFromSession() ;
-//
-//        $loadedTiles = $event->getTiles()->getTiles() ;
-//        foreach($loadedTiles as $row => $cols)
-//        {
-//            foreach($cols as $col => $value)
-//            {
-//                $tiles->set($row, $col, $value) ;
-//            }
-//        }
-//        $this->storeTiles($tiles) ;
-//    }
     
     public function onReloadGame(ReloadGameEvent $event) {
         $tiles = $this->getTilesFromSession() ;
@@ -80,6 +66,14 @@ class TilesAggregate implements EventSubscriberInterface{
         $size = $tiles->getSize() ;
         $tiles->reset() ;
         $tiles->init($size) ;
+        $this->storeTiles($tiles) ;
+    }
+
+    public function onValidatedTile(ValidateTileSetEvent $event) {
+        $tiles = $this->getTilesFromSession() ;
+        
+        $validTile = $event->getTile() ;
+        $tiles->set($validTile->getRow(), $validTile->getCol(), $validTile->getValue()) ;
         $this->storeTiles($tiles) ;
     }
 }

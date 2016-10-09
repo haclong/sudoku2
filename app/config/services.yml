@@ -62,6 +62,11 @@ services:
         arguments: ['@session']
         tags:
             -  { name: session.content }
+    groupsSession:
+        class: AppBundle\Persistence\GroupsSession
+        arguments: ['@session']
+        tags:
+            -  { name: session.content }
 
     sudokuSession:
         class: AppBundle\Persistence\SudokuSession
@@ -74,14 +79,6 @@ services:
     setTileService:
         class: AppBundle\Service\SetTileService
         arguments: ['@event_dispatcher', '@setTileEvent']
-
-#    tileService:
-#        class: AppBundle\Service\TileService
-#        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
-#    sudokuSessionService:
-#        class: AppBundle\Service\SudokuSessionService
-#        factory: [AppBundle\Service\SudokuSessionServiceFactory, create]
-#        arguments: ['@sudokuSession']
 
     sessionMarker:
         class: AppBundle\Utils\SessionMarker
@@ -100,6 +97,16 @@ services:
         class: AppBundle\Subscriber\TilesAggregate
         arguments: ['@tilesSession']
         tags: 
+            - { name: kernel.event_subscriber }
+    groupsAggregate:
+        class: AppBundle\Subscriber\GroupsAggregate
+        arguments: ['@groupsSession']
+        tags:
+            - { name: kernel.event_subscriber } 
+    setTileSubscriber:
+        class: AppBundle\Subscriber\SetTileSubscriber
+        arguments: ['@groupsSession', '@valuesSession', '@groupsService']
+        tags:
             - { name: kernel.event_subscriber }
 
     app.twig_extension:

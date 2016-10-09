@@ -51,20 +51,20 @@ class GroupsService {
     }
 
     // pouvoir écarter un chiffre de toutes les cases
-    public function set($groups, $value, $row, $col)
+    public function set($groups, $index, $row, $col)
     {
         // vérifier que la valeur n'apparaît pas déjà sur une autre case dans le même groupe
-        $this->checkAlreadySetTile($groups, $value, $row, $col) ;
+        $this->checkAlreadySetTile($groups, $index, $row, $col) ;
         
         // envoyer un événement pour valider le choix du numéro
-        $this->validateTileSetEvent->getTile()->set($row, $col, $value) ;
-        $this->dispatcher->dispatch('settile.validate', $this->validateTileSetEvent) ;
+        $this->validateTileSetEvent->getTile()->set($row, $col, $index) ;
+        $this->dispatcher->dispatch(ValidateTileSetEvent::NAME, $this->validateTileSetEvent) ;
 
         // trouver toutes les cases impactées par le choix d'une valeur dans une case
         $impactedTiles = $groups->getImpactedTiles($row, $col) ;
         
         // écarter le numéro de toutes les cases de la grille
-        $this->discard($groups->getValuesByGroup(), $value, array_unique($impactedTiles)) ;
+        $this->discard($groups->getValuesByGroup(), $index, array_unique($impactedTiles)) ;
         
         // vérifier qu'il n'y a pas de dernières valeurs dans le groupe
         $this->checkLastValueInGroup($groups) ;
@@ -73,20 +73,20 @@ class GroupsService {
         $this->checkLastValueInTile($groups) ;
     }
     
-    protected function checkAlreadySetTile($groups, $value, $row, $col)
+    protected function checkAlreadySetTile($groups, $index, $row, $col)
     {
         $region = RegionGetter::getRegion($row, $col, $groups->getSize()) ;
         // vérifier que la valeur n'a pas déjà été assignée
-        $this->checkValue($groups->getRow($row), $value, "row.".$row) ;
-        $this->checkValue($groups->getCol($col), $value, "col.".$col) ;
-        $this->checkValue($groups->getRegion($region), $value, "region.".$region) ;
+        $this->checkValue($groups->getRow($row), $index, "row.".$row) ;
+        $this->checkValue($groups->getCol($col), $index, "col.".$col) ;
+        $this->checkValue($groups->getRegion($region), $index, "region.".$region) ;
 
     }
-    protected function checkValue($array, $value, $id)
+    protected function checkValue($array, $index, $id)
     {
-        if(!array_key_exists($value, $array))
+        if(!array_key_exists($index, $array))
         {
-            throw new AlreadySetTileException($value . " is already set in " . $id) ;
+            throw new AlreadySetTileException($index . " is already set in " . $id) ;
         }
     }
     
@@ -95,18 +95,18 @@ class GroupsService {
 //    {
 //        
 //    }
-    protected function discard(&$groups, $value, $impactedTiles)
+    protected function discard(&$groups, $index, $impactedTiles)
     {
         // col, row, region
         foreach($groups as $type => &$group)
         {
-            foreach($group as $index => &$figure)
+            foreach($group as $groupid => &$figure)
             {
                 foreach($figure as $key => &$tiles)
                 {
-                    if($key == $value)
+                    if($key == $index)
                     {
-//                        echo $type . "::" . $index . "::" . $key . "::";
+//                        echo $type . "::" . $groupid . "::" . $key . "::";
                         foreach($impactedTiles as $impactedTile)
                         {
                             $flippedTiles = array_flip($tiles) ;
@@ -123,19 +123,19 @@ class GroupsService {
     {
         foreach($groups->getValuesByGroup() as $type => $group)
         {
-            foreach($group as $index => $figure)
+            foreach($group as $groupid => $figure)
             {
-                foreach($figure as $value => $tileId)
+                foreach($figure as $index => $tileId)
                 {
                     if(count($tileId) == 1)
                     {
                         // dispatch lastvalueingroup ;
-                        //$array[$type][$index][$value] = count($tileId) ;
+                        //$array[$type][$groupid][$value] = count($tileId) ;
                         //$tileId = id de la case
-                        //$value = valeur de la case
+                        //$index = index values
                         $tile = explode('.', current($tileId)) ;
-                        $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $value) ;
-                        $this->dispatcher->dispatch('tile.deduce', $this->deduceTileEvent) ;
+                        $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
+                        $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
                     }
                 }
             }

@@ -110,7 +110,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $tiles->method('getSize')
                 ->willReturn(9) ;
         $tiles->method('getTiles')
-                ->willReturn(array()) ;
+                ->willReturn(array(0 => array(0 => 2, 1 => 4))) ;
         $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
                                     ->setConstructorArgs(array($tiles))
                                     ->getMock() ;
@@ -123,6 +123,8 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->exactly(3))
               ->method('getTiles')
               ->will($this->returnValue($tiles));
+        $this->service->expects($this->atLeastOnce())
+                      ->method('setTile') ;
         
         $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onLoadGame($event) ;
