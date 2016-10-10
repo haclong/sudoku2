@@ -75,7 +75,6 @@ services:
     groupsService:
         class: AppBundle\Service\GroupsService
         arguments: ['@event_dispatcher', '@validateTileSetEvent', '@deduceTileEvent']
-#        arguments: ['@event_dispatcher', '@setTileEvent', '@deduceTileEvent', '@valuesEntity']
     setTileService:
         class: AppBundle\Service\SetTileService
         arguments: ['@event_dispatcher', '@setTileEvent']
