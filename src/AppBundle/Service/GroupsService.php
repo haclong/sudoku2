@@ -156,7 +156,7 @@ class GroupsService {
                 // dispatch last value in tile ;
                 $tile = explode('.', $tileId) ;
                 $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $datas['col'][0]) ;
-                $this->dispatcher->dispatch('tile.deduce', $this->deduceTileEvent) ;
+                $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
             }
         }
     }

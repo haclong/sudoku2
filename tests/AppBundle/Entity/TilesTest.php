@@ -24,9 +24,10 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
     {
         $tiles = new Tiles($this->tileset) ;
         $this->assertEquals($this->tileset, $tiles->getTileset()) ;
+        $this->assertEquals(array(), $tiles->getTilesToSolve()) ;
     }
 
-    public function testSetTileset()
+    public function testInit()
     {
         $tiles = new Tiles($this->tileset) ;
         $tiles->init(9) ;
@@ -42,6 +43,7 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(81, count($tiles->getTileset())) ;
         $this->assertEquals(0, $count) ;
         $this->assertEquals(9, $tiles->getSize()) ;
+        $this->assertEquals(81, count($tiles->getTilesToSolve())) ;
     }
     
     public function testReload()
@@ -63,6 +65,7 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
             }
         }
         $this->assertEquals(0, $count) ;
+        $this->assertEquals(81, count($tiles->getTilesToSolve())) ;
     }
 
     public function testReset()
@@ -71,6 +74,7 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
         $tiles->reset() ;
         $this->assertEquals(0, count($tiles->getTileset())) ;
         $this->assertInstanceOf('AppBundle\Entity\Tiles\Tileset', $tiles->getTileset()) ;
+        $this->assertEquals(0, count($tiles->getTilesToSolve())) ;
     }
     
     public function testGetTile()
@@ -111,5 +115,46 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
             }
         }
         $this->assertEquals(2, $count) ;
+        $this->assertEquals(79, count($tiles->getTilesToSolve())) ;
+    }
+    
+    public function testFirstTileToSolve()
+    {
+        $tiles = new Tiles($this->tileset) ;
+        $tiles->init(9) ;
+        
+        $this->assertEquals('0.0', $tiles->getFirstTileToSolve()) ;
+    }
+    
+    public function testPriorizeTileToSolve()
+    {
+        $lastPossibilityTile = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
+                              ->getMock() ;
+        $lastPossibilityTile->method('getRow')->willReturn(8) ;
+        $lastPossibilityTile->method('getCol')->willReturn(8) ;
+        $lastPossibilityTile->method('getValue')->willReturn(2) ;
+        
+        $tiles = new Tiles($this->tileset) ;
+        $tiles->init(9) ;
+        $tiles->priorizeTileToSolve($lastPossibilityTile) ;
+        
+        $this->assertEquals('8.8', $tiles->getFirstTileToSolve()) ;
+        $counted_values = array_count_values($tiles->getTilesToSolve()) ;
+        $this->assertEquals(1, $counted_values['8.8']) ;
+    }
+    
+    public function testGetValuesToSet()
+    {
+        $lastPossibilityTile = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
+                              ->getMock() ;
+        $lastPossibilityTile->method('getRow')->willReturn(8) ;
+        $lastPossibilityTile->method('getCol')->willReturn(8) ;
+        $lastPossibilityTile->method('getValue')->willReturn(2) ;
+
+        $tiles = new Tiles($this->tileset) ;
+        $tiles->init(9) ;
+        $tiles->priorizeTileToSolve($lastPossibilityTile) ;
+        
+        $this->assertEquals(2, $tiles->getValuesToSet('8.8')) ;
     }
 }
