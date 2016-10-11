@@ -128,12 +128,33 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
     
     public function testPriorizeTileToSolve()
     {
+        $lastPossibilityTile = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
+                              ->getMock() ;
+        $lastPossibilityTile->method('getRow')->willReturn(8) ;
+        $lastPossibilityTile->method('getCol')->willReturn(8) ;
+        $lastPossibilityTile->method('getValue')->willReturn(2) ;
+        
         $tiles = new Tiles($this->tileset) ;
         $tiles->init(9) ;
-        $tiles->priorizeTileToSolve('8.8') ;
+        $tiles->priorizeTileToSolve($lastPossibilityTile) ;
         
         $this->assertEquals('8.8', $tiles->getFirstTileToSolve()) ;
         $counted_values = array_count_values($tiles->getTilesToSolve()) ;
         $this->assertEquals(1, $counted_values['8.8']) ;
+    }
+    
+    public function testGetValuesToSet()
+    {
+        $lastPossibilityTile = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
+                              ->getMock() ;
+        $lastPossibilityTile->method('getRow')->willReturn(8) ;
+        $lastPossibilityTile->method('getCol')->willReturn(8) ;
+        $lastPossibilityTile->method('getValue')->willReturn(2) ;
+
+        $tiles = new Tiles($this->tileset) ;
+        $tiles->init(9) ;
+        $tiles->priorizeTileToSolve($lastPossibilityTile) ;
+        
+        $this->assertEquals(2, $tiles->getValuesToSet('8.8')) ;
     }
 }

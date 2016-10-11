@@ -87,48 +87,6 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onInitGame($event) ;
     }
-//
-//    public function testLoadGameSubscriber()
-//    {
-//        $result = $this->commonEventSubscriber('LoadGameEvent', 'onLoadGame') ;
-//        $this->assertTrue($result) ;
-//    }
-//    
-//    public function testOnLoadGame()
-//    {
-//        $array = [] ;
-//        $array[0][0] = 3 ;
-//        $array[2][4] = 7 ;
-//        
-//        $tiles = $this->getMockBuilder('AppBundle\Entity\Event\TilesLoaded')
-//                        ->disableOriginalConstructor()
-//                        ->getMock() ;
-////        $tiles->method('getSize')
-////                ->willReturn(9) ;
-//        $tiles->method('getTiles')
-//                ->willReturn($array) ;
-//        $event = $this->getMockBuilder('AppBundle\Event\LoadGameEvent')
-//                                    ->setConstructorArgs(array($tiles))
-//                                    ->getMock() ;
-//        $values = $this->getMockBuilder('AppBundle\Entity\Values')
-//                        ->getMock() ;
-//        
-////        $this->session->expects($this->once())
-////                ->method('getValues') 
-////                ->will($this->returnValue($values)) ;
-//        $event->expects($this->once())
-//                ->method('getTiles') 
-//                ->will($this->returnValue($tiles)) ;
-//        $this->session->method('getTiles')
-//                ->willReturn($this->tiles) ;
-//        $this->session->expects($this->once())
-//                ->method('setTiles') ;
-//        $this->tiles->expects($this->exactly(2))
-//                ->method('set') ;
-//
-//        $tilesAggregate = new TilesAggregate($this->session) ;
-//        $tilesAggregate->onLoadGame($event) ;
-//    }
     
     public function testReloadGameSubscriber()
     {
@@ -209,6 +167,34 @@ class TilesAggregateTest extends \PHPUnit_Framework_TestCase {
         
         $tilesAggregate = new TilesAggregate($this->session) ;
         $tilesAggregate->onValidatedTile($event) ;
+    }
+
+    public function testDeduceTileSubscriber()
+    {
+        $result = $this->commonEventSubscriber('DeduceTileEvent', 'onDeduceTile') ;
+        $this->assertTrue($result) ;
+    }
+    
+    public function testOnDeduceTile()
+    {
+        $event = $this->getMockBuilder('AppBundle\Event\DeduceTileEvent')
+                      ->disableOriginalConstructor()
+                      ->getMock() ;
+        $tilelp = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
+                        ->getMock() ;
+        $event->expects($this->once())
+                ->method('getTile')
+                ->willReturn($tilelp) ;
+        $this->session->method('getTiles')
+                ->willReturn($this->tiles) ;
+        $this->session->expects($this->once())
+                ->method('setTiles') ;
+        $this->tiles->expects($this->once())
+                ->method('priorizeTileToSolve')
+                ->with($tilelp) ;
+        
+        $tilesAggregate = new TilesAggregate($this->session) ;
+        $tilesAggregate->onDeduceTile($event) ;
     }
    
     protected function commonEventSubscriber($eventName, $method)

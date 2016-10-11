@@ -21,9 +21,9 @@ class DebugController  extends Controller {
     {
         $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
         $array = include($file) ;
-        $tiles = $this->get('tilesEntity') ;
-        $tiles->init(9) ;
-        $tiles->priorizeTileToSolve('8.8') ;
+//        $tiles = $this->get('tilesEntity') ;
+//        $tiles->init(9) ;
+//        $tiles->priorizeTileToSolve('8.8') ;
         
 //        var_dump($tiles) ;
 //        $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;

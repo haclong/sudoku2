@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Event\TileLastPossibility;
 use AppBundle\Entity\Tiles\Tileset;
 
 /**
@@ -12,12 +13,14 @@ use AppBundle\Entity\Tiles\Tileset;
 class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     protected $tileset ;
     protected $size ;
-    public $tilesToSolve ;
+    protected $tilesToSolve ;
+    protected $singleValues ;
 
     public function __construct(Tileset $tileset)
     {
         $this->tileset = $tileset ;
         $this->tilesToSolve = [] ;
+        $this->singleValues = [] ;
     }
     
     public function init($size)
@@ -31,6 +34,7 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     {
         $this->tileset->exchangeArray(array()) ;
         $this->tilesToSolve = [] ;
+        $this->singleValues = [] ;
         $this->size = null ;
         return $this ;
     }
@@ -38,6 +42,7 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     {
         $this->setTileset($grid->getSize()) ;
         $this->setTilesToSolve($this->getTileset()) ;
+        $this->singleValues = [] ;
     }
     public function getSize()
     {
@@ -59,17 +64,23 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     {
         $this->tileset->offsetSet($row.'.'.$col, $value) ;
         $this->removeTileToSolve($row.'.'.$col) ;
+        unset($this->singleValues[$row .'.'.$col]) ;
     }
-    public function priorizeTileToSolve($tileId)
+    public function priorizeTileToSolve(TileLastPossibility $deduceTile)
     {
+        $tileId = $deduceTile->getRow() .'.'. $deduceTile->getCol() ;
         $this->removeTileToSolve($tileId) ;
-//        unset($this->tilesToSolve[$tileId]) ;
         array_unshift($this->tilesToSolve, $tileId) ;
+        $this->singleValues[$tileId] = $deduceTile->getValue() ;
     }
     public function getFirstTileToSolve()
     {
         reset($this->tilesToSolve) ;
         return current($this->tilesToSolve) ;
+    }
+    public function getValuesToSet($tileId)
+    {
+        return $this->singleValues[$tileId] ;
     }
     
     protected function setTileset($size)

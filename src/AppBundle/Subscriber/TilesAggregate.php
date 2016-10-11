@@ -3,6 +3,7 @@
 namespace AppBundle\Subscriber;
 
 use AppBundle\Entity\Tiles;
+use AppBundle\Event\DeduceTileEvent;
 use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
@@ -31,6 +32,7 @@ class TilesAggregate implements EventSubscriberInterface{
             ReloadGameEvent::NAME => 'onReloadGame',
             ResetGameEvent::NAME => 'onResetGame',
             ValidateTileSetEvent::NAME => 'onValidatedTile',
+            DeduceTileEvent::NAME => 'onDeduceTile', 
         ) ;
     }
     
@@ -74,6 +76,13 @@ class TilesAggregate implements EventSubscriberInterface{
         
         $validTile = $event->getTile() ;
         $tiles->set($validTile->getRow(), $validTile->getCol(), $validTile->getValue()) ;
+        $this->storeTiles($tiles) ;
+    }
+    
+    public function onDeduceTile(DeduceTileEvent $event) {
+        $tiles = $this->getTilesFromSession() ;
+        
+        $tiles->priorizeTileToSolve($event->getTile()) ;
         $this->storeTiles($tiles) ;
     }
 }
