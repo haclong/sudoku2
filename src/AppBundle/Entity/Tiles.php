@@ -78,9 +78,13 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
         reset($this->tilesToSolve) ;
         return current($this->tilesToSolve) ;
     }
-    public function getValuesToSet($tileId)
+    public function getIndexToSet($tileId)
     {
-        return $this->singleValues[$tileId] ;
+        if(array_key_exists($tileId, $this->singleValues))
+        {
+            return $this->singleValues[$tileId] ;
+        }
+        return null ;
     }
     
     protected function setTileset($size)
