@@ -143,7 +143,7 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(1, $counted_values['8.8']) ;
     }
     
-    public function testGetValuesToSet()
+    public function testGetIndexToSet()
     {
         $lastPossibilityTile = $this->getMockBuilder('AppBundle\Entity\Event\TileLastPossibility')
                               ->getMock() ;
@@ -155,6 +155,7 @@ class TilesTest extends \PHPUnit_Framework_TestCase {
         $tiles->init(9) ;
         $tiles->priorizeTileToSolve($lastPossibilityTile) ;
         
-        $this->assertEquals(2, $tiles->getValuesToSet('8.8')) ;
+        $this->assertEquals(2, $tiles->getIndexToSet('8.8')) ;
+        $this->assertNull($tiles->getIndexToSet('0.0')) ;
     }
 }

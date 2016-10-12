@@ -21,44 +21,38 @@ class DebugController  extends Controller {
     {
         $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
         $array = include($file) ;
-//        $tiles = $this->get('tilesEntity') ;
-//        $tiles->init(9) ;
-//        $tiles->priorizeTileToSolve('8.8') ;
         
-//        var_dump($tiles) ;
-//        $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
-//        $array = include($file) ;
-//        
-//        $gridSession = $this->get('gridSession') ;
-//        $tilesSession = $this->get('tilesSession') ;
-//        
-//        $values = $this->get('valuesEntity') ;
-//        $service = $this->get('groupsService') ;
-//        $groups = $this->get('groupsEntity') ;
-//        $grid = $this->get('gridEntity') ;
-//        $tiles = $this->get('tilesEntity') ;
-//        $gridSession->setGrid($grid) ;
-//        $tilesSession->setTiles($tiles) ;
-//        
-//        $grid = $gridSession->getGrid() ;
-//        $grid->init(9) ;
-//        $gridSession->setGrid($grid) ;
-//        $groups->init(9) ;
-//        $values->init(9) ;
-//        foreach($array as $row => $cols)
-//        {
-//            foreach($cols as $col => $value)
-//            {
-//                if(is_null($values->getKeyByValue($value)))
-//                {
-//                    $values->add($value) ;
-//                }
-//                $service->set($groups, $values->getKeyByValue($value), $row, $col) ;
-////                var_dump($values) ;
-//            }
-//        }
+        $gridSession = $this->get('gridSession') ;
+        $tilesSession = $this->get('tilesSession') ;
+        
+        $values = $this->get('valuesEntity') ;
+        $service = $this->get('groupsService') ;
+        $groups = $this->get('groupsEntity') ;
+        $grid = $this->get('gridEntity') ;
+        $tiles = $this->get('tilesEntity') ;
 
-//        var_dump($groups->getValuesByGroup()['col']) ;
+        $gridSession->setGrid($grid) ;
+        $tilesSession->setTiles($tiles) ;
+        
+        $grid = $gridSession->getGrid() ;
+        $grid->init(9) ;
+        $gridSession->setGrid($grid) ;
+        $groups->init(9) ;
+        $values->init(9) ;
+        $tiles->init(9) ;
+        foreach($array as $row => $cols)
+        {
+            foreach($cols as $col => $value)
+            {
+                if(is_null($values->getKeyByValue($value)))
+                {
+                    $values->add($value) ;
+                }
+                $service->set($groups, $values->getKeyByValue($value), $row, $col) ;
+            }
+        }
+
+//        var_dump($tiles) ;
         return $this->render('sudoku/debug.html.twig', []);
     }
 //    protected function discard(&$groups, $value, $impactedTiles)
