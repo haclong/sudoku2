@@ -8,7 +8,7 @@
     <button id="loadGridButton"   class="btn btn-default" type="submit" name="load" value="get">Charger une grille</button>
 
     <button class="btn btn-default" type="submit" name="submit" value="start">Résoudre</button>
-    <button class="btn btn-default" type="submit" name="submit" value="play">Jouer</button>
+    <button id="playGridButton" class="btn btn-default" type="submit" name="submit" value="play">Jouer</button>
     <button id="reloadGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
 
     <button id="resetGridButton" class="btn btn-default" type="submit" name="empty" value="clear">Nouvelle grille</button>
@@ -27,7 +27,7 @@
         {% for col in 0..size-1 %}
             {% set topStyle = "" %}
             {% set leftStyle = "" %}
-            {% set sqrt = '9'|sqrt %}
+            {% set sqrt = size |sqrt %}
             {% if row % sqrt == 0 %}
                 {% set topStyle = " region_border_top" %}
             {% endif %}
@@ -35,7 +35,7 @@
                 {% set leftStyle = " region_border_left" %}
             {% endif %}
             
-            <td class="sudoku_case{{topStyle}}{{leftStyle}}"><input type="text" size="1" name="t[{{row}}][{{col}}]" id="t.{{row}}.{{col}}" value=""/></td>
+            <td class="sudoku_case{{topStyle}}{{leftStyle}}"><input type="text" class="case" size="1" name="t[{{row}}][{{col}}]" id="t.{{row}}.{{col}}" value=""/></td>
         {% endfor %}
     </tr>
     {% endfor %}
@@ -97,6 +97,27 @@
                 dataType: "json"
             });
         }) ;
+        
+        $("input:text.case").change(function() {
+            var id = $( this ).attr('id') ;
+            var value = $( this ).val() ;
+            
+            if(value) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{path('setTile')}}",
+                    data: JSON.stringify({tile:{id:id, value:value}}),
+                    contentType: 'application/json',
+                    success: setTile,
+                    dataType: "json"
+                });
+            } else {
+                var inputElement = document.getElementById(id) ;
+                var parent = inputElement.parentNode ;
+                parent.style.backgroundColor = "#ffffff";
+                inputElement.style.backgroundColor = "#ffffff" ;
+            }
+        }) ;
 
         function loadGrid(data)
         {
@@ -108,6 +129,10 @@
 //            alert("Data: " + myData.tiles.length) ;
             for(i=0; i<myData.tiles.length; i++) {
                 document.getElementById(myData.tiles[i].id).value = myData.tiles[i].value;
+                if(myData.tiles[i].value != null)
+                {
+                    document.getElementById(myData.tiles[i].id).setAttribute("readonly", "readonly") ;
+                }
             }
         }
 
@@ -126,6 +151,35 @@
         {
             clearGrid() ;
             loadGrid(data) ;
+        }
+        
+        function setTile(data)
+        {
+            if(data.hasOwnProperty('solved') )
+            {
+                var elements = document.querySelectorAll('td.sudoku_case') ;
+                for (var element in elements)
+                {
+                    elements[element].style.backgroundColor = "#6eea59" ;
+                    elements[element].children[0].style.backgroundColor = "#6eea59" ;
+                }
+            }
+            if(data.hasOwnProperty('error')) 
+            {
+                var myData = data.error ;
+                var inputElement = document.getElementById(myData.id) ;
+                var parent = inputElement.parentNode ;
+                parent.style.backgroundColor = "#ff0000";
+                inputElement.style.backgroundColor = "#ff0000" ;
+            } else
+            {
+                var elements = document.querySelectorAll('td.sudoku_case') ;
+                for (var element in elements)
+                {
+                    elements[element].style.backgroundColor = "#ffffff" ;
+                    elements[element].children[0].style.backgroundColor = "#ffffff" ;
+                }
+            }
         }
     </script>
 

@@ -2,5 +2,18 @@
 
 {% block body %}
     <h1 id="titre">Debug</h1>
+    <input type="text" id="test"/><button id="click" value="click">Click</value>
 {% endblock %}
 
+
+{% block javascripts %}
+
+    <script>
+        $("#click").click(function() {
+//            alert("getGridButton") ;
+            document.getElementById('test').setAttribute("readonly", "readonly");
+        }) ;
+
+    </script>
+
+{% endblock %}

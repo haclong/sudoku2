@@ -2,10 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Event\TileSet;
 use AppBundle\Entity\Event\TilesLoaded;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\SetTileEvent;
+use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Utils\JsonMapper;
 use AppBundle\Utils\SudokuFileMapper;
 use AppBundle\Utils\TilesMapper;
@@ -54,6 +57,59 @@ class ApiController extends Controller
 
             $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
             $sessionMarker->logSession("ApiController::loadGrid") ;
+            
+            return new JsonResponse($response) ;
+//        } else {
+//            return $this->render(
+//                    'sudoku/error.html.twig',
+//                    array('msg' => 'No XHR')
+//                    ) ;
+//        }
+    }
+
+    /**
+     * 
+     * @Route("/api/tile/set", name="setTile")
+     */
+    public function setTileAction(Request $request)
+    {
+//        if($request->isXmlHttpRequest()) {
+            // récupération des objets dans le container
+            $sessionMarker = $this->get('sessionMarker') ;
+            $session = $this->get('sudokuSession') ;
+            $gridSession = $this->get('gridSession') ;
+
+            if(!$session->isReady()) {
+                return $this->redirectToRoute('homepage');
+            }
+
+//            $json = '{"tile":{"id":"t.1.3","value":"2"}}' ;
+//            $sudokuJson = json_decode($json) ;
+            $sudokuJson = json_decode($request->getContent()) ;
+            $explodedArray = explode('.', $sudokuJson->tile->id) ;
+            $row = $explodedArray[1] ;
+            $col = $explodedArray[2] ;
+            $val = $sudokuJson->tile->value ;
+
+            // on charge la grille dans l'objet TilesSet
+            $setTile = new TileSet() ;
+            $setTile->set($row, $col, $val) ;
+//var_dump($setTile) ;
+            try {
+            // on déclenche l'événement avec la grille à résoudre
+            $event = new SetTileEvent($setTile) ;
+            $this->get('event_dispatcher')->dispatch(SetTileEvent::NAME, $event) ;
+            } catch (AlreadySetTileException $e) {
+                $response['error'] = ["id" => "t.".$row.".".$col] ;
+            }
+            
+            if($gridSession->getGrid()->isSolved())
+            {
+                $response['solved'] = ["status" => 1] ;
+            }
+            
+            $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
+            $sessionMarker->logSession("ApiController::setTile." .$row. "." .$col. "." .$val) ;
             
             return new JsonResponse($response) ;
 //        } else {
