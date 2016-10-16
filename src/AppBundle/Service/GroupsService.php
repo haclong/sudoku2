@@ -80,11 +80,10 @@ class GroupsService {
         $this->checkValue($groups->getRow($row), $index, "row.".$row) ;
         $this->checkValue($groups->getCol($col), $index, "col.".$col) ;
         $this->checkValue($groups->getRegion($region), $index, "region.".$region) ;
-
     }
     protected function checkValue($array, $index, $id)
     {
-        if(!array_key_exists($index, $array))
+        if(array_key_exists($index, $array) && count($array[$index]) == 0)
         {
             throw new AlreadySetTileException($index . " is already set in " . $id) ;
         }

@@ -52,7 +52,7 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->groups = null ;
     }
     
-    public function testSetThrowsAlreadySetTileException()
+    public function testSetThrowsAlreadySetTileExceptionInRow()
     {
         $this->setExpectedException(AlreadySetTileException::class) ;
         $this->dispatcher->expects($this->never())
@@ -60,16 +60,49 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
                          ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
         
         $this->groups->method('getRow')
-                     ->willReturn($this->onConsecutiveCalls(['0.0', '0.1', '0.2', '0.3'], ['3.0', '3.1', '3.2', '3.3'])) ;
+                     ->willReturn([0 => [0, 1], 1 => null, 2 => [0, 1]]) ;
         $this->groups->method('getCol')
-                     ->willReturn($this->onConsecutiveCalls(['0.0', '0.1', '0.2', '0.3'], ['1.0', '2.0', '3.0'])) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getRegion')
-                     ->willReturn($this->onConsecutiveCalls(['0.0', '0.1', '0.2', '0.3'], ['3.0', '3.1', '3.2', '3.3'])) ;
+                     ->willReturn([0 => [0, 1], 1 => [1], 2 => [0, 1]]) ;
         $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
         $service->set($this->groups, 1, 0, 0) ;
-        $service->set($this->groups, 1, 3, 0) ;
+    } 
+    
+    public function testSetThrowsAlreadySetTileExceptionInCol()
+    {
+        $this->setExpectedException(AlreadySetTileException::class) ;
+        $this->dispatcher->expects($this->never())
+                         ->method('dispatch')
+                         ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
+        
+        $this->groups->method('getRow')
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
+        $this->groups->method('getCol')
+                     ->willReturn([0 => [0, 1], 1 => null, 2 => [0, 1]]) ;
+        $this->groups->method('getRegion')
+                     ->willReturn([0 => [0, 1], 1 => [1], 2 => [0, 1]]) ;
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->set($this->groups, 1, 0, 0) ;
     }
     
+    public function testSetThrowsAlreadySetTileExceptionInRegion()
+    {
+        $this->setExpectedException(AlreadySetTileException::class) ;
+        $this->dispatcher->expects($this->never())
+                         ->method('dispatch')
+                         ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
+        
+        $this->groups->method('getRow')
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
+        $this->groups->method('getCol')
+                     ->willReturn([0 => [0, 1], 1 => [1], 2 => [0, 1]]) ;
+        $this->groups->method('getRegion')
+                     ->willReturn([0 => [0, 1], 1 => null, 2 => [0, 1]]) ;
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->set($this->groups, 1, 0, 0) ;
+    }
+
     public function testSetDispatchSetTileValidateEvent()
     {
         $impactedTiles = ['0.1', '0.3'] ;
@@ -83,11 +116,11 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
                          ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
         
         $this->groups->method('getRow')
-                     ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getCol')
-                     ->willReturn(['0.0', '1.0', '2.0', '3.0']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getRegion')
-                     ->willReturn(['0.0', '0.1', '1.0', '1.1']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getImpactedTiles')
                      ->willReturn($impactedTiles) ;
         $this->groups->method('getValuesByGroup')
@@ -110,11 +143,11 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
                          ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
         
         $this->groups->method('getRow')
-                     ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getCol')
-                     ->willReturn(['0.0', '1.0', '2.0', '3.0']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getRegion')
-                     ->willReturn(['0.0', '0.1', '1.0', '1.1']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getImpactedTiles')
                      ->willReturn(array()) ;
         $this->groups->method('getValuesByGroup')
@@ -136,11 +169,11 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
                          ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
         
         $this->groups->method('getRow')
-                     ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getCol')
-                     ->willReturn(['0.0', '1.0', '2.0', '3.0']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getRegion')
-                     ->willReturn(['0.0', '0.1', '1.0', '1.1']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getImpactedTiles')
                      ->willReturn(array()) ;
         $this->groups->method('getValuesByGroup')
@@ -160,11 +193,11 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->setExpectedException(Exception::class) ;
         
         $this->groups->method('getRow')
-                     ->willReturn(['0.0', '0.1', '0.2', '0.3']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getCol')
-                     ->willReturn(['0.0', '1.0', '2.0', '3.0']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getRegion')
-                     ->willReturn(['0.0', '0.1', '1.0', '1.1']) ;
+                     ->willReturn([0 => [0, 1], 1 => [0], 2 => [0, 1]]) ;
         $this->groups->method('getImpactedTiles')
                      ->willReturn(array()) ;
         $this->groups->method('getValuesByGroup')

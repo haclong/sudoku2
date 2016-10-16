@@ -2,6 +2,11 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Event\GridSize;
+use AppBundle\Entity\Event\TilesLoaded;
+use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\SetGameEvent;
 use AppBundle\Utils\JsonMapper;
 use AppBundle\Utils\TilesMapper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -25,6 +30,8 @@ class ApiControllerTest extends WebTestCase
         $this->values = $this->client->getContainer()->get('valuesEntity') ;
         $this->tiles = $this->client->getContainer()->get('tilesEntity') ;
         $this->groups = $this->client->getContainer()->get('groupsEntity') ;
+        $this->groupsService = $this->client->getContainer()->get('groupsService') ;
+        $this->dispatcher = $this->client->getContainer()->get('event_dispatcher') ;
         $this->session->clear() ;
     }
     
@@ -105,6 +112,152 @@ class ApiControllerTest extends WebTestCase
         // on vérifie que la grille stockée dans l'objet $grid est la même qui est dans le json
         $mappedJson['grid'] = TilesMapper::toArray($this->tilessession->getTiles(), $this->valuessession->getValues()) ;
         $this->assertEquals($response->getContent(), json_encode($mappedJson)) ;
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetTileRedirectToHomepage()
+    {
+        $this->client->request('GET', '/api/tile/set');
+        $this->assertTrue($this->client->getResponse()->isRedirect('/'));
+    }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetTileReturnsError()
+    {
+        // créer une grille remplie
+        $g4easy[0][1] = 2 ;
+        $g4easy[1][0] = 3 ;
+        $g4easy[2][2] = 2 ;
+        $g4easy[3][1] = 3 ;
+        $g4easy[3][2] = 4 ;
+        $g4easy[3][3] = 1 ;
+        
+        // on initialise les objets en session
+        $sudokuEntities = $this->client->getContainer()->get('sudokuEntities') ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->dispatcher->dispatch(SetGameEvent::NAME, $event) ;
+        
+        $gridSize = new GridSize(4) ;
+        $event = new InitGameEvent($gridSize) ;
+        $this->dispatcher->dispatch(InitGameEvent::NAME, $event) ;
+        
+        $loadedGrid = new TilesLoaded(4, $g4easy) ;
+        $event = new LoadGameEvent($loadedGrid) ;
+        $this->dispatcher->dispatch(LoadGameEvent::NAME, $event) ;
+
+        $crawler = $this->client->request(
+                            'POST',
+                            '/api/tile/set',
+                            array(),
+                            array(),
+                            array('CONTENT_TYPE' => 'application/json'),
+                            '{"tile":{"id":"t.0.0","value":"2"}}');
+        
+        // tests sur le retour en json
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
+        $decodedJson = json_decode($response->getContent()) ;
+        $this->assertTrue(isset($decodedJson->error)) ;
+        $this->assertEquals('t.0.0', $decodedJson->error->id) ;
+    }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetTileReturnsOK()
+    {
+        // créer une grille remplie
+        $g4easy[0][1] = 2 ;
+        $g4easy[1][0] = 3 ;
+        $g4easy[2][2] = 2 ;
+        $g4easy[3][1] = 3 ;
+        $g4easy[3][2] = 4 ;
+        $g4easy[3][3] = 1 ;
+        
+        // on initialise les objets en session
+        $sudokuEntities = $this->client->getContainer()->get('sudokuEntities') ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->dispatcher->dispatch(SetGameEvent::NAME, $event) ;
+        
+        $gridSize = new GridSize(4) ;
+        $event = new InitGameEvent($gridSize) ;
+        $this->dispatcher->dispatch(InitGameEvent::NAME, $event) ;
+        
+        $loadedGrid = new TilesLoaded(4, $g4easy) ;
+        $event = new LoadGameEvent($loadedGrid) ;
+        $this->dispatcher->dispatch(LoadGameEvent::NAME, $event) ;
+
+        $crawler = $this->client->request(
+                            'POST',
+                            '/api/tile/set',
+                            array(),
+                            array(),
+                            array('CONTENT_TYPE' => 'application/json'),
+                            '{"tile":{"id":"t.1.3","value":"2"}}');
+        
+        // tests sur le retour en json
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
+        $decodedJson = json_decode($response->getContent()) ;
+        $this->assertFalse(isset($decodedJson->error)) ;
+    }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testSetTileReturnsSolved()
+    {
+        // créer une grille remplie
+        $g4easy[0][1] = 2 ;
+        $g4easy[0][2] = 3 ;
+        $g4easy[0][3] = 4 ;
+        $g4easy[1][0] = 3 ;
+        $g4easy[1][1] = 4 ;
+        $g4easy[1][2] = 1 ;
+        $g4easy[1][3] = 2 ;
+        $g4easy[2][0] = 4 ;
+        $g4easy[2][1] = 1 ;
+        $g4easy[2][2] = 2 ;
+        $g4easy[2][3] = 3 ;
+        $g4easy[3][0] = 2 ;
+        $g4easy[3][1] = 3 ;
+        $g4easy[3][2] = 4 ;
+        $g4easy[3][3] = 1 ;
+        
+        // on initialise les objets en session
+        $sudokuEntities = $this->client->getContainer()->get('sudokuEntities') ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->dispatcher->dispatch(SetGameEvent::NAME, $event) ;
+        
+        $gridSize = new GridSize(4) ;
+        $event = new InitGameEvent($gridSize) ;
+        $this->dispatcher->dispatch(InitGameEvent::NAME, $event) ;
+        
+        $loadedGrid = new TilesLoaded(4, $g4easy) ;
+        $event = new LoadGameEvent($loadedGrid) ;
+        $this->dispatcher->dispatch(LoadGameEvent::NAME, $event) ;
+
+        $crawler = $this->client->request(
+                            'POST',
+                            '/api/tile/set',
+                            array(),
+                            array(),
+                            array('CONTENT_TYPE' => 'application/json'),
+                            '{"tile":{"id":"t.0.0","value":"1"}}');
+        
+        // tests sur le retour en json
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
+        $decodedJson = json_decode($response->getContent()) ;
+        $this->assertTrue(isset($decodedJson->solved)) ;
+        $this->assertEquals(1, $decodedJson->solved->status) ;
     }
 
     /**
