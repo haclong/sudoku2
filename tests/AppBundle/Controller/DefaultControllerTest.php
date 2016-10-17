@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Event\SetGameEvent;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
@@ -22,6 +23,8 @@ class DefaultControllerTest extends WebTestCase
         $this->valuessession->setValues($this->values) ;
         $this->tilessession->setTiles($this->tiles) ;
         $this->groupssession->setGroups($this->groups) ;
+        $this->dispatcher = $this->client->getContainer()->get('event_dispatcher') ;
+        $this->session->clear() ;
      }
     
     protected function tearDown()
@@ -37,24 +40,38 @@ class DefaultControllerTest extends WebTestCase
         $this->tiles = null ;
         $this->groups = null ;
     }
+    
+    /**
+     * @runInSeparateProcess
+     */
+    public function testInitial()
+    {
+        // on vérifie que grid est rempli
+        $this->assertNull($this->session->getGrid()) ;
+        // on vérifie que values est vide
+        $this->assertNull($this->session->getValues()) ;
+        // on vérifie que tiles est rempli
+        $this->assertNull($this->session->getTiles()) ;
+    }
+    
     /**
      * @runInSeparateProcess
      */
     public function testHomepage()
     {
-        // on remplit grid et tiles
-        $this->session->getGrid()->init(9) ;
-        $this->session->getTiles()->init(9) ;
-        
-        // on vérifie que grid est rempli
-        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
-        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
-        // on vérifie que values est vide
-        $this->assertNull($this->session->getValues()->getSize()) ;
-        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
-        // on vérifie que tiles est rempli
-        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
-        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
+//        // on remplit grid et tiles
+//        $this->session->getGrid()->init(9) ;
+//        $this->session->getTiles()->init(9) ;
+//        
+//        // on vérifie que grid est rempli
+//        $this->assertEquals(9, $this->session->getGrid()->getSize()) ;
+//        $this->assertEquals(81, $this->session->getGrid()->getRemainingTiles()) ;
+//        // on vérifie que values est vide
+//        $this->assertNull($this->session->getValues()->getSize()) ;
+//        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+//        // on vérifie que tiles est rempli
+//        $this->assertEquals(81, count($this->session->getTiles()->getTileset())) ;
+//        $this->assertEquals(9, $this->session->getTiles()->getSize()) ;
         
         $crawler = $this->client->request('GET', '/');
        
@@ -62,15 +79,15 @@ class DefaultControllerTest extends WebTestCase
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
         $this->assertContains('Choisir une taille de grille', $crawler->text());
 
-        // on vérifie que grid est vide
-        $this->assertNull($this->session->getGrid()->getSize()) ;
-        $this->assertEquals(-1, $this->session->getGrid()->getRemainingTiles()) ;
-        // on vérifie que tiles est vide
-        $this->assertEquals(0, count($this->session->getTiles()->getTileset())) ;
-        $this->assertNull($this->session->getTiles()->getSize()) ;
-        // on vérifie que values est vide
-        $this->assertNull($this->session->getValues()->getSize()) ;
-        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
+//        // on vérifie que grid est vide
+//        $this->assertNull($this->session->getGrid()->getSize()) ;
+//        $this->assertEquals(-1, $this->session->getGrid()->getRemainingTiles()) ;
+//        // on vérifie que tiles est vide
+//        $this->assertEquals(0, count($this->session->getTiles()->getTileset())) ;
+//        $this->assertNull($this->session->getTiles()->getSize()) ;
+//        // on vérifie que values est vide
+//        $this->assertNull($this->session->getValues()->getSize()) ;
+//        $this->assertEquals(0, count($this->session->getValues()->getValues())) ;
     }
 
     /**
@@ -88,22 +105,27 @@ class DefaultControllerTest extends WebTestCase
      */
     public function testGrid()
     {
-        $this->session->clear() ;
-        // on vérifie que grid est vide
-        $this->assertNull($this->gridsession->getGrid()) ;
-        // on vérifie que values est vide
-        $this->assertNull($this->valuessession->getValues()) ;
-        // on vérifie que tiles est vide
-        $this->assertNull($this->tilessession->getTiles()) ;
-        $this->assertNull($this->groupssession->getGroups()) ;
-        $this->grid->reset() ;
-        $this->values->reset() ;
-        $this->tiles->reset() ;
-        $this->groups->reset() ;
-        $this->gridsession->setGrid($this->grid) ;
-        $this->valuessession->setValues($this->values) ;
-        $this->tilessession->setTiles($this->tiles) ;
-        $this->groupssession->setGroups($this->groups) ;
+//        $this->session->clear() ;
+//        // on vérifie que grid est vide
+//        $this->assertNull($this->gridsession->getGrid()) ;
+//        // on vérifie que values est vide
+//        $this->assertNull($this->valuessession->getValues()) ;
+//        // on vérifie que tiles est vide
+//        $this->assertNull($this->tilessession->getTiles()) ;
+//        $this->assertNull($this->groupssession->getGroups()) ;
+//        $this->grid->reset() ;
+//        $this->values->reset() ;
+//        $this->tiles->reset() ;
+//        $this->groups->reset() ;
+//        $this->gridsession->setGrid($this->grid) ;
+//        $this->valuessession->setValues($this->values) ;
+//        $this->tilessession->setTiles($this->tiles) ;
+//        $this->groupssession->setGroups($this->groups) ;
+
+        // on initialise les objets en session
+        $sudokuEntities = $this->client->getContainer()->get('sudokuEntities') ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->dispatcher->dispatch(SetGameEvent::NAME, $event) ;
 
         $crawler = $this->client->request('GET', '/9');
 
@@ -115,11 +137,11 @@ class DefaultControllerTest extends WebTestCase
         // on vérifie que grid est rempli
         $this->assertEquals(9, $this->gridsession->getGrid()->getSize()) ;
         $this->assertEquals(81, $this->gridsession->getGrid()->getRemainingTiles()) ;
-        // on vérifie que values est rempli
-        $this->assertEquals(9, $this->valuessession->getValues()->getSize()) ;
-        $this->assertEquals(0, count($this->valuessession->getValues()->getValues())) ;
-        // on vérifie que tiles est rempli
-        $this->assertEquals(81, count($this->tilessession->getTiles()->getTileset())) ;
-        $this->assertEquals(9, $this->tilessession->getTiles()->getSize()) ;
+//        // on vérifie que values est rempli
+//        $this->assertEquals(9, $this->valuessession->getValues()->getSize()) ;
+//        $this->assertEquals(0, count($this->valuessession->getValues()->getValues())) ;
+//        // on vérifie que tiles est rempli
+//        $this->assertEquals(81, count($this->tilessession->getTiles()->getTileset())) ;
+//        $this->assertEquals(9, $this->tilessession->getTiles()->getSize()) ;
     }
 }
