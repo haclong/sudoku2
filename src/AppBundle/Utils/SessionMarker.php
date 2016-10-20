@@ -2,6 +2,9 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Persistence\SudokuSession;
+use Symfony\Bridge\Monolog\Logger;
+
 /**
  * Description of SessionMarker
  *
@@ -11,7 +14,7 @@ class SessionMarker {
     protected $session ;
     protected $logger ;
     
-    public function __construct($session, $logger) {
+    public function __construct(SudokuSession $session, Logger $logger) {
         $this->session = $session;
         $this->logger = $logger;
     }

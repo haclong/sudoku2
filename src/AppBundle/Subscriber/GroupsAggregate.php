@@ -29,7 +29,7 @@ class GroupsAggregate implements EventSubscriberInterface{
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
 //            LoadGameEvent::NAME => 'onLoadGame',
-            ReloadGameEvent::NAME => 'onReloadGame',
+            ReloadGameEvent::NAME => array('onReloadGame', 10),
             ResetGameEvent::NAME => 'onResetGame'
         ) ;
     }
