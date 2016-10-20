@@ -108,6 +108,13 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     }
     protected function removeTileToSolve($id)
     {
+//        foreach($this->tilesToSolve as $key => $tile)
+//        {
+//            if($tile == $id)
+//            {
+//                //unset($)
+//            }
+//        }
         $this->tilesToSolve = array_flip($this->tilesToSolve) ;
         unset($this->tilesToSolve[$id]) ;
         $this->tilesToSolve = array_flip($this->tilesToSolve) ;

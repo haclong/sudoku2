@@ -29,7 +29,7 @@ class TilesAggregate implements EventSubscriberInterface{
         return array(
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-            ReloadGameEvent::NAME => 'onReloadGame',
+            ReloadGameEvent::NAME => array('onReloadGame', 10),
             ResetGameEvent::NAME => 'onResetGame',
             ValidateTileSetEvent::NAME => 'onValidatedTile',
             DeduceTileEvent::NAME => 'onDeduceTile', 

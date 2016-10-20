@@ -2,7 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\RegionGetter;
+use AppBundle\Entity\Event\GridSize;
+use AppBundle\Entity\Event\TilesLoaded;
+use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\SetGameEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,40 +23,62 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
-        $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
+        $file = __DIR__ . "/../../../datas/4/1/1.php" ;
         $array = include($file) ;
+        $grid = $this->get('gridSession')->getGrid() ;
+        $tiles = $this->get('tilesSession')->getTiles() ;
+        $groups = $this->get('groupsSession')->getGroups() ;
         
-        $gridSession = $this->get('gridSession') ;
-        $tilesSession = $this->get('tilesSession') ;
+        // on initialise les objets en session
+        $sudokuEntities = $this->get('sudokuEntities') ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->get('event_dispatcher')->dispatch(SetGameEvent::NAME, $event) ;
         
-        $values = $this->get('valuesEntity') ;
-        $service = $this->get('groupsService') ;
-        $groups = $this->get('groupsEntity') ;
-        $grid = $this->get('gridEntity') ;
-        $tiles = $this->get('tilesEntity') ;
+        $gridSize = new GridSize(4) ;
+        $event = new InitGameEvent($gridSize) ;
+        $this->get('event_dispatcher')->dispatch(InitGameEvent::NAME, $event) ;
+        
+        $loadedGrid = new TilesLoaded(4, $array) ;
+        $event = new LoadGameEvent($loadedGrid) ;
+        $this->get('event_dispatcher')->dispatch(LoadGameEvent::NAME, $event) ;
 
-        $gridSession->setGrid($grid) ;
-        $tilesSession->setTiles($tiles) ;
+//        $crawler = $this->client->request(
+//                            'POST',
+//                            '/api/tile/set',
+//                            array(),
+//                            array(),
+//                            array('CONTENT_TYPE' => 'application/json'),
+//                            '{"tile":{"id":"t.0.0","value":"2"}}');
         
-        $grid = $gridSession->getGrid() ;
-        $grid->init(9) ;
-        $gridSession->setGrid($grid) ;
-        $groups->init(9) ;
-        $values->init(9) ;
-        $tiles->init(9) ;
-        foreach($array as $row => $cols)
+        // tests sur le retour en json
+        $grid = $this->get('gridSession')->getGrid() ;
+        $tiles = $this->get('tilesSession')->getTiles() ;
+        $groups = $this->get('groupsSession')->getGroups() ;
+//        var_dump($groups) ;
+        $grid->reload() ;
+        $groups->reload($grid) ;
+        
+        var_dump($tiles->getTilesToSolve()) ;
+//        var_dump($groups) ;
+        $array = $tiles->getTilesToSolve() ;
+        foreach($grid->getTiles() as $row => $cols)
         {
             foreach($cols as $col => $value)
             {
-                if(is_null($values->getKeyByValue($value)))
-                {
-                    $values->add($value) ;
-                }
-                $service->set($groups, $values->getKeyByValue($value), $row, $col) ;
+        $array = array_flip($array) ;
+        unset($array[$row . '.' . $col]) ;
+        $array = array_flip($array) ;
             }
         }
-
-//        var_dump($tiles) ;
+        var_dump($array) ;
+        
+//        foreach($array as $key => $tile)
+//        {
+//            if($tile == '4.6')
+//            {
+//                unset($array[$key]) ;
+//            }
+//        }
         return $this->render('sudoku/debug.html.twig', []);
     }
 //    protected function discard(&$groups, $value, $impactedTiles)

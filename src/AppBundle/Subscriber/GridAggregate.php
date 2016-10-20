@@ -34,7 +34,7 @@ class GridAggregate implements EventSubscriberInterface {
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
             LoadGameEvent::NAME => 'onLoadGame',
-            ReloadGameEvent::NAME => 'onReloadGame',
+            ReloadGameEvent::NAME => array('onReloadGame', -10),
             ResetGameEvent::NAME => 'onResetGame',
             ValidateTileSetEvent::NAME => 'onValidatedTile',
         ) ;
@@ -82,6 +82,13 @@ class GridAggregate implements EventSubscriberInterface {
     public function onReloadGame(ReloadGameEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->reload() ;
+        foreach($grid->getTiles() as $row => $cols)
+        {
+            foreach($cols as $col => $value)
+            {
+                $this->service->setTile($row, $col, $value) ;
+            }
+        }
         $this->storeGrid($grid) ;
     }
 
