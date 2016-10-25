@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Event\TileLastPossibility;
 use AppBundle\Entity\Tiles\Tileset;
+use AppBundle\Entity\Tiles\TileToSolve;
 
 /**
  * Description of Tiles
@@ -12,13 +13,15 @@ use AppBundle\Entity\Tiles\Tileset;
  */
 class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     protected $tileset ;
+    protected $tile;
     protected $size ;
     protected $tilesToSolve ;
     protected $singleValues ;
 
-    public function __construct(Tileset $tileset)
+    public function __construct(Tileset $tileset, TileToSolve $tile)
     {
         $this->tileset = $tileset ;
+        $this->tile = $tile ;
         $this->tilesToSolve = [] ;
         $this->singleValues = [] ;
     }
@@ -54,7 +57,7 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     }
     public function getTilesToSolve()
     {
-        return $this->tilesToSolve ;
+       return $this->tilesToSolve ;
     }
     public function getTile($row, $col)
     {
@@ -69,8 +72,19 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     public function priorizeTileToSolve(TileLastPossibility $deduceTile)
     {
         $tileId = $deduceTile->getRow() .'.'. $deduceTile->getCol() ;
+        $tile = clone $this->tile ;
+        $tile->setId($tileId) ;
+        $tile->setValue($deduceTile->getValue()) ;
         $this->removeTileToSolve($tileId) ;
-        array_unshift($this->tilesToSolve, $tileId) ;
+        
+//        $array = [] ;
+//        $array[] = $tile ;
+//        foreach($this->tilesToSolve as $tile)
+//        {
+//            $array[] = $tile ;
+//        }
+        array_unshift($this->tilesToSolve, $tile) ;
+//        $this->tilesToSolve = $array ;
         $this->singleValues[$tileId] = $deduceTile->getValue() ;
     }
     public function getFirstTileToSolve()
@@ -103,20 +117,21 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
         $this->tilesToSolve = [] ;
         foreach($tileset as $key => $index)
         {
-            array_push($this->tilesToSolve, $key) ;
+            $tile = clone $this->tile ;
+            $tile->setId($key) ;
+            $tile->setValue($index) ;
+            array_push($this->tilesToSolve, $tile) ;
         }
     }
     protected function removeTileToSolve($id)
     {
-//        foreach($this->tilesToSolve as $key => $tile)
-//        {
-//            if($tile == $id)
-//            {
-//                //unset($)
-//            }
-//        }
-        $this->tilesToSolve = array_flip($this->tilesToSolve) ;
-        unset($this->tilesToSolve[$id]) ;
-        $this->tilesToSolve = array_flip($this->tilesToSolve) ;
+        foreach($this->tilesToSolve as $key => $tile)
+        {
+            if($tile->getId() == $id)
+            {
+                unset($this->tilesToSolve[$key]) ;
+                break ;
+            }
+        }
     }
 }

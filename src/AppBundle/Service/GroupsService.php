@@ -101,19 +101,21 @@ class GroupsService {
         {
             foreach($group as $groupid => &$figure)
             {
-                foreach($figure as $key => &$tiles)
-                {
-                    if($key == $index)
-                    {
+//                foreach($figure as $key => &$tiles)
+//                {
+                    if(count($figure[$index]) > 0) {
+//                    if($key == $index)
+//                    {
 //                        echo $type . "::" . $groupid . "::" . $key . "::";
                         foreach($impactedTiles as $impactedTile)
                         {
-                            $flippedTiles = array_flip($tiles) ;
+                            $flippedTiles = array_flip($figure[$index]) ;
                             unset($flippedTiles[$impactedTile]) ;
-                            $tiles = array_flip($flippedTiles) ;
+                            $figure[$index] = array_flip($flippedTiles) ;
                         }
+//                    }
                     }
-                }
+//                }
             }
         }
     }

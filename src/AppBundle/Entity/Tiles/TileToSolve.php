@@ -10,10 +10,6 @@ namespace AppBundle\Entity\Tiles;
 class TileToSolve {
     protected $id ;
     protected $value ;
-    
-    public function __construct($id) {
-        $this->id = $id;
-    }
 
     public function getId() {
         return $this->id;

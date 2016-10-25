@@ -25,9 +25,9 @@ class TileLastPossibility {
     protected $value ;
     
     public function set($row, $col, $value) {
-        $this->row = $row;
-        $this->col = $col;
-        $this->value = $value;
+        $this->row = (int) $row;
+        $this->col = (int) $col;
+        $this->value = (int) $value;
     }
 
     public function getRow() {

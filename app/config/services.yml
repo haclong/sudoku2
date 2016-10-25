@@ -19,16 +19,23 @@ services:
             -  { name: sudoku.entity }
     tilesEntity:
         class: AppBundle\Entity\Tiles
-        arguments: ['@tilesetEntity']
+        arguments: ['@tilesetEntity', '@tileToSolve']
         tags:
             -  { name: sudoku.entity }
     groupsEntity:
         class: AppBundle\Entity\Groups
+        arguments: ['@tilesInGrid', '@valuesByGrid']
         tags:
             -  { name: sudoku.entity }
 
     tilesetEntity:
         class: AppBundle\Entity\Tiles\Tileset
+    tileToSolve:
+        class: AppBundle\Entity\Tiles\TileToSolve
+    tilesInGrid:
+        class: AppBundle\Entity\Groups\TilesInGrid
+    valuesByGrid:
+        class: AppBundle\Entity\Groups\ValuesByGrid
 
     eventTileLastPossibilityEntity:
         class: AppBundle\Entity\Event\TileLastPossibility
