@@ -227,7 +227,7 @@ class ApiControllerTest extends WebTestCase
         // on vérifie que grid est rempli
         $this->assertEquals(4, $this->gridsession->getGrid()->getSize()) ;
         $this->assertEquals(9, $this->gridsession->getGrid()->getRemainingTiles()) ;
-        var_dump($this->tilessession->getTiles()->getTileset()) ;
+//        var_dump($this->tilessession->getTiles()->getTileset()) ;
     }
     
     /**
@@ -342,7 +342,7 @@ class ApiControllerTest extends WebTestCase
         $this->assertEquals(10, $this->gridsession->getGrid()->getRemainingTiles()) ;
 //        var_dump($this->tilessession->getTiles()->getTileset()) ;
 //        var_dump($this->tilessession->getTiles()->getTilesToSolve()) ;
-        $this->assertEquals(13, count($this->tilessession->getTiles()->getTilesToSolve())) ;
+        $this->assertEquals(10, count($this->tilessession->getTiles()->getTilesToSolve())) ;
     }
 //
 //    /**

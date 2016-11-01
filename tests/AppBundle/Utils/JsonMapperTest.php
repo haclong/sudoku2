@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Grid;
 use AppBundle\Utils\JsonMapper;
 
 /**

@@ -22,7 +22,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     {
         $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->disableOriginalConstructor()
-                     ->setMethods(array('setTiles', 'getSize', 'init', 'reset', 'reload', 'decreaseRemainingTiles'))
+                     ->setMethods(array('getTiles', 'setTiles', 'getSize', 'init', 'reset', 'reload', 'decreaseRemainingTiles'))
                      ->getMock() ;
         $this->grid->method('getSize')
                    ->willReturn(9) ;
@@ -161,17 +161,23 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     
     public function testOnReloadGame()
     {
+        $array = array() ;
+        $array[0][3] = 2 ;
+        $array[2][5] = 4 ;
+        $array[3][2] = 8 ;
+        $array[5][3] = 8 ;
+
         $event = $this->getMockBuilder('AppBundle\Event\ReloadGameEvent')
                                     ->disableOriginalConstructor()
                                     ->getMock() ;
         
-        $this->grid->expects($this->once())
-                ->method('reload') ;
-        $this->session->method('getGrid')
-                ->willReturn($this->grid) ;
-        $this->session->expects($this->once())
-                ->method('setGrid') ;
-        
+        $this->grid->method('getTiles')->willReturn($array) ;
+        $this->session->method('getGrid')->willReturn($this->grid) ;
+
+        $this->grid->expects($this->once())->method('reload') ;
+        $this->service->expects($this->exactly(4))->method('setTile') ;
+        $this->session->expects($this->once())->method('setGrid') ;
+       
         $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onReloadGame($event) ;
     }

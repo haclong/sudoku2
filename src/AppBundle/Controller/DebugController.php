@@ -4,8 +4,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Event\GridSize;
 use AppBundle\Entity\Event\TilesLoaded;
+use AppBundle\Entity\Groups;
 use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\LoadGameEvent;
+use AppBundle\Event\ResetGameEvent;
 use AppBundle\Event\SetGameEvent;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,12 +25,16 @@ class DebugController  extends Controller {
      */
     public function indexAction(Request $request)
     {
-        $file = __DIR__ . "/../../../datas/4/1/1.php" ;
-        $array = include($file) ;
-        $grid = $this->get('gridSession')->getGrid() ;
-        $tiles = $this->get('tilesSession')->getTiles() ;
-        $groups = $this->get('groupsSession')->getGroups() ;
-        
+//        $file = __DIR__ . "/../../../datas/4/1/1.php" ;
+//        $array = include($file) ;
+$g4easy[0][1] = 1 ;
+$g4easy[2][0] = 2 ;
+$g4easy[1][3] = 3 ;
+//$g4easy[3][1] = 3 ;
+//$g4easy[3][2] = 4 ;
+//$g4easy[3][3] = 1 ;
+
+        $service = $this->get('groupsService') ;
         // on initialise les objets en session
         $sudokuEntities = $this->get('sudokuEntities') ;
         $event = new SetGameEvent($sudokuEntities) ;
@@ -38,39 +44,88 @@ class DebugController  extends Controller {
         $event = new InitGameEvent($gridSize) ;
         $this->get('event_dispatcher')->dispatch(InitGameEvent::NAME, $event) ;
         
-        $loadedGrid = new TilesLoaded(4, $array) ;
+        $loadedGrid = new TilesLoaded(4, $g4easy) ;
         $event = new LoadGameEvent($loadedGrid) ;
         $this->get('event_dispatcher')->dispatch(LoadGameEvent::NAME, $event) ;
-
-//        $crawler = $this->client->request(
-//                            'POST',
-//                            '/api/tile/set',
-//                            array(),
-//                            array(),
-//                            array('CONTENT_TYPE' => 'application/json'),
-//                            '{"tile":{"id":"t.0.0","value":"2"}}');
         
-        // tests sur le retour en json
         $grid = $this->get('gridSession')->getGrid() ;
         $tiles = $this->get('tilesSession')->getTiles() ;
         $groups = $this->get('groupsSession')->getGroups() ;
-//        var_dump($groups) ;
-        $grid->reload() ;
-        $groups->reload($grid) ;
+
+//        echo "0.1::0" ;
+//        $service->set($groups, 0, 0, 1) ;
+//        echo "1.0::1" ;
+//        $service->set($groups, 1, 1, 0) ;
+//        echo "2.2::0" ;
+//        $service->set($groups, 0, 2, 2) ;
+//        echo "3.1::1" ;
+//        $service->set($groups, 1, 3, 1) ;
+//        echo "3.2::2" ;
+//        $service->set($groups, 2, 3, 2) ;
         
-        var_dump($tiles->getTilesToSolve()) ;
+//        var_dump($groups->getCol(0)->offsetGet(0)->getIterator()->current()) ;
 //        var_dump($groups) ;
-        $array = $tiles->getTilesToSolve() ;
-        foreach($grid->getTiles() as $row => $cols)
-        {
-            foreach($cols as $col => $value)
-            {
-        $array = array_flip($array) ;
-        unset($array[$row . '.' . $col]) ;
-        $array = array_flip($array) ;
-            }
-        }
-        var_dump($array) ;
+//        for($i = 0; $i<4; $i++)
+//        {
+//            var_dump($groups->getRow($i)) ;
+//        }
+//        var_dump($groups->getCol(0)) ;
+//        var_dump($groups->getRegion(1)) ;
+//        var_dump($groups->getRegion(2)) ;
+//        var_dump($groups->getRegion(3)) ;
+//        var_dump($groups->valuesByGroup) ;
+//        var_dump($groups->getValuesByGrid()) ;
+//        var_dump($groups->tilesByGroup) ;
+//        var_dump($groups->getValuesByTile()) ;
+//        $grid = $this->get('gridSession')->getGrid() ;
+//        $tiles = $this->get('tilesSession')->getTiles() ;
+//        $groups = $this->get('groupsSession')->getGroups() ;
+//        
+//        // on initialise les objets en session
+//        $sudokuEntities = $this->get('sudokuEntities') ;
+//        $event = new SetGameEvent($sudokuEntities) ;
+//        $this->get('event_dispatcher')->dispatch(SetGameEvent::NAME, $event) ;
+//        
+//        $gridSize = new GridSize(4) ;
+//        $event = new InitGameEvent($gridSize) ;
+//        $this->get('event_dispatcher')->dispatch(InitGameEvent::NAME, $event) ;
+//        
+//        $loadedGrid = new TilesLoaded(4, $array) ;
+//        $event = new LoadGameEvent($loadedGrid) ;
+//        $this->get('event_dispatcher')->dispatch(LoadGameEvent::NAME, $event) ;
+//
+////        $crawler = $this->client->request(
+////                            'POST',
+////                            '/api/tile/set',
+////                            array(),
+////                            array(),
+////                            array('CONTENT_TYPE' => 'application/json'),
+////                            '{"tile":{"id":"t.0.0","value":"2"}}');
+//        
+//        // tests sur le retour en json
+//        $grid = $this->get('gridSession')->getGrid() ;
+//        $tiles = $this->get('tilesSession')->getTiles() ;
+//        $groups = $this->get('groupsSession')->getGroups() ;
+////        var_dump($groups) ;
+////        $grid->reload() ;
+////        $groups->reload($grid) ;
+//        
+//        var_dump($tiles->getTilesToSolve()) ;
+//        var_dump($tiles->getTileset()) ;
+//////
+
+//        //        var_dump($groups) ;
+//        $array = $tiles->getTilesToSolve() ;
+//        foreach($grid->getTiles() as $row => $cols)
+//        {
+//            foreach($cols as $col => $value)
+//            {
+//        $array = array_flip($array) ;
+//        unset($array[$row . '.' . $col]) ;
+//        $array = array_flip($array) ;
+//            }
+//        }
+//        var_dump($array) ;
         
 //        foreach($array as $key => $tile)
 //        {

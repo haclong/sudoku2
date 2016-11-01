@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Utils;
 
-use AppBundle\Entity\Tile;
 use AppBundle\Entity\Tiles;
 use AppBundle\Entity\Tiles\Tileset;
 use AppBundle\Utils\TilesMapper;
@@ -18,7 +17,8 @@ class TilesMapperTest extends \PHPUnit_Framework_TestCase {
         $values = $this->getMockBuilder('AppBundle\Entity\Values')
                         ->getMock() ;
         $tileset = new Tileset() ;
-        $tiles = new Tiles($tileset) ;
+        $tileToSolve = $this->getMockBuilder('AppBundle\Entity\Tiles\TileToSolve')->getMock() ;
+        $tiles = new Tiles($tileset, $tileToSolve) ;
         $tiles->init(9) ;
 
         $mapper = new TilesMapper() ;

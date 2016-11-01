@@ -29,6 +29,7 @@ class GroupsSessionTest extends \PHPUnit_Framework_TestCase {
     public function testGetGroupsReturnsGroups()
     {
         $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                     ->disableOriginalConstructor()
                      ->getMock() ;
         $this->session->expects($this->once())
                 ->method('get')
@@ -41,6 +42,7 @@ class GroupsSessionTest extends \PHPUnit_Framework_TestCase {
     public function testSetGroupsCallsSessionSet()
     {
         $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                     ->disableOriginalConstructor()
                      ->getMock() ;
         $this->session->expects($this->once())
                 ->method('set')
@@ -52,6 +54,7 @@ class GroupsSessionTest extends \PHPUnit_Framework_TestCase {
     public function testGroupsStoredReturnTrue()
     {
         $groups = $this->getMockBuilder('AppBundle\Entity\Groups')
+                     ->disableOriginalConstructor()
                      ->getMock() ;
         $this->session->method('get')
                       ->with('groups')

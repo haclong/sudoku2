@@ -1,7 +1,12 @@
 <?php
 
 namespace AppBundle\Entity;
+
+use ArrayObject;
+use AppBundle\Entity\Groups\ValuesByGrid;
+use AppBundle\Entity\Groups\ValuesByTile;
 use AppBundle\Utils\RegionGetter;
+use RuntimeException;
 
 /**
  * Description of Groups
@@ -9,10 +14,27 @@ use AppBundle\Utils\RegionGetter;
  * @author haclong
  */
 class Groups implements InitInterface, ReloadInterface, ResetInterface {
-    protected $valuesByGroup = array() ;
+    protected $valuesByGrid ;
+    protected $arrayObject ;
+    
+    /**
+     * liste des cases rangées par colonne / lignes / region
+     * $tilesByGroup[##typeGroup##][##indexGroup##] = [##list<tileId>##]
+     * $tilesByGroup['col'][0] = ['0.0', '1.0', '2.0', '3.0']
+     * $tilesByGroup['row'][0] = ['0.0', '0.1', '0.2', '0.3']
+     * $tilesByGroup['region'][0] = ['0.0', '0.1', '1.0', '1.1']
+     * @var array
+     */
     protected $tilesByGroup = array() ;
+    protected $valuesByGridObject ;
     protected $size ;
 
+    public function __construct(ArrayObject $arrayObject, ValuesByGrid $valuesByGrid)
+    {
+        $this->arrayObject = $arrayObject ;
+        $this->valuesByGridObject = $valuesByGrid ;
+    }
+    
     public function init($size)
     {
         $this->size = $size ;
@@ -20,36 +42,36 @@ class Groups implements InitInterface, ReloadInterface, ResetInterface {
         // répartit les id des cases par colonne / ligne / region
         $this->tilesByGroup = $this->setTilesByGroup($size) ;
         // par colonne / ligne / region, répartit les cases contenant les valeurs
-        $this->valuesByGroup = $this->setValuesByGroup($size) ;
+        $this->valuesByGrid = $this->setValuesByGrid($size) ;
     }
     
     public function reset()
     {
         $this->size = null ;
-        $this->valuesByGroup = array() ;
         $this->tilesByGroup = array() ;
+        $this->valuesByGrid = $this->valuesByGridObject ;
     }
     
     public function reload(Grid $grid)
     {
-        $this->valuesByGroup = $this->setValuesByGroup($grid->getSize()) ;
+        $this->valuesByGrid = $this->setValuesByGrid($grid->getSize()) ;
     }
     
     public function getSize()
     {
         return $this->size ;
     }
-    public function &getCol($index)
+    public function getCol($index)
     {
-        return $this->valuesByGroup['col'][$index] ;
+        return $this->filterValuesByGrid($this->getTilesByCol($index)) ;
     }
-    public function &getRow($index)
+    public function getRow($index)
     {
-        return $this->valuesByGroup['row'][$index] ;
+        return $this->filterValuesByGrid($this->getTilesByRow($index)) ;
     }
-    public function &getRegion($index)
+    public function getRegion($index)
     {
-        return $this->valuesByGroup['region'][$index] ;
+        return $this->filterValuesByGrid($this->getTilesByRegion($index)) ;
     }
     public function getImpactedTiles($row, $col)
     {
@@ -60,25 +82,20 @@ class Groups implements InitInterface, ReloadInterface, ResetInterface {
         $tiles = array_merge($tilesByCol, $tilesByRow, $tilesByRegion) ;
         return $tiles ;
     }
-    public function &getValuesByGroup()
+    public function getValuesByGrid()
     {
-        return $this->valuesByGroup ;
+        return $this->valuesByGrid ;
     }
     public function getValuesByTile()
     {
         $valuesByTile = [] ;
-        foreach($this->valuesByGroup as $type => $grouptype)
+        foreach($this->getValuesByGrid() as $index => $tiles)
         {
-            foreach($grouptype as $index => $group)
+            foreach($tiles as $tile)
             {
-                foreach($group as $value => $figure)
-                {
-                    foreach($figure as $key => $tileId)
-                    {
-                        $valuesByTile[$tileId][$type][] = $value ;
-                    }
-                }
+                $valuesByTile[$tile][] = $index ;
             }
+            
         }
         return $valuesByTile ;
     }
@@ -91,7 +108,12 @@ class Groups implements InitInterface, ReloadInterface, ResetInterface {
      */
     protected function getTilesByCol($index)
     {
-        return $this->tilesByGroup['col'][$index] ;
+        if(isset($this->tilesByGroup['col'][$index]))
+        {
+            return $this->tilesByGroup['col'][$index] ;
+        } else {
+            return NULL ;
+        }
     }
     /**
      * Retourne la liste de tous les id des cases de la region numéro $index
@@ -100,7 +122,12 @@ class Groups implements InitInterface, ReloadInterface, ResetInterface {
      */
     protected function getTilesByRegion($index)
     {
-        return $this->tilesByGroup['region'][$index] ;
+        if(isset($this->tilesByGroup['region'][$index]))
+        {
+            return $this->tilesByGroup['region'][$index] ;
+        } else {
+            return NULL ;
+        }
     }
     /**
      * Retourne la liste de tous les id des cases de la ligne numéro $index
@@ -109,67 +136,51 @@ class Groups implements InitInterface, ReloadInterface, ResetInterface {
      */
     protected function getTilesByRow($index)
     {
-        return $this->tilesByGroup['row'][$index] ;
+        if(isset($this->tilesByGroup['row'][$index]))
+        {
+            return $this->tilesByGroup['row'][$index] ;
+        } else {
+            return NULL ;
+        }
     }
     
-    // set $valuesByGroup
-    protected function setValuesByGroup($size)
+    protected function setValuesByGrid($size)
     {
-        $array = [] ;
-        $array['col'] = $this->sortValuesByCols($size) ;
-        $array['row'] = $this->sortValuesByRows($size) ;
-        $array['region'] = $this->sortValuesByRegions($size) ;
+        $array = clone $this->valuesByGridObject ;
+        for($index = 0; $index < $size ; $index++)
+        {
+            $tiles = clone $this->arrayObject ;
+            for($row = 0; $row < $size ; $row++)
+            {
+                for($col = 0; $col < $size ; $col++)
+                {
+                    $tiles->offsetSet(NULL, $row . "." . $col) ;
+                }
+            }
+            $array->offsetSet($index, $tiles) ;
+        }
+        return $array ;
+    }
+    // filtrer valuesByGrid par groupe
+    protected function filterValuesByGrid($tilesByGroup)
+    {
+        $array = clone $this->valuesByGridObject ;
+        if(is_null($tilesByGroup))
+        {
+            throw new RuntimeException("Tiles By Group undefined") ;
+        }
         
-        return $array ;
-    }
-    /**
-     * retourne la liste des id de cases par valeurs par colonne
-     * @param int $size
-     * @return array
-     */
-    protected function sortValuesByCols($size)
-    {
-        $array = [] ;
-        for($groupindex=0; $groupindex<$size; $groupindex++)
+        foreach($this->valuesByGrid as $index => $tiles)
         {
-            for($value=0; $value<$size; $value++)
+            $tilesList = clone $this->arrayObject ;
+            foreach($tiles as $tile)
             {
-                $array[$groupindex][$value] = $this->getTilesByCol($groupindex) ;
+                if(in_array($tile, $tilesByGroup))
+                {
+                    $tilesList->offsetSet(NULL, $tile) ;
+                }
             }
-        }
-        return $array ;
-    }
-    /**
-     * retourne la liste des id de cases par valeurs par ligne
-     * @param int $size
-     * @return array
-     */
-    protected function sortValuesByRows($size)
-    {
-        $array = [] ;
-        for($groupindex=0; $groupindex<$size; $groupindex++)
-        {
-            for($value=0; $value<$size; $value++)
-            {
-                $array[$groupindex][$value] = $this->getTilesByRow($groupindex) ;
-            }
-        }
-        return $array ;
-    }
-    /**
-     * retourne la liste des id de cases par valeurs par region
-     * @param int $size
-     * @return array
-     */
-    protected function sortValuesByRegions($size)
-    {
-        $array = [] ;
-        for($groupindex=0; $groupindex<$size; $groupindex++)
-        {
-            for($value=0; $value<$size; $value++)
-            {
-                $array[$groupindex][$value] = $this->getTilesByRegion($groupindex) ;
-            }
+            $array->offsetSet($index, $tilesList) ;
         }
         return $array ;
     }
