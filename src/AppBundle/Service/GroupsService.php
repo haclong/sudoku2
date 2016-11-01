@@ -62,12 +62,15 @@ class GroupsService {
 
         // trouver toutes les cases impactées par le choix d'une valeur dans une case
         $impactedTiles = $groups->getImpactedTiles($row, $col) ;
+     
+        // écarter tous les numéros de la case
+        $this->discardValuesInTile($groups, $row.'.'.$col) ;
         
         // écarter le numéro de toutes les cases de la grille
-        $this->discard($groups->getValuesByGroup(), $index, array_unique($impactedTiles)) ;
+        $this->discard($groups->getValuesByGrid()->offsetGet($index), array_unique($impactedTiles)) ;
         
         // vérifier qu'il n'y a pas de dernières valeurs dans le groupe
-        $this->checkLastValueInGroup($groups) ;
+        $this->checkLastValueInGroups($groups) ;
         
         // vérifier qu'il n'y a pas de dernière valeur dans la case
         $this->checkLastValueInTile($groups) ;
@@ -83,81 +86,141 @@ class GroupsService {
     }
     protected function checkValue($array, $index, $id)
     {
-        if(array_key_exists($index, $array) && count($array[$index]) == 0)
+        if($array->offsetExists($index) && count($array->offsetGet($index)) == 0)
         {
             throw new AlreadySetTileException($index . " is already set in " . $id) ;
         }
     }
     
-    // pouvoir écarter un chiffre d'une case
-//    public function discard($groups, $value, $row, $col)
-//    {
-//        
-//    }
-    protected function discard(&$groups, $index, $impactedTiles)
+    protected function discardValuesInTile($groups, $tileId)
     {
-        // col, row, region
-        foreach($groups as $type => &$group)
+        foreach($groups->getValuesByGrid() as $index => $tiles)
         {
-            foreach($group as $groupid => &$figure)
+            $key = $this->getKey($tiles, $tileId) ;
+            if(!is_null($key))
             {
-//                foreach($figure as $key => &$tiles)
-//                {
-                    if(count($figure[$index]) > 0) {
-//                    if($key == $index)
-//                    {
-//                        echo $type . "::" . $groupid . "::" . $key . "::";
-                        foreach($impactedTiles as $impactedTile)
-                        {
-                            $flippedTiles = array_flip($figure[$index]) ;
-                            unset($flippedTiles[$impactedTile]) ;
-                            $figure[$index] = array_flip($flippedTiles) ;
-                        }
-//                    }
-                    }
-//                }
+                $groups->getValuesByGrid()->offsetGet($index)->offsetUnset($key) ;
             }
+        }
+    } 
+    
+    // pouvoir écarter un chiffre d'une case
+//    protected function discard($tilesForIndex, $impactedTiles)
+    protected function discard($tilesForIndex, $impactedTiles)
+    {
+        $keyToRemove = [] ;
+        foreach($tilesForIndex as $key => $tile)
+        {
+            if(in_array($tile, $impactedTiles))
+            {
+                $keyToRemove[] = $key ;
+            }
+        }
+        foreach($keyToRemove as $key)
+        {
+            $tilesForIndex->offsetUnset($key) ;
         }
     }
+
+//    protected function discard(&$groups, $index, $impactedTiles)
+//    {
+//        // col, row, region
+//        foreach($groups as $type => &$group)
+//        {
+//            foreach($group as $groupid => &$figure)
+//            {
+////                foreach($figure as $key => &$tiles)
+////                {
+//                    if(count($figure[$index]) > 0) {
+////                    if($key == $index)
+////                    {
+////                        echo $type . "::" . $groupid . "::" . $key . "::";
+//                        foreach($impactedTiles as $impactedTile)
+//                        {
+//                            $flippedTiles = array_flip($figure[$index]) ;
+//                            unset($flippedTiles[$impactedTile]) ;
+//                            $figure[$index] = array_flip($flippedTiles) ;
+//                        }
+////                    }
+//                    }
+////                }
+//            }
+//        }
+//    }
     
-    protected function checkLastValueInGroup($groups)
+    protected function checkLastValueInGroups($groups)
     {
-        foreach($groups->getValuesByGroup() as $type => $group)
+        for($index = 0; $index < $groups->getSize(); $index++)
         {
-            foreach($group as $groupid => $figure)
+            $this->checkLastValueInGroup($groups->getCol($index)) ;
+            $this->checkLastValueInGroup($groups->getRow($index)) ;
+            $this->checkLastValueInGroup($groups->getRegion($index)) ;
+        }
+    }
+
+    protected function checkLastValueInGroup($valuesByGrid)
+    {
+//        var_dump($groups->getValuesByGrid()) ;
+//        echo "col 0" ;
+//        var_dump($groups->getCol(0)) ;
+//        echo "col 1" ;
+//        var_dump($groups->getCol(1)) ;
+//        echo "col 2" ;
+//        var_dump($groups->getCol(2)) ;
+//        echo "col 3" ;
+//        var_dump($groups->getCol(3)) ;
+        foreach($valuesByGrid as $index => $tiles)
+        {
+            if(count($tiles) == 1)
             {
-                foreach($figure as $index => $tileId)
-                {
-                    if(count($tileId) == 1)
-                    {
-                        // dispatch lastvalueingroup ;
-                        //$array[$type][$groupid][$value] = count($tileId) ;
-                        //$tileId = id de la case
-                        //$index = index values
-                        $tile = explode('.', current($tileId)) ;
-                        $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
-                        $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
-                    }
-                }
+                $tile = explode('.', $tiles->getIterator()->current()) ;
+                $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
+                $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
             }
         }
+//        foreach($groups->getValuesByGroup() as $type => $group)
+//        {
+//            foreach($group as $groupid => $figure)
+//            {
+//                foreach($figure as $index => $tileId)
+//                {
+//                    if(count($tileId) == 1)
+//                    {
+//                        // dispatch lastvalueingroup ;
+//                        //$array[$type][$groupid][$value] = count($tileId) ;
+//                        //$tileId = id de la case
+//                        //$index = index values
+//                        $tile = explode('.', current($tileId)) ;
+//                        $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
+//                        $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
+//                    }
+//                }
+//            }
+//        }
     }
     protected function checkLastValueInTile($groups)
     {
         foreach($groups->getValuesByTile() as $tileId => $datas)
         {
-            if((count($datas['col']) != count($datas['row'])) && (count($datas['col']) != count($datas['region'])))
-            {
-                throw new Exception() ;
-            }
-            if(count($datas['col']) == 1)
+            if(count($datas) == 1)
             {
                 // $tileId = id de la case
-                // $datas['col'][0] = dernière valeur de la case
-                // dispatch last value in tile ;
+                // dispatch value in tile ;
                 $tile = explode('.', $tileId) ;
-                $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $datas['col'][0]) ;
+//                $index = $datas->getIterator()->current() ;
+                $index = $datas ;
+                $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
                 $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
+            }
+        }
+    }
+    protected function getKey($arrayObject, $target)
+    {
+        foreach($arrayObject as $key => $value)
+        {
+            if($target == $value)
+            {
+                return $key ;
             }
         }
     }

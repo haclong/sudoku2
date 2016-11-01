@@ -5,10 +5,10 @@ namespace AppBundle\Entity\Groups;
 use ArrayObject;
 
 /**
- * Description of TilesInGrid
+ * Description of ValuesByTile
  *
  * @author haclong
  */
-class TilesInGrid extends ArrayObject {
+class ValuesByTile extends ArrayObject {
     //put your code here
 }

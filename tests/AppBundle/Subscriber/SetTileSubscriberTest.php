@@ -20,7 +20,7 @@ class SetTileSubscriberTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp()
     {
-        $this->groups = $this->getMockBuilder('AppBundle\Entity\Groups')->getMock() ;
+        $this->groups = $this->getMockBuilder('AppBundle\Entity\Groups')->disableOriginalConstructor()->getMock() ;
         $this->values = $this->getMockBuilder('AppBundle\Entity\Values')->getMock() ;
         $this->tileset = $this->getMockBuilder('AppBundle\Entity\Event\TileSet')->getMock() ;
         

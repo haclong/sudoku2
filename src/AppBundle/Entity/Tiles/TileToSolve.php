@@ -8,7 +8,7 @@ namespace AppBundle\Entity\Tiles;
  * @author haclong
  */
 class TileToSolve {
-    protected $id ;
+    protected $id;
     protected $value ;
 
     public function getId() {
@@ -29,6 +29,6 @@ class TileToSolve {
     
     public function __toString()
     {
-        return $this->getId() ;
+        return (string) $this->getId() ;
     }
 }

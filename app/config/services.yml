@@ -24,7 +24,7 @@ services:
             -  { name: sudoku.entity }
     groupsEntity:
         class: AppBundle\Entity\Groups
-        arguments: ['@tilesInGrid', '@valuesByGrid']
+        arguments: ['@arrayObject', '@valuesByGrid', '@valuesByTile']
         tags:
             -  { name: sudoku.entity }
 
@@ -32,10 +32,12 @@ services:
         class: AppBundle\Entity\Tiles\Tileset
     tileToSolve:
         class: AppBundle\Entity\Tiles\TileToSolve
-    tilesInGrid:
-        class: AppBundle\Entity\Groups\TilesInGrid
+    arrayObject:
+        class: ArrayObject
     valuesByGrid:
         class: AppBundle\Entity\Groups\ValuesByGrid
+    valuesByTile:
+        class: AppBundle\Entity\Groups\ValuesByTile
 
     eventTileLastPossibilityEntity:
         class: AppBundle\Entity\Event\TileLastPossibility
@@ -89,9 +91,6 @@ services:
         class: AppBundle\Service\SolverService
         arguments: ['@event_dispatcher', '@setTileEvent', '@tilesSession']
 
-#    loggerAggregate:
-#        class: AppBundle\Subscriber\LoggerAggregate
-#        arguments: ['@logger']
     sessionMarker:
         class: AppBundle\Utils\SessionMarker
         arguments: ['@sudokuSession', '@logger']

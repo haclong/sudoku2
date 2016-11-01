@@ -130,7 +130,7 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
             if($tile->getId() == $id)
             {
                 unset($this->tilesToSolve[$key]) ;
-                break ;
+//                break ;
             }
         }
     }
