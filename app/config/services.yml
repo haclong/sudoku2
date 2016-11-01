@@ -24,7 +24,7 @@ services:
             -  { name: sudoku.entity }
     groupsEntity:
         class: AppBundle\Entity\Groups
-        arguments: ['@arrayObject', '@valuesByGrid', '@valuesByTile']
+        arguments: ['@arrayObject', '@valuesByGrid']
         tags:
             -  { name: sudoku.entity }
 
@@ -36,8 +36,6 @@ services:
         class: ArrayObject
     valuesByGrid:
         class: AppBundle\Entity\Groups\ValuesByGrid
-    valuesByTile:
-        class: AppBundle\Entity\Groups\ValuesByTile
 
     eventTileLastPossibilityEntity:
         class: AppBundle\Entity\Event\TileLastPossibility

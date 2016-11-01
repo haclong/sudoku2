@@ -64,11 +64,11 @@ $g4easy[1][3] = 3 ;
 //        $service->set($groups, 2, 3, 2) ;
         
 //        var_dump($groups->getCol(0)->offsetGet(0)->getIterator()->current()) ;
-        var_dump($groups) ;
-        for($i = 0; $i<4; $i++)
-        {
-            var_dump($groups->getRow($i)) ;
-        }
+//        var_dump($groups) ;
+//        for($i = 0; $i<4; $i++)
+//        {
+//            var_dump($groups->getRow($i)) ;
+//        }
 //        var_dump($groups->getCol(0)) ;
 //        var_dump($groups->getRegion(1)) ;
 //        var_dump($groups->getRegion(2)) ;
@@ -76,7 +76,7 @@ $g4easy[1][3] = 3 ;
 //        var_dump($groups->valuesByGroup) ;
 //        var_dump($groups->getValuesByGrid()) ;
 //        var_dump($groups->tilesByGroup) ;
-        var_dump($groups->getValuesByTile()) ;
+//        var_dump($groups->getValuesByTile()) ;
 //        $grid = $this->get('gridSession')->getGrid() ;
 //        $tiles = $this->get('tilesSession')->getTiles() ;
 //        $groups = $this->get('groupsSession')->getGroups() ;

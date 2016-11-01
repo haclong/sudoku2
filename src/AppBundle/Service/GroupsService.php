@@ -121,32 +121,6 @@ class GroupsService {
             $tilesForIndex->offsetUnset($key) ;
         }
     }
-
-//    protected function discard(&$groups, $index, $impactedTiles)
-//    {
-//        // col, row, region
-//        foreach($groups as $type => &$group)
-//        {
-//            foreach($group as $groupid => &$figure)
-//            {
-////                foreach($figure as $key => &$tiles)
-////                {
-//                    if(count($figure[$index]) > 0) {
-////                    if($key == $index)
-////                    {
-////                        echo $type . "::" . $groupid . "::" . $key . "::";
-//                        foreach($impactedTiles as $impactedTile)
-//                        {
-//                            $flippedTiles = array_flip($figure[$index]) ;
-//                            unset($flippedTiles[$impactedTile]) ;
-//                            $figure[$index] = array_flip($flippedTiles) ;
-//                        }
-////                    }
-//                    }
-////                }
-//            }
-//        }
-//    }
     
     protected function checkLastValueInGroups($groups)
     {
@@ -160,15 +134,6 @@ class GroupsService {
 
     protected function checkLastValueInGroup($valuesByGrid)
     {
-//        var_dump($groups->getValuesByGrid()) ;
-//        echo "col 0" ;
-//        var_dump($groups->getCol(0)) ;
-//        echo "col 1" ;
-//        var_dump($groups->getCol(1)) ;
-//        echo "col 2" ;
-//        var_dump($groups->getCol(2)) ;
-//        echo "col 3" ;
-//        var_dump($groups->getCol(3)) ;
         foreach($valuesByGrid as $index => $tiles)
         {
             if(count($tiles) == 1)
@@ -178,26 +143,8 @@ class GroupsService {
                 $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
             }
         }
-//        foreach($groups->getValuesByGroup() as $type => $group)
-//        {
-//            foreach($group as $groupid => $figure)
-//            {
-//                foreach($figure as $index => $tileId)
-//                {
-//                    if(count($tileId) == 1)
-//                    {
-//                        // dispatch lastvalueingroup ;
-//                        //$array[$type][$groupid][$value] = count($tileId) ;
-//                        //$tileId = id de la case
-//                        //$index = index values
-//                        $tile = explode('.', current($tileId)) ;
-//                        $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
-//                        $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
-//                    }
-//                }
-//            }
-//        }
     }
+
     protected function checkLastValueInTile($groups)
     {
         foreach($groups->getValuesByTile() as $tileId => $datas)

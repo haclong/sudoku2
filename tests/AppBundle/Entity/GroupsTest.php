@@ -4,7 +4,7 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Groups;
 use AppBundle\Entity\Groups\ValuesByGrid;
-use AppBundle\Entity\Groups\ValuesByTile;
+
 use ArrayObject;
 use RuntimeException;
 
@@ -18,11 +18,10 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
     {
         $this->arrayObject = new ArrayObject() ;
         $this->valuesByGridObject = new ValuesByGrid() ;
-        $this->valuesByTile = new ValuesByTile() ;
     }
     public function testInitialValuesAreNull() {
         $this->setExpectedException(RuntimeException::class) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $this->assertNull($groups->getSize()) ;
         $this->assertEquals(0, count($groups->getValuesByGrid())) ;
         $this->assertNull($groups->getCol(0)) ;
@@ -30,13 +29,13 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
     
     public function testInitialGetRowThrowsException() {
         $this->setExpectedException(RuntimeException::class) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $this->assertNull($groups->getRow(0)) ;
     }
     
     public function testInitialGetRegionThrowsException() {
         $this->setExpectedException(RuntimeException::class) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $this->assertNull($groups->getRegion(0)) ;
     }
     
@@ -62,7 +61,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
         }
         $valuesByGrid = new ValuesByGrid($array) ;
         
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
 
         $this->assertEquals(4, $groups->getSize()) ;
@@ -83,7 +82,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
     
     public function testResetDoesResetValues() {
         $this->setExpectedException(RuntimeException::class) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
         $groups->reset() ;
         $this->assertNull($groups->getSize()) ;
@@ -93,7 +92,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
     
     public function testResetGetRowThrowsException() {
         $this->setExpectedException(RuntimeException::class) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
         $groups->reset() ;
         $this->assertNull($groups->getRow(0)) ;
@@ -101,7 +100,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
     
     public function testResetGetRegionThrowsException() {
         $this->setExpectedException(RuntimeException::class) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
         $groups->reset() ;
         $this->assertNull($groups->getRegion(0)) ;
@@ -137,7 +136,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
         $grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->getMock() ;
         $grid->method('getSize')->willReturn(4) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
         
         $groups->getValuesByGrid()->offsetUnset(3) ;
@@ -180,7 +179,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
         $row1 = ['1.0', '1.1', '1.2', '1.3'] ;
         $region1 = ['0.2', '0.3', '1.2', '1.3'] ;
         $impactedTiles = array_merge($col2, $row1, $region1) ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
         $this->assertEquals($impactedTiles, $groups->getImpactedTiles(1, 2)) ;
     }
@@ -189,7 +188,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase  {
     {
         $tile = [0, 1, 2, 3] ;
         $poppedTile = [1, 3] ;
-        $groups = new Groups($this->arrayObject, $this->valuesByGridObject, $this->valuesByTile) ;
+        $groups = new Groups($this->arrayObject, $this->valuesByGridObject) ;
         $groups->init(4) ;
         $this->assertEquals($tile, $groups->getValuesByTile()['1.2']) ;
         

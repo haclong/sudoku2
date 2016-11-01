@@ -77,14 +77,7 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
         $tile->setValue($deduceTile->getValue()) ;
         $this->removeTileToSolve($tileId) ;
         
-//        $array = [] ;
-//        $array[] = $tile ;
-//        foreach($this->tilesToSolve as $tile)
-//        {
-//            $array[] = $tile ;
-//        }
         array_unshift($this->tilesToSolve, $tile) ;
-//        $this->tilesToSolve = $array ;
         $this->singleValues[$tileId] = $deduceTile->getValue() ;
     }
     public function getFirstTileToSolve()
@@ -130,7 +123,7 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
             if($tile->getId() == $id)
             {
                 unset($this->tilesToSolve[$key]) ;
-//                break ;
+                break ;
             }
         }
     }
