@@ -7,9 +7,7 @@ use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
 use AppBundle\Event\SetGameEvent;
-use AppBundle\Event\SetTileEvent;
 use AppBundle\Persistence\GroupsSession;
-use AppBundle\Service\GroupsService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -28,7 +26,6 @@ class GroupsAggregate implements EventSubscriberInterface{
         return array(
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame',
-//            LoadGameEvent::NAME => 'onLoadGame',
             ReloadGameEvent::NAME => array('onReloadGame', 10),
             ResetGameEvent::NAME => 'onResetGame'
         ) ;
@@ -53,20 +50,6 @@ class GroupsAggregate implements EventSubscriberInterface{
         $groups->init($event->getGridSize()->get()) ;
         $this->storeGroups($groups) ;
     }
-
-//    public function onLoadGame(LoadGameEvent $event) {
-//        $tiles = $this->getTilesFromSession() ;
-//
-//        $loadedTiles = $event->getTiles()->getTiles() ;
-//        foreach($loadedTiles as $row => $cols)
-//        {
-//            foreach($cols as $col => $value)
-//            {
-//                $tiles->set($row, $col, $value) ;
-//            }
-//        }
-//        $this->storeTiles($tiles) ;
-//    }
     
     public function onReloadGame(ReloadGameEvent $event) {
         $groups = $this->getGroupsFromSession() ;

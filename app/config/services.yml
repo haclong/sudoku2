@@ -85,9 +85,6 @@ services:
     setTileService:
         class: AppBundle\Service\SetTileService
         arguments: ['@event_dispatcher', '@setTileEvent']
-#    solverService:
-#        class: AppBundle\Service\SolverService
-#        arguments: ['@event_dispatcher', '@setTileEvent', '@tilesSession']
 
     sessionMarker:
         class: AppBundle\Utils\SessionMarker

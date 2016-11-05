@@ -25,7 +25,6 @@ class ValuesAggregate implements EventSubscriberInterface {
         return array(
             SetGameEvent::NAME => 'onSetGame',
             InitGameEvent::NAME => 'onInitGame', 
-//            LoadGameEvent::NAME => array('onLoadGame', 2048),
             ResetGameEvent::NAME => 'onResetGame',
         ) ;
     }
@@ -49,22 +48,6 @@ class ValuesAggregate implements EventSubscriberInterface {
         $values->init($event->getGridSize()->get()) ;
         $this->storeValues($values) ;
     }
-//    
-//    public function onLoadGame(LoadGameEvent $event) {
-//        $values = $this->getValuesFromSession() ;
-//        $tiles = $event->getTiles() ;
-//        
-//        $values->init($tiles->getSize()) ;
-//        foreach($tiles->getTiles() as $row) 
-//        {
-//            foreach($row as $value)
-//            {
-//                $values->add($value) ;
-//            }
-//        }
-////        var_dump($values) ;
-//        $this->storeValues($values) ;
-//    }
 
     public function onResetGame(ResetGameEvent $event) {
         $values = $this->getValuesFromSession() ;
