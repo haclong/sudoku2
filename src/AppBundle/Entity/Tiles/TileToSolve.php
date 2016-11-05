@@ -18,6 +18,15 @@ class TileToSolve {
     public function getValue() {
         return $this->value;
     }
+    
+    public function hasValue()
+    {
+        if(is_null($this->value))
+        {
+            return false ;
+        }
+        return true ;
+    }
 
     public function setId($id) {
         $this->id = $id;
