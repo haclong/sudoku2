@@ -85,9 +85,9 @@ services:
     setTileService:
         class: AppBundle\Service\SetTileService
         arguments: ['@event_dispatcher', '@setTileEvent']
-    solverService:
-        class: AppBundle\Service\SolverService
-        arguments: ['@event_dispatcher', '@setTileEvent', '@tilesSession']
+#    solverService:
+#        class: AppBundle\Service\SolverService
+#        arguments: ['@event_dispatcher', '@setTileEvent', '@tilesSession']
 
     sessionMarker:
         class: AppBundle\Utils\SessionMarker
@@ -115,6 +115,11 @@ services:
     setTileSubscriber:
         class: AppBundle\Subscriber\SetTileSubscriber
         arguments: ['@groupsSession', '@valuesSession', '@groupsService']
+        tags:
+            - { name: kernel.event_subscriber }
+    runSolverSubscriber:
+        class: AppBundle\Subscriber\RunSolverSubscriber
+        arguments: ['@groupsSession', '@tilesSession', '@groupsService']
         tags:
             - { name: kernel.event_subscriber }
 

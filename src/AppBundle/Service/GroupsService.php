@@ -155,7 +155,7 @@ class GroupsService {
                 // dispatch value in tile ;
                 $tile = explode('.', $tileId) ;
 //                $index = $datas->getIterator()->current() ;
-                $index = $datas ;
+                $index = current($datas) ;
                 $this->deduceTileEvent->getTile()->set($tile[0], $tile[1], $index) ;
                 $this->dispatcher->dispatch(DeduceTileEvent::NAME, $this->deduceTileEvent) ;
             }

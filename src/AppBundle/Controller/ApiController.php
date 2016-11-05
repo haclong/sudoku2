@@ -7,6 +7,7 @@ use AppBundle\Entity\Event\TilesLoaded;
 use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ReloadGameEvent;
 use AppBundle\Event\ResetGameEvent;
+use AppBundle\Event\RunSolverEvent;
 use AppBundle\Event\SetTileEvent;
 use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Utils\JsonMapper;
@@ -111,6 +112,45 @@ class ApiController extends Controller
             $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
             $sessionMarker->logSession("ApiController::setTile." .$row. "." .$col. "." .$val) ;
             
+            return new JsonResponse($response) ;
+//        } else {
+//            return $this->render(
+//                    'sudoku/error.html.twig',
+//                    array('msg' => 'No XHR')
+//                    ) ;
+//        }
+    }
+    
+    /**
+     * @Route("/api/grid/solve", name="solveGrid")
+     * 
+     */
+    public function solveGridAction(Request $request)
+    {
+//        if($request->isXmlHttpRequest()) {
+            // récupération des objets dans le container
+            $sessionMarker = $this->get('sessionMarker') ;
+            $session = $this->get('sudokuSession') ;
+            $gridSession = $this->get('gridSession') ;
+
+            if(!$session->isReady()) {
+                return $this->redirectToRoute('homepage');
+            }
+            
+            
+            // on crée l'événement runSolver 
+            $event = new RunSolverEvent() ;
+            $this->get('event_dispatcher')->dispatch(RunSolverEvent::NAME, $event) ;
+
+            if($gridSession->getGrid()->isSolved())
+            {
+                $response['solved'] = ["status" => 1] ;
+            }
+            // on récupère l'objet Grid qui est en session (qui a été reloadé)
+            // on prépare le format de la grille à renvoyer en json
+            $response['grid'] = TilesMapper::toArray($session->getTiles(), $session->getValues()) ;
+            $sessionMarker->logSession("ApiController::solveGrid") ;
+        
             return new JsonResponse($response) ;
 //        } else {
 //            return $this->render(

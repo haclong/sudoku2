@@ -7,7 +7,7 @@
 <!--form name="sudokuGrid"-->   
     <button id="loadGridButton"   class="btn btn-default" type="submit" name="load" value="get">Charger une grille</button>
 
-    <button class="btn btn-default" type="submit" name="submit" value="start">Résoudre</button>
+    <button id="solveGridButton" class="btn btn-default" type="submit" name="submit" value="start">Résoudre</button>
     <button id="playGridButton" class="btn btn-default" type="submit" name="submit" value="play">Jouer</button>
     <button id="reloadGridButton" class="btn btn-default" type="submit" name="submit" value="reset">Recommencer</button>
 
@@ -46,6 +46,8 @@
 {% block javascripts %}
 
     <script>
+        $("#solveGridButton").click(ajaxRunSolver) ;
+        
         $("#loadGridButton").click(function() {
 //            alert("getGridButton") ;
 //            $.getJSON("{{path('loadGrid')}}", refreshGrid); 
@@ -118,7 +120,34 @@
                 inputElement.style.backgroundColor = "#ffffff" ;
             }
         }) ;
+        
+        function ajaxRunSolver()
+        {
+            $.ajax({
+                datatype: "json",
+                url: "{{path('solveGrid')}}",
+                success: solveGrid
+            }) ;
+        }
 
+        function solveGrid(data)
+        {
+            loadGrid(data) ;
+            if(data.hasOwnProperty('solved') )
+            {
+                var elements = document.querySelectorAll('td.sudoku_case') ;
+                for (var element in elements)
+                {
+                    elements[element].style.backgroundColor = "#6eea59" ;
+                    elements[element].children[0].style.backgroundColor = "#6eea59" ;
+                }
+            }
+            else
+            {
+                setTimeout(ajaxRunSolver, 500) ;
+            }
+        }
+        
         function loadGrid(data)
         {
 //            var myData = JSON.parse(JSON.stringify(data)) ;
@@ -164,6 +193,7 @@
                     elements[element].children[0].style.backgroundColor = "#6eea59" ;
                 }
             }
+            
             if(data.hasOwnProperty('error')) 
             {
                 var myData = data.error ;
