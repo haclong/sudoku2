@@ -16,14 +16,12 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     protected $tile;
     protected $size ;
     protected $tilesToSolve ;
-    protected $singleValues ;
 
     public function __construct(Tileset $tileset, TileToSolve $tile)
     {
         $this->tileset = $tileset ;
         $this->tile = $tile ;
         $this->tilesToSolve = [] ;
-        $this->singleValues = [] ;
     }
     
     public function init($size)
@@ -37,7 +35,6 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     {
         $this->tileset->exchangeArray(array()) ;
         $this->tilesToSolve = [] ;
-        $this->singleValues = [] ;
         $this->size = null ;
         return $this ;
     }
@@ -45,7 +42,6 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     {
         $this->setTileset($grid->getSize()) ;
         $this->setTilesToSolve($this->getTileset()) ;
-        $this->singleValues = [] ;
     }
     public function getSize()
     {
@@ -67,7 +63,6 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
     {
         $this->tileset->offsetSet($row.'.'.$col, $value) ;
         $this->removeTileToSolve($row.'.'.$col) ;
-        unset($this->singleValues[$row .'.'.$col]) ;
     }
     public function priorizeTileToSolve(TileLastPossibility $deduceTile)
     {
@@ -78,20 +73,11 @@ class Tiles implements InitInterface, ResetInterface, ReloadInterface {
         $this->removeTileToSolve($tileId) ;
         
         array_unshift($this->tilesToSolve, $tile) ;
-        $this->singleValues[$tileId] = $deduceTile->getValue() ;
     }
     public function getFirstTileToSolve()
     {
         reset($this->tilesToSolve) ;
         return current($this->tilesToSolve) ;
-    }
-    public function getIndexToSet($tileId)
-    {
-        if(array_key_exists($tileId, $this->singleValues))
-        {
-            return $this->singleValues[$tileId] ;
-        }
-        return null ;
     }
     
     protected function setTileset($size)

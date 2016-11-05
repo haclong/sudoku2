@@ -34,10 +34,6 @@ class Values implements InitInterface, ResetInterface {
             }
             $this->values[] = $value ;
         }    
-//        if(!in_array($value, $this->values))
-//        {
-//            $this->values[] = $value ;
-//        }    
     }
     
     public function getSize()
