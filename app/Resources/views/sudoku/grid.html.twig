@@ -151,6 +151,10 @@
         function loadGrid(data)
         {
 //            var myData = JSON.parse(JSON.stringify(data)) ;
+            if(data.error.id == 500)
+            {
+                alert("désolé, il n'y a pas de grille de cette dimension") ;
+            }
             var myData = data.grid ;
             var i; 
 //            alert(JSON.stringify(myData)) ;
