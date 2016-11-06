@@ -128,6 +128,33 @@ class ApiControllerTest extends WebTestCase
     /**
      * @runInSeparateProcess
      */
+    public function testLoadGridReturnsException()
+    {
+        // on initialise les objets en session
+        $sudokuEntities = $this->client->getContainer()->get('sudokuEntities') ;
+        $event = new SetGameEvent($sudokuEntities) ;
+        $this->dispatcher->dispatch(SetGameEvent::NAME, $event) ;
+        
+        $gridSize = new GridSize(1) ;
+        $event = new InitGameEvent($gridSize) ;
+        $this->dispatcher->dispatch(InitGameEvent::NAME, $event) ;
+
+        $crawler = $this->client->request('GET', '/api/grid/load?size=1');
+        
+        // tests sur le retour en json
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($response->headers->contains('Content-Type', 'application/json')) ;
+
+        $json = json_decode($response->getContent()) ;
+        $this->assertInstanceOf('stdClass', $json) ;
+        $this->assertObjectHasAttribute('error', $json) ;
+        $this->assertEquals(500, $json->error->id) ;
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testSetTileRedirectToHomepage()
     {
         $this->client->request('GET', '/api/tile/set');

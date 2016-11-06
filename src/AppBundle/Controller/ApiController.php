@@ -13,9 +13,11 @@ use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Utils\JsonMapper;
 use AppBundle\Utils\SudokuFileMapper;
 use AppBundle\Utils\TilesMapper;
+use InvalidArgumentException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -47,8 +49,26 @@ class ApiController extends Controller
 
             // on choisit une grille à afficher
             // les grilles sont stockées dans datas/
-            $loadedTiles = $this->pickAGrid($gridSize) ;
+            $size = (int) $gridSize ;
+//        if($size == 4) {
+//            $file = __DIR__ . "/../../../datas/4/1/1.php" ;
+//        } elseif ($size == 9) {
+//            $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
+//        }
+            $finder = new Finder() ;
             
+            try {
+                $finder->files()->in(__DIR__ . "/../../../datas/" . $size) ;
+
+                $fileList = iterator_to_array($finder) ;
+                $file = array_rand($fileList) ;
+
+                $loadedTiles = include($file) ;
+            } catch (InvalidArgumentException $e) {
+                $response['error'] = ['id' => 500] ;
+                $loadedTiles = [] ;
+            }
+
             // on charge la grille dans l'objet TilesLoaded
             $loadedGrid = new TilesLoaded($gridSize, $loadedTiles) ;
 
@@ -254,20 +274,5 @@ class ApiController extends Controller
 //                    array('msg' =>'No XHR' )
 //                    ) ;
 //        }
-    }
-
-    // TODO : réussir à faire un test unitaire de getGrid sans cette méthode
-    protected function pickAGrid($size)
-    {
-        $size = (int) $size ;
-        if($size == 4) {
-            $file = __DIR__ . "/../../../datas/4/1/1.php" ;
-        } elseif ($size == 9) {
-            $file = __DIR__ . "/../../../datas/9/1/facile_0.php" ;
-        }
-           
-        $array = include($file) ;
-        
-        return $array ;
     }
 }
