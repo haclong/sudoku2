@@ -3,8 +3,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Event\GridSize;
+use AppBundle\Entity\Event\TilesLoaded;
 use AppBundle\Event\DeduceTileEvent;
 use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Utils\RegionGetter;
@@ -205,6 +207,6 @@ class GroupsService {
     {
         $loadedGrid = new TilesLoaded($size, $confirmedMove) ;
         $event = new LoadGameEvent($loadedGrid) ;
-        $this->get('event_dispatcher')->dispatch(LoadGameEvent::NAME, $event) ;
+        $this->dispatcher->dispatch(LoadGameEvent::NAME, $event) ;
     }
 }
