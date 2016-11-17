@@ -12,8 +12,11 @@ use AppBundle\Exception\MaxRemainingTilesLimitException;
  */
 class Grid implements InitInterface, ResetInterface, ReloadInterface {
     protected $size ;
-    protected $tiles = array() ;
+    protected $tiles = [] ;
     protected $remainingTiles = -1 ;
+    protected $confirmedMoves = [] ;
+    protected $unconfirmedMoves = [] ;
+    protected $noWayHypothesis = [] ;
     
     public function init($size)
     {
@@ -34,6 +37,8 @@ class Grid implements InitInterface, ResetInterface, ReloadInterface {
         $this->remainingTiles = -1 ;
         $this->tiles = [] ;
         $this->size = null ;
+        $this->confirmedMoves = [] ;
+        $this->unconfirmedMoves = [] ;
     }
 
     public function getSize()
@@ -65,6 +70,32 @@ class Grid implements InitInterface, ResetInterface, ReloadInterface {
             throw new MaxRemainingTilesLimitException() ;
         }
         $this->remainingTiles += 1 ;
+    }
+    public function storeMove($row, $col, $index, $confirmedMove)
+    {
+        if($confirmedMove)
+        {
+            $this->confirmedMoves[$row][$col] = $index ;
+        } else
+        {
+            $this->unconfirmedMoves[] = ['id' => $row . '.' . $col, 'index' => $index] ;
+        }
+    }
+    public function storeHypothesis($tile)
+    {
+        $this->noWayHypothesis[] = $tile ;
+    }
+    public function getConfirmedMoves()
+    {
+        return $this->confirmedMoves ;
+    }
+    public function getUnconfirmedMoves()
+    {
+        return $this->unconfirmedMoves ;
+    }
+    public function getHypothesis()
+    {
+        return $this->noWayHypothesis ;
     }
     public function isSolved()
     {

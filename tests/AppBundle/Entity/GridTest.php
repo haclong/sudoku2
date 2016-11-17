@@ -17,11 +17,13 @@ class GridTest  extends \PHPUnit_Framework_TestCase
         $grid = new Grid() ;
         $grid->init(9) ;
         $this->assertFalse($grid->isSolved()) ;
-        $this->assertEquals($grid->getSize(), 9) ;
+        $this->assertEquals(9, $grid->getSize()) ;
         $this->assertEquals(81, $grid->getRemainingTiles()) ;
         $grid->reload() ;
-        $this->assertEquals($grid->getSize(), 9) ;
+        $this->assertEquals(9, $grid->getSize()) ;
         $this->assertFalse($grid->isSolved()) ;
+        $this->assertEquals(0, count($grid->getConfirmedMoves())) ;
+        $this->assertEquals(0, count($grid->getUnconfirmedMoves())) ;
     }
     
     public function testValue() {
@@ -33,7 +35,7 @@ class GridTest  extends \PHPUnit_Framework_TestCase
         $array[3][2] = 8 ;
         $array[5][3] = 8 ;
         $grid->setTiles($array) ;
-        $this->assertEquals($grid->getTiles(), $array) ;
+        $this->assertEquals($array, $grid->getTiles()) ;
     }
     
     public function testNewGrid() {
@@ -93,5 +95,27 @@ class GridTest  extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(InvalidGridSizeException::class) ;
         $grid = new Grid() ;
         $grid->init(3) ;
+    }
+    
+    public function testStoreConfirmedMove()
+    {
+        $expectedMove = [4 => [2 => 3]] ;
+        $grid = new Grid() ;
+        $this->assertEquals(0, count($grid->getConfirmedMoves())) ;
+        $this->assertEquals(0, count($grid->getUnconfirmedMoves())) ;
+        $grid->storeMove(4, 2, 3, true) ;
+        $this->assertEquals($expectedMove, $grid->getConfirmedMoves()) ;
+        $this->assertEquals(0, count($grid->getUnconfirmedMoves())) ;
+    }
+    
+    public function testStoreUnconfirmedMove()
+    {
+        $expectedMove[] = ['id' => '4.2', 'index' => 3] ;
+        $grid = new Grid() ;
+        $this->assertEquals(0, count($grid->getConfirmedMoves())) ;
+        $this->assertEquals(0, count($grid->getUnconfirmedMoves())) ;
+        $grid->storeMove(4, 2, 3, false) ;
+        $this->assertEquals(0, count($grid->getConfirmedMoves())) ;
+        $this->assertEquals($expectedMove, $grid->getUnconfirmedMoves()) ;
     }
 }

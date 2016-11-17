@@ -377,14 +377,14 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
     
     public function testProtectedDiscard()
     {
-        $discardMethod = self::getMethod('discard') ;
+        $discardAllImpactedTilesMethod = self::getMethod('discardAllImpactedTiles') ;
 
         $tilesForIndex = new ArrayObject(['0.0', '0.1', '0.2', '0.3', '1.0', '1.1', '1.2', '1.3']) ;
         $impactedTiles = ['0.0', '1.2', '1.3'] ;
         
         $this->assertEquals(8, count($tilesForIndex)) ;
         $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
-        $discardMethod->invokeArgs($service, [$tilesForIndex, $impactedTiles]) ;
+        $discardAllImpactedTilesMethod->invokeArgs($service, [$tilesForIndex, $impactedTiles]) ;
         $this->assertEquals(5, count($tilesForIndex)) ;
         $this->assertEquals([1 => '0.1', 2 => '0.2', 3 => '0.3', 4=> '1.0', 5=> '1.1'], $tilesForIndex->getArrayCopy()) ;
     }

@@ -103,6 +103,8 @@ class GridAggregate implements EventSubscriberInterface {
     public function onValidatedTile(ValidateTileSetEvent $event) {
         $grid = $this->getGridFromSession() ;
         $grid->decreaseRemainingTiles() ;
+        $validTile = $event->getTile() ;
+        $grid->storeMove($validTile->getRow(), $validTile->getCol(), $validTile->getValue(), $event->isConfirmed()) ;
         $this->storeGrid($grid) ;
     }
 }

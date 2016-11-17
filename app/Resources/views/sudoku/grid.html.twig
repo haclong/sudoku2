@@ -69,12 +69,13 @@
 
 
         $("#resetGridButton").click(function() {
+            location.href= "{{path('homepage')}}" ;
 //            clearGrid() ;
-            $.ajax({
-              dataType: "json",
-              url: "{{path('resetGrid')}}",
-              success: clearGrid
-            });
+//            $.ajax({
+//              dataType: "json",
+//              url: "{{path('resetGrid')}}",
+//              success: clearGrid
+//            });
         }) ;
 
         $("#saveGridButton").click(function() {
@@ -151,7 +152,8 @@
         function loadGrid(data)
         {
 //            var myData = JSON.parse(JSON.stringify(data)) ;
-            if(data.error.id == 500)
+//alert(JSON.stringify(data)) ;
+            if(data.hasOwnProperty('error') && data.error.id == 500)
             {
                 alert("désolé, il n'y a pas de grille de cette dimension") ;
             }

@@ -2,12 +2,14 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Event\GridSize;
 use AppBundle\Event\DeduceTileEvent;
+use AppBundle\Event\InitGameEvent;
 use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Utils\RegionGetter;
+use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use \Exception ;
 
 /**
  * Description of GroupsService
@@ -51,13 +53,14 @@ class GroupsService {
     }
 
     // pouvoir écarter un chiffre de toutes les cases
-    public function set($groups, $index, $row, $col)
+    public function set($groups, $index, $row, $col, $confirmed = true)
     {
         // vérifier que la valeur n'apparaît pas déjà sur une autre case dans le même groupe
         $this->checkAlreadySetTile($groups, $index, $row, $col) ;
         
         // envoyer un événement pour valider le choix du numéro
         $this->validateTileSetEvent->getTile()->set($row, $col, $index) ;
+        $this->validateTileSetEvent->setConfirmation($confirmed) ;
         $this->dispatcher->dispatch(ValidateTileSetEvent::NAME, $this->validateTileSetEvent) ;
 
         // trouver toutes les cases impactées par le choix d'une valeur dans une case
@@ -67,7 +70,26 @@ class GroupsService {
         $this->discardValuesInTile($groups, $row.'.'.$col) ;
         
         // écarter le numéro de toutes les cases de la grille
-        $this->discard($groups->getValuesByGrid()->offsetGet($index), array_unique($impactedTiles)) ;
+        $this->discardAllImpactedTiles($groups->getValuesByGrid()->offsetGet($index), array_unique($impactedTiles)) ;
+        
+        // vérifier qu'il n'y a pas de dernières valeurs dans le groupe
+        $this->checkLastValueInGroups($groups) ;
+        
+        // vérifier qu'il n'y a pas de dernière valeur dans la case
+        $this->checkLastValueInTile($groups) ;
+    }
+    
+    public function discard($groups, $index, $row, $col)
+    {
+        foreach($groups->getValuesByGrid()->offsetGet($index) as $key => $value)
+        {
+            if($value == $row . '.' . $col)
+            {
+                $keyToDiscard = $key ;
+                break ;
+            }
+        }
+        $groups->getValuesByGrid()->offsetGet($index)->offsetUnset($keyToDiscard) ;
         
         // vérifier qu'il n'y a pas de dernières valeurs dans le groupe
         $this->checkLastValueInGroups($groups) ;
@@ -106,7 +128,7 @@ class GroupsService {
     
     // pouvoir écarter un chiffre d'une case
 //    protected function discard($tilesForIndex, $impactedTiles)
-    protected function discard($tilesForIndex, $impactedTiles)
+    protected function discardAllImpactedTiles($tilesForIndex, $impactedTiles)
     {
         $keyToRemove = [] ;
         foreach($tilesForIndex as $key => $tile)
@@ -170,5 +192,19 @@ class GroupsService {
                 return $key ;
             }
         }
+    }
+    
+    public function resetGame($size)
+    {
+        $gridSize = new GridSize($size) ;
+        $event = new InitGameEvent($gridSize) ;
+        $this->dispatcher->dispatch(InitGameEvent::NAME, $event) ;
+    }
+    
+    public function reloadGame($size, $confirmedMove)
+    {
+        $loadedGrid = new TilesLoaded($size, $confirmedMove) ;
+        $event = new LoadGameEvent($loadedGrid) ;
+        $this->get('event_dispatcher')->dispatch(LoadGameEvent::NAME, $event) ;
     }
 }

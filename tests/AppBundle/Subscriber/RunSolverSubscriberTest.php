@@ -13,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class RunSolverSubscriberTest extends \PHPUnit_Framework_TestCase {
     protected $groupsSession ;
     protected $tilesSession ;
+    protected $gridSession ;
     protected $groupsService ;
     protected $groups ;
     protected $tiles ;
@@ -22,6 +23,7 @@ class RunSolverSubscriberTest extends \PHPUnit_Framework_TestCase {
     {
         $this->groups = $this->getMockBuilder('AppBundle\Entity\Groups')->disableOriginalConstructor()->getMock() ;
         $this->tiles = $this->getMockBuilder('AppBundle\Entity\Tiles')->disableOriginalConstructor()->getMock() ;
+        $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')->disableOriginalConstructor()->getMock() ;
         $this->tileToSolve = $this->getMockBuilder('AppBundle\Entity\Tiles\TileToSolve')->getMock() ;
         
         $this->groupsSession = $this->getMockBuilder('AppBundle\Persistence\GroupsSession')
@@ -30,12 +32,16 @@ class RunSolverSubscriberTest extends \PHPUnit_Framework_TestCase {
         $this->tilesSession = $this->getMockBuilder('AppBundle\Persistence\TilesSession')
                                     ->disableOriginalConstructor()
                                     ->getMock() ;
+        $this->gridSession = $this->getMockBuilder('AppBundle\Persistence\GridSession')
+                                    ->disableOriginalConstructor()
+                                    ->getMock() ;
         $this->groupsService = $this->getMockBuilder('AppBundle\Service\GroupsService')
                                     ->disableOriginalConstructor()
                                     ->getMock() ;
         
         $this->groupsSession->method('getGroups')->willReturn($this->groups) ;
         $this->tilesSession->method('getTiles')->willReturn($this->tiles) ;
+        $this->gridSession->method('getGrid')->willReturn($this->grid) ;
         $this->tiles->method('getFirstTileToSolve')->willReturn($this->tileToSolve) ;
     }
     
@@ -67,7 +73,7 @@ class RunSolverSubscriberTest extends \PHPUnit_Framework_TestCase {
         $this->groupsSession->expects($this->once())
                             ->method('setGroups') ;
 
-        $subscriber = new RunSolverSubscriber($this->groupsSession, $this->tilesSession, $this->groupsService) ;
+        $subscriber = new RunSolverSubscriber($this->groupsSession, $this->tilesSession, $this->gridSession, $this->groupsService) ;
         $subscriber->onRunSolver($event) ;
     }
 //    

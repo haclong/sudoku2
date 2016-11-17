@@ -21,7 +21,7 @@ class Values implements InitInterface, ResetInterface {
     public function reset()
     {
         $this->size = null ;
-        $this->values = array() ;
+        $this->values = [] ;
     }
 
     public function add($value)
