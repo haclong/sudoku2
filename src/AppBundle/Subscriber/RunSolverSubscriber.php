@@ -67,7 +67,7 @@ class RunSolverSubscriber implements EventSubscriberInterface {
             }
         } catch (AlreadySetTileException $exception) {
             // échec de l'hypothese
-            $this->discardHypothesis($grid, $tiles) ;
+            $this->discardHypothesis($groups, $grid, $tiles) ;
         }
         
         $this->groupsSession->setGroups($groups) ;
@@ -109,7 +109,7 @@ class RunSolverSubscriber implements EventSubscriberInterface {
         $this->service->set($groups, $nextMove['index'], $datas[0], $datas[1], false) ;    
     }
     
-    protected function discardHypothesis($grid, $tiles)
+    protected function discardHypothesis($groups, $grid, $tiles)
     {
         // récupérer les données de grid avant reset des infos
         $size = $grid->getSize() ;
@@ -128,7 +128,7 @@ class RunSolverSubscriber implements EventSubscriberInterface {
         $this->service->discard($groups, $hypothesis['index'], $datas[0], $datas[1]) ;
         
         $tile = $tiles->getFirstTileToSolve() ;
-
+        
         if($tile->hasValue())
         {
             $datas = explode(".", $tile->getId()) ;

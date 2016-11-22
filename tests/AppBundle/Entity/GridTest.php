@@ -112,10 +112,18 @@ class GridTest  extends \PHPUnit_Framework_TestCase
     {
         $expectedMove[] = ['id' => '4.2', 'index' => 3] ;
         $grid = new Grid() ;
-        $this->assertEquals(0, count($grid->getConfirmedMoves())) ;
-        $this->assertEquals(0, count($grid->getUnconfirmedMoves())) ;
+        $this->assertCount(0, $grid->getConfirmedMoves()) ;
+        $this->assertCount(0, $grid->getUnconfirmedMoves()) ;
         $grid->storeMove(4, 2, 3, false) ;
-        $this->assertEquals(0, count($grid->getConfirmedMoves())) ;
+        $this->assertCount(0, $grid->getConfirmedMoves()) ;
         $this->assertEquals($expectedMove, $grid->getUnconfirmedMoves()) ;
+    }
+    
+    public function testStoreHypothesis()
+    {
+        $grid = new Grid() ;
+        $this->assertEmpty($grid->getHypothesis()) ;
+        $grid->storeHypothesis('hello') ;
+        $this->assertEquals(['hello'], $grid->getHypothesis()) ;
     }
 }
