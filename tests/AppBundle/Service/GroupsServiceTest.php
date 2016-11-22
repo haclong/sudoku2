@@ -4,6 +4,8 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Groups\ValuesByGrid;
 use AppBundle\Event\DeduceTileEvent;
+use AppBundle\Event\InitGameEvent;
+use AppBundle\Event\LoadGameEvent;
 use AppBundle\Event\ValidateTileSetEvent;
 use AppBundle\Exception\AlreadySetTileException;
 use AppBundle\Service\GroupsService;
@@ -44,8 +46,6 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $this->groups = $this->getMockBuilder('AppBundle\Entity\Groups')
                              ->disableOriginalConstructor()
                              ->getMock() ;
-//        $this->groups->method('getSize')
-//                    ->willReturn(9) ;
     }
     
     protected function tearDown() {
@@ -185,36 +185,6 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
                          ->method('dispatch')
                          ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
 
-
-//        $row = new ArrayObject([0 => new ArrayObject([0,1]), 1 => new ArrayObject([0]), 2 => new ArrayObject([0,1])]) ;
-//        $col = new ArrayObject([0 => new ArrayObject([0,1]), 1 => new ArrayObject([0]), 2 => new ArrayObject([0,1])]) ;
-//        $reg = new ArrayObject([0 => new ArrayObject([0,1]), 1 => new ArrayObject([0]), 2 => new ArrayObject([0,1])]) ;
-//        $valuesByGroup['col'][0][0] = ['0.0', '0.1', '0.2', '0.3'] ;
-//        $valuesByGroup['col'][0][1] = ['0.0', '0.1', '0.2', '0.3'] ;
-//        $valuesByGroup['col'][0][2] = ['0.3'] ;
-//        $valuesByGroup['col'][0][3] = ['0.0', '0.1', '0.2', '0.3'] ;
-//        $tiles0 = new ArrayObject(['0.0', '0.1', '0.2', '0.3']) ;
-//        $tiles1 = new ArrayObject(['0.0', '0.1', '0.2', '0.3']) ;
-//        $tiles2 = new ArrayObject(['0.3']) ;
-//        $tiles3 = new ArrayObject(['0.0', '0.1', '0.2', '0.3']) ;
-//        $valuesByGrid = new ArrayObject([$tiles0, $tiles1, $tiles2, $tiles3]) ;
-//        
-//        $this->dispatcher->expects($this->at(1))
-//                         ->method('dispatch')
-//                         ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
-//        
-//        $this->groups->method('getRow')
-//                     ->willReturn($row) ;
-//        $this->groups->method('getCol')
-//                     ->willReturn($col) ;
-//        $this->groups->method('getRegion')
-//                     ->willReturn($reg) ;
-//        $this->groups->method('getImpactedTiles')
-//                     ->willReturn(array()) ;
-//        $this->groups->method('getValuesByGrid')
-//                    ->willReturn($valuesByGrid) ;
-//        $this->groups->method('getValuesByTile')
-//                    ->willReturn(array()) ;
         $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
         $service->set($this->groups, 1, 0, 0) ;
     }
@@ -237,51 +207,11 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
                     new ArrayObject(['1.0', '1.1'])
                     ]) ;
         $impactedTiles = ['0.0', '1.2', '1.3'] ;
-//        $row = new ArrayObject([0 => new ArrayObject([0,1]), 1 => new ArrayObject([0]), 2 => new ArrayObject([0,1])]) ;
-//        $col = new ArrayObject([0 => new ArrayObject([0,1]), 1 => new ArrayObject([0]), 2 => new ArrayObject([0,1])]) ;
-//        $reg = new ArrayObject([0 => new ArrayObject([0,1]), 1 => new ArrayObject([0]), 2 => new ArrayObject([0,1])]) ;
         $valuesByTile = ['1.0' => [3]] ;
-//        $valuesByTile = ['1.2' => [0, 1, 3],
-//                         '2.2' => [0, 2, 3],
-//                         '2.3' => [0, 3],
-//                         '3.0' => [0, 2, 3],
-//                         '3.2' => [0, 1, 2, 3],
-//                         '3.3' => [0, 1, 3],
-//                         '0.2' => [1, 3],
-//                         '0.3' => [1, 3],
-//                         '1.1' => [1, 3],
-//                         '0.0' => [2, 3],
-//                         '2.1' => [2, 3],
-//                         '3.1' => [2, 3],
-//                         '1.0' => [3],
-//                        ] ;
-//
-//        $index0 = new ArrayObject(['1.2', '2.2', '2.3', '3.0', '3.2', '3.3']) ;
-//        $index1 = new ArrayObject(['0.2', '0.3', '1.1', '1.2', '3.2', '3.3']) ;
-//        $index2 = new ArrayObject(['0.0', '2.1', '2.2', '3.0', '3.1', '3.2']) ;
-//        $index3 = new ArrayObject(['0.0', '0.2', '0.3', '1.0', '1.1', '1.2', '2.1', '2.2', '2.3', '3.0', '3.1', '3.2', '3.3']) ;
-//        $valuesByGrid = new ValuesByGrid([$index0, $index1, $index2, $index3]) ;
-//       
-//        $this->dispatcher->expects($this->at(1))
-//                         ->method('dispatch')
-//                         ->with(ValidateTileSetEvent::NAME, $this->equalTo($this->validateTileSetEvent)) ;
         $this->dispatcher->expects($this->at(1))
                          ->method('dispatch')
                          ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
-//        
-//        $this->groups->method('getRow')->with($this->equalTo(0))
-//                     ->willReturn(new ValuesByGrid([new ArrayObject([]), new ArrayObject(['0.2', '0.3']), new ArrayObject(['0.0']), new ArrayObject(['0.0', '0.2', '0.3'])])) ;
-//        $this->groups->method('getRow')->with($this->equalTo(1))
-//                     ->willReturn(new ValuesByGrid([new ArrayObject(['1.2']), new ArrayObject(['1.1', '1.2']), new ArrayObject([]), new ArrayObject(['1.0', '1.1', '1.2'])])) ;
-//        $this->groups->method('getRow')->with($this->equalTo(2))
-//                     ->willReturn(new ValuesByGrid([new ArrayObject(['2.2', '2.3']), new ArrayObject([]), new ArrayObject(['2.1', '2.2']), new ArrayObject(['2.1', '2.2', '2.3'])])) ;
-//        $this->groups->method('getRow')->with($this->equalTo(3))
-//                     ->willReturn(new ValuesByGrid([new ArrayObject(['3.0', '3.2', '3.3']), new ArrayObject(['3.2', '3.3']), new ArrayObject(['3.0', '3.1', '3.2']), new ArrayObject(['3.0', '3.1', '3.2', '3.3'])])) ;
 
-//        $this->groups->method('getCol')
-//                     ->willReturn($col) ;
-//        $this->groups->method('getRegion')
-//                     ->willReturn($reg) ;
         $this->groups->method('getSize')->willReturn(1) ;
         $this->groups->method('getRow')->with(0)->willReturn($row) ;
         $this->groups->method('getCol')->with(0)->willReturn($col) ;
@@ -293,6 +223,82 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $service->set($this->groups, 1, 0, 0) ;
     }
     
+    public function testDiscardUnsetValue() {
+        $valuesByGrid = new ArrayObject([
+                    new ArrayObject(['1.0', '1.1', '1.3']),
+                    new ArrayObject(['1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1'])
+                    ]) ;
+        
+        $expectedValuesByGrid = new ArrayObject([
+                    new ArrayObject(['1.0', '1.1', '1.3']),
+                    new ArrayObject(['1.1', 2 => '1.3']),
+                    new ArrayObject(['1.0', '1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1'])
+                    ]) ;
+        $this->groups->method('getValuesByGrid')->willReturn($valuesByGrid) ;
+        $this->groups->method('getValuesByTile')->willReturn([]) ;
+        
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->discard($this->groups, 1, 1, 2) ;
+        $this->assertEquals($expectedValuesByGrid, $this->groups->getValuesByGrid()) ;
+    }
+    
+    public function testDiscardDispatchLastValueInGroup()
+    {
+        $row = new ArrayObject([0 => new ArrayObject(['0.0']), 
+                  1 => new ArrayObject(['2.3']), 
+                  2 => new ArrayObject(['1.2', '3.0'])]) ;
+        $col = new ArrayObject([0 => new ArrayObject(['0.0']), 
+                  1 => new ArrayObject(['2.3']), 
+                  2 => new ArrayObject(['1.2', '3.0'])]) ;
+        $region = new ArrayObject([0 => new ArrayObject(['0.0']), 
+                  1 => new ArrayObject(['2.3']), 
+                  2 => new ArrayObject(['1.2', '3.0'])]) ;
+        $valuesByGrid = new ArrayObject([
+                    new ArrayObject(['1.0', '1.1', '1.3']),
+                    new ArrayObject(['1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1'])
+                    ]) ;
+
+        $this->groups->method('getSize')->willReturn(1) ;
+        $this->groups->method('getRow')->willReturn($row) ;
+        $this->groups->method('getCol')->willReturn($col) ;
+        $this->groups->method('getRegion')->willReturn($region) ;
+        $this->groups->method('getValuesByGrid')->willReturn($valuesByGrid) ;
+        $this->groups->method('getValuesByTile')->willReturn([]) ;
+
+        $this->dispatcher->expects($this->at(1))
+                         ->method('dispatch')
+                         ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
+
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->discard($this->groups, 2, 1, 0) ;
+        $service->discard($this->groups, 2, 1, 1) ;
+        $service->discard($this->groups, 2, 1, 3) ;
+    }
+    
+    public function testDiscardDispatchLastValueInTile()
+    {
+        $valuesByGrid = new ArrayObject([
+                    new ArrayObject(['1.0', '1.1', '1.3']),
+                    new ArrayObject(['1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1', '1.2', '1.3']),
+                    new ArrayObject(['1.0', '1.1'])
+                    ]) ;
+        $valuesByTile = ['1.2' => [2]] ;
+        $this->dispatcher->expects($this->at(0))
+                         ->method('dispatch')
+                         ->with(DeduceTileEvent::NAME, $this->equalTo($this->deduceTileEvent)) ;
+
+        $this->groups->method('getValuesByGrid')->willReturn($valuesByGrid) ;
+        $this->groups->method('getValuesByTile')->willReturn($valuesByTile) ;
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->discard($this->groups, 1, 1, 2) ;
+    }
+
     public function testProtectedCheckAlreadySetTile()
     {
         $checkAlreadySetTileMethod = self::getMethod('checkAlreadySetTile') ;
@@ -377,14 +383,14 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
     
     public function testProtectedDiscard()
     {
-        $discardMethod = self::getMethod('discard') ;
+        $discardAllImpactedTilesMethod = self::getMethod('discardAllImpactedTiles') ;
 
         $tilesForIndex = new ArrayObject(['0.0', '0.1', '0.2', '0.3', '1.0', '1.1', '1.2', '1.3']) ;
         $impactedTiles = ['0.0', '1.2', '1.3'] ;
         
         $this->assertEquals(8, count($tilesForIndex)) ;
         $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
-        $discardMethod->invokeArgs($service, [$tilesForIndex, $impactedTiles]) ;
+        $discardAllImpactedTilesMethod->invokeArgs($service, [$tilesForIndex, $impactedTiles]) ;
         $this->assertEquals(5, count($tilesForIndex)) ;
         $this->assertEquals([1 => '0.1', 2 => '0.2', 3 => '0.3', 4=> '1.0', 5=> '1.1'], $tilesForIndex->getArrayCopy()) ;
     }
@@ -453,5 +459,25 @@ class GroupsServiceTest extends \PHPUnit_Framework_TestCase {
         $method = $class->getMethod($name) ;
         $method->setAccessible(true) ;
         return $method ;
+    }
+    
+    public function testResetGame()
+    {
+        $this->dispatcher->expects($this->once())
+                         ->method('dispatch')
+                         ->with(InitGameEvent::NAME, $this->isInstanceOf(InitGameEvent::class)) ;
+
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->resetGame(4) ;
+    }
+    
+    public function testReloadGame()
+    {
+        $this->dispatcher->expects($this->once())
+                         ->method('dispatch')
+                         ->with(LoadGameEvent::NAME, $this->isInstanceOf(LoadGameEvent::class)) ;
+
+        $service = new GroupsService($this->dispatcher, $this->validateTileSetEvent, $this->deduceTileEvent) ;
+        $service->reloadGame(4, []) ;
     }
 }

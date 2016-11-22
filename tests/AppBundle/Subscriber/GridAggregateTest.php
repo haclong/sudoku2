@@ -22,7 +22,7 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     {
         $this->grid = $this->getMockBuilder('AppBundle\Entity\Grid')
                      ->disableOriginalConstructor()
-                     ->setMethods(array('getTiles', 'setTiles', 'getSize', 'init', 'reset', 'reload', 'decreaseRemainingTiles'))
+                     ->setMethods(array('storeMove', 'getTiles', 'setTiles', 'getSize', 'init', 'reset', 'reload', 'decreaseRemainingTiles'))
                      ->getMock() ;
         $this->grid->method('getSize')
                    ->willReturn(9) ;
@@ -190,19 +190,13 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
     
     public function testOnResetGame()
     {
-        $event = $this->getMockBuilder('AppBundle\Event\ResetGameEvent')
-                                    ->getMock() ;
+        $event = $this->getMockBuilder('AppBundle\Event\ResetGameEvent')->getMock() ;
+        $this->session->method('getGrid')->willReturn($this->grid) ;
         
-        $this->grid->expects($this->once())
-                ->method('reset') ;
-        $this->session->method('getGrid')
-                ->willReturn($this->grid) ;
-        $this->session->expects($this->once())
-                ->method('setGrid') ;
-        $this->grid->expects($this->once())
-                ->method('getSize') ;
-        $this->grid->expects($this->once())
-                ->method('init') ;
+        $this->grid->expects($this->once())->method('reset') ;
+        $this->session->expects($this->once())->method('setGrid') ;
+        $this->grid->expects($this->once())->method('getSize') ;
+        $this->grid->expects($this->once())->method('init') ;
         
         $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onResetGame($event) ;
@@ -214,19 +208,46 @@ class GridAggregateTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result) ;
     }
     
-    public function testOnValidatedTile()
+    public function testOnValidatedConfirmedTile()
     {
+        $tile = $this->getMockBuilder('AppBundle\Entity\Event\TileSet')->getMock() ;
+        $tile->method('getRow')->willReturn(1) ;
+        $tile->method('getCol')->willReturn(2) ;
+        $tile->method('getValue')->willReturn(3) ;
+         
         $event = $this->getMockBuilder('AppBundle\Event\ValidateTileSetEvent')
-                                    ->disableOriginalConstructor()
+                                    ->setConstructorArgs([$tile])
                                     ->getMock() ;
+        $event->method('getTile')->willReturn($tile) ;
+        $event->method('isConfirmed')->willReturn(true) ;
         
-        $this->session->method('getGrid')
-                ->willReturn($this->grid) ;
-        $this->grid->expects($this->once())
-                   ->method('decreaseRemainingTiles') ;                   
-        $this->session->expects($this->once())
-                ->method('setGrid') ;
+        $this->session->method('getGrid')->willReturn($this->grid) ;
+        $this->grid->expects($this->once())->method('decreaseRemainingTiles') ;                   
+        $this->grid->expects($this->once())->method('storeMove')->with(1, 2, 3, true) ;                   
+        $this->session->expects($this->once())->method('setGrid') ;
+                
+        $gridAggregate = new GridAggregate($this->session, $this->service) ;
+        $gridAggregate->onValidatedTile($event) ;
+    }
+    
+    public function testOnValidatedUnconfirmedTile()
+    {
+        $tile = $this->getMockBuilder('AppBundle\Entity\Event\TileSet')->getMock() ;
+        $tile->method('getRow')->willReturn(1) ;
+        $tile->method('getCol')->willReturn(2) ;
+        $tile->method('getValue')->willReturn(3) ;
+         
+        $event = $this->getMockBuilder('AppBundle\Event\ValidateTileSetEvent')
+                                    ->setConstructorArgs([$tile])
+                                    ->getMock() ;
+        $event->method('getTile')->willReturn($tile) ;
+        $event->method('isConfirmed')->willReturn(false) ;
         
+        $this->session->method('getGrid')->willReturn($this->grid) ;
+        $this->grid->expects($this->once())->method('decreaseRemainingTiles') ;                   
+        $this->grid->expects($this->once())->method('storeMove')->with(1, 2, 3, false) ;                   
+        $this->session->expects($this->once())->method('setGrid') ;
+                
         $gridAggregate = new GridAggregate($this->session, $this->service) ;
         $gridAggregate->onValidatedTile($event) ;
     }

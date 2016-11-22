@@ -116,7 +116,7 @@ services:
             - { name: kernel.event_subscriber }
     runSolverSubscriber:
         class: AppBundle\Subscriber\RunSolverSubscriber
-        arguments: ['@groupsSession', '@tilesSession', '@groupsService']
+        arguments: ['@groupsSession', '@tilesSession', '@gridSession', '@groupsService']
         tags:
             - { name: kernel.event_subscriber }
 

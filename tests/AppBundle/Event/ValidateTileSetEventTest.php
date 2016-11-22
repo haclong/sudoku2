@@ -17,5 +17,15 @@ class ValidateTileSetEventTest extends \PHPUnit_Framework_TestCase  {
         $event = new ValidateTileSetEvent($tile) ;
         $this->assertInstanceOf('AppBundle\Entity\Event\TileSet', $event->getTile()) ;
         $this->assertEquals($event::NAME, 'settile.validated') ;
+        $this->assertTrue($event->isConfirmed()) ;
+    }
+    
+    public function testConfirmedFalse()
+    {
+        $tile = $this->getMockBuilder('AppBundle\Entity\Event\TileSet')
+                     ->getMock() ;
+        $event = new ValidateTileSetEvent($tile) ;
+        $event->setConfirmation(false) ;
+        $this->assertFalse($event->isConfirmed()) ;
     }
 }
